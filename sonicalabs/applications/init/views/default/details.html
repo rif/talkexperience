@@ -1,0 +1,45 @@
+{{left_sidebar_enabled,right_sidebar_enabled=False,True}}
+{{extend 'layout.html'}}
+
+<div class="sound">
+	<div class="title"><a href="{{=detail_sound.download_url}}" title="{{=detail_sound.title}}" type="{{=detail_sound.mime_type}}"><img src="{{=Gravatar(detail_sound.owner_email, size=350).thumb}}" alt="" style="display:none" /></a> {{=detail_sound.title}}</h3></div>	
+	<div class="info">{{=T('Added')}} {{=prettydate(detail_sound.created_on)}} {{=T('by')}} {{=detail_sound.username}} {{=detail_sound.play_count}} {{=T('views')}}</div>
+	<div class="description">{{=detail_sound.description}}</div>
+	{{if detail_sound.price > 0:}}
+	<div id="buy"><span id="price">{{=detail_sound.price}}$</span> <a class="button" href="{{=URL('buy')}}">{{=T('Buy')}}</a></div>
+	{{pass}}
+</div>
+
+<h5>{{=T('Comments')}}</h5>
+<div id="comments">
+{{=plugin_comments('sounds',detail_sound.id)}}
+</div>
+
+{{if len(sounds) > 0:}}	
+	<img src="{{=Gravatar(detail_sound.owner_email, size=60).thumb}}" alt="" style="float:right"/>
+	<h3>{{=T('By the same author')}}</h3>
+	<hr/>
+	{{=paginate_selector}} {{=paginate_info}}
+	{{ for sound in sounds:}}		
+		{{if sound.id != detail_sound.id:}}
+		<div class="sound">
+		  <div class="title"><a href="{{=sound.download_url}}" title="{{=sound.title}}" type="{{=sound.mime_type}}"><img src="{{=Gravatar(sound.owner_email, size=350).thumb}}" alt="" style="display:none" /></a><a href="{{=URL('details', args=sound.id)}}">{{=sound.title}}</a></div>		  
+		  <div class="info">{{=T('Added')}} {{=prettydate(sound.created_on)}} {{=sound.play_count}} {{=T('views')}}</div>
+		  <div class="description">{{=sound.description}}</div> 	  
+		</div>
+		{{pass}}
+	{{pass}}
+
+	{{=paginator}}
+{{pass}}
+
+<div class="back">
+<a class="button" href="{{=URL('index')}}">{{=T('Back')}}</a>
+</div>
+
+<script type="text/javascript">
+    var YWPParams = 
+    {
+        autoplay: true
+    };
+</script>

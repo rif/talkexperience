@@ -1,0 +1,18 @@
+{{left_sidebar_enabled,right_sidebar_enabled=False,True}}
+{{extend 'layout.html'}}
+
+<h3>{{=T('Edit Experience Information')}}</h3>
+{{=form}}
+
+<a href="{{=URL('my_uploads', user_signature=True)}}">{{=T('Back')}}</a>
+
+{{block right_sidebar}}
+{{=A(T("Record"), _href=URL('record'), _class='button', _style='margin-top: 1em;')}}
+{{end}}
+
+<link href="{{=URL('static','css/chosen.css')}}" rel="stylesheet" type="text/css" />
+<script src="{{=URL('static','js/chosen.jquery.min.js')}}" type="text/javascript"></script>
+
+<script type="text/javascript">
+$("#sounds_language").chosen();
+</script>
