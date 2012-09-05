@@ -106,6 +106,7 @@ Sounds.download_url = Field.Virtual(get_download_url)
 Sounds.delete_url = Field.Virtual(get_delete_url)
 Sounds.is_active.default = False
 
+#request.args(0,default=0, cast=int, otherwise=URL(...))
 a0,a1 = request.args(0), request.args(1)
 active_sounds = Sounds.is_active == True
 user_sounds = Sounds.created_by == auth.user_id
