@@ -1,0 +1,11 @@
+
+<h4>{{=T('Most popular')}}</h4>
+
+{{for sound in sounds:}}
+<div class="sound">
+  <div class="title">{{=A(sound.title,_href=URL('details', args=sound.id))}}</div>
+  <div class="info">{{=T('By')}} {{=sound.username}} {{=sound.play_count}} {{=T('views')}}</div>
+</div>
+{{pass}}
+
+{{=paginator}}

@@ -1,0 +1,4 @@
+cron:
+- description: daily summary job
+  url: /init/default/activate_scheduled_sounds
+  schedule: every 1 hours

@@ -1,0 +1,58 @@
+{{left_sidebar_enabled,right_sidebar_enabled=False,True}}
+{{extend 'layout.html'}}
+
+<h3>{{=T('Upload an Experience')}}</h3>
+<div id="file-uploader">       
+    <noscript>          
+        <p>{{=T("Please enable JavaScript to use the file uploader.")}}</p>
+        <!-- or put a simple form for upload here -->
+    </noscript>         
+</div>
+
+{{=form}}
+
+<div id="uploading" style="display:none">
+  <h4>{{=T('Uploading...')}}</h4>
+  <progress min="0" max="100" value="0">0% complete</progress> <br/>
+</div>
+
+<a href="{{=URL('index')}}">{{=T('Back')}}</a>
+
+{{block right_sidebar}}
+{{=A(T("Record"), _href=URL('record'), _class='button', _style='margin-top: 1em;')}}
+{{end}}
+
+<link href="{{=URL('static','css/chosen.css')}}" rel="stylesheet" type="text/css" />
+<link href="{{=URL('static','css/fileuploader.css')}}" rel="stylesheet" type="text/css" />
+<script src="{{=URL('static','js/chosen.jquery.min.js')}}" type="text/javascript"></script>
+<script src="{{=URL('static','js/fileuploader.js')}}" type="text/javascript"></script>
+
+<script type="text/javascript">
+$(function(){
+  $("#sounds_language").chosen();
+  $("#sounds_uuid__row").hide();
+ 
+  var uploader = new qq.FileUploader({
+    // pass the dom node (ex. $(selector)[0] for jQuery users)
+    element: $("#file-uploader")[0],
+    // path to server-side upload script
+    action: 'http://avocadosoft.ro:6060/process',
+    //action: 'http://localhost:6060/process',
+    params: {uuid: $("#sounds_uuid").val()},
+    allowedExtensions: ['mp3', 'wav', 'ogg', 'oga', 'aac', 'mp4', 'mp2', 'flac', 'au', 'ac3'],
+    onSubmit: function(id, fileName){
+      $(".qq-upload-button").hide();
+    },
+    onComplete: function(id, fileName){
+      $("#file-uploader").replaceWith('<h4 id="filename">Experience name: ' + fileName + '</h4>');
+    }
+  });
+  $("form").submit(function(){
+    if($("#filename").length == 0){      
+      alert("Please upload an audio file!");
+      return false;
+    } 
+    return true;
+  });  
+});
+</script>

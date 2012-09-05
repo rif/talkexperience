@@ -1,0 +1,26 @@
+{{left_sidebar_enabled,right_sidebar_enabled=False,True}}
+{{extend 'layout.html'}}
+
+<h4>{{=T('What do we have here?')}}</h4>
+{{=form.custom.begin}}
+{{=form.custom.widget.query}}
+{{=form.custom.end}}
+{{ if form.vars.query:}}
+{{=T('Searching for:')}} {{=form.vars.query}}
+{{pass}}
+{{=paginate_selector}}{{=paginate_info}}
+{{ for sound in sounds:}}
+<div class="sound">
+  <div class="title"><a href="{{=sound.download_url}}" title="{{=sound.title}}" type="{{=sound.mime_type}}"><img src="{{=Gravatar(sound.owner_email, size=350).thumb}}" alt="" style="display:none" /></a><a href="{{=URL('details', args=sound.id)}}">{{=sound.title}}</a></div>
+  <div class="info">{{=T('Added')}} {{=prettydate(sound.created_on)}} {{=T('by')}} {{=sound.username}} {{=sound.play_count}} {{=T('views')}}</div>
+  <div class="description">{{if sound.description:}}{{=sound.description[:100]}}...{{else:}}{{pass}}</div>  
+</div>
+{{pass}}
+
+{{=paginator}}
+
+<script type="text/javascript">        
+  $("#no_table_query").one("focus", function() {
+      $(this).val("");
+  });  
+</script>
