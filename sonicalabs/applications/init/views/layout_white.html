@@ -41,10 +41,9 @@
   <!-- include stylesheets -->
   {{
   response.files.append(URL('static','css/bootstrap.min.css'))
-  #response.files.append(URL('static','css/bootstrap-responsive.min.css'))
   response.files.append(URL('static','css/web2py.css'))
   response.files.append(URL('static','css/web2py_bootstrap.css'))
-  response.files.append(URL('static','css/screen.css'))
+  response.files.append(URL('static','css/white.css'))
   }}
 
   {{include 'web2py_ajax.html'}}
@@ -69,19 +68,10 @@
             <form action="" enctype="multipart/form-data" method="post">
               <input id="ta-search" name="query" type="text" class="input-mir" placeholder="SEARCH">
             </form>
-            <a href="#">ADD <span class="green">FACEBOOK</span></a> | <a href="#"><span class="green">TWITTER</span> ACCOUNT</a><br>
-            <a href="#">WELCOME <span class="green">USER</span></a> | <a href="#"><span class="green">PROFILE</span></a><br>
-            <a href="#"><span class="green">SIGN</span> OUT</a>
+            <a href="#">ADD FACEBOOK</a> | <a href="#">TWITTER ACCOUNT</a><br>
+            <a href="#">WELCOME USER</a> | <a href="#">PROFILE</a><br>
+            <a href="#">SIGN OUT</a>
           </div>
-          <a id="top-first" href="#">MOST POPULAR<br>SUBJECTS</a>
-          <a id="top-second" href="#">MOST EXPERIENCES<br>BY LANGUAGE</a>
-          <a id="top-third" href="#">MOST EXPERIENCES<br>BY USER</a>
-          <a id="top-fourth" href="#">SEARCH FOR AN<br>EXPERIENCE</a>
-          <a id="top-fifth" href="#">CAPTURING GLOBAL<br>TACIT KNOWLEDGE</a>
-          <a id="bottom-first" href="#">UPLOAD AN<br>EXPERIENCE</a>
-          <a id="bottom-second" href="#">RECORD AN<br>EXPERIENCE</a>
-          <a id="bottom-third" href="#">MY<br>EXPERIENCES</a>
-          <a id="bottom-fourth" href="#">FUNDS &amp;<br>CERTIFICATES</a>
         </div>
     </div>
   </div>  
@@ -90,7 +80,7 @@
     
     <section id="main" class="main span12">
       <div class="row">
-      	<div class="span=12">
+      	<div class="span12">
       	  {{block center}}
       	  {{include}}
       	  {{end}}
