@@ -1,40 +1,92 @@
-div.sound 
-  margin-bottom: 10px
-  div.title
-    font-size: 1.5em
+@import "compass/typography/links"
+
+$green: #8dc63f
+$dark-gray: #292424
+
+body 
+  background-color: $dark-gray
+
+a  
+  color: white
+  font-size: 1em
+  font-weight: bold
+  &:hover
+    text-decoration: none 
+  &>span.green  
+    color: $green
+
+footer
+  margin-bottom: 1em
+  a  
+    color: white
+    font-size: 1em
     font-weight: bold
+    margin-right: 40px
 
-#most_popular div.sound
-  margin-bottom: 0px
-  div.title a, #most_popular div.sound
-    div.title
-      font-size: 1.1em
-  div.info 
-    font-size: .8em
-    color: gray
-  div.actions 
-    float: right
+ul>li
+  color: white
+  font-weight: bold
 
-.paginate_info, .paginate_selector 
-  float: right
-  margin-right: 5px
+.container.first
+  margin-top: 4%
 
-#otherlinks 
+hr
+  margin-top: 3%
+  border-bottom: 0px 
+  border-color: $green
+
+#main
+  height: 538px
+  margin: auto
   float: left
-  margin-left: 20px
-  a 
-    margin-right: 20px
+  z-index: -1
+  background-image: url("../img/center.png")
+  background-repeat: no-repeat  
 
-#buy 
+#top-left
+  float: left
+  margin-top: 0.5%
+  margin-left: 9%
+
+#top-center-left
+  float: left
+  margin-top: 0.5% 
+  margin-left: 19%  
+
+#top-center-right
+  float: left
+  margin-top: 0.5%
+  margin-left: 6% 
+
+#logo
   float: right
-  margin-right: 50px
-  #price 
-    font-size: 1.2em
-    font-weight: bold
+  margin-top: -3%  
+  margin-right: -3%
+  width: 38% 
 
-#file-uploader
-  div.qq-uploader
-    div.qq-upload-button 
-      width: 150px
+#center-left
+  clear: left
+  float: left
+  margin-left: 6%
+  margin-top: 24%  
 
+#center-right
+  float: right
+  margin-top: 23%  
+  margin-right: -27%
 
+#bottom-left
+  clear: left
+  float: left
+  margin-top: 20%
+  margin-left: 6%
+
+#bottom-center
+  float: left
+  margin-top: 24%
+  margin-left: 18%
+
+#bottom-right
+  float: right
+  margin-top: 20%  
+  margin-right: 5%

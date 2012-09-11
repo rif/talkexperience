@@ -31,6 +31,8 @@ from utils import web2py_uuid
 from fileutils import read_file, check_credentials
 from gluon import *
 from gluon.contrib.autolinks import expand_one
+from gluon.contrib.markmin.markmin2html import \
+    replace_at_urls, replace_autolinks, replace_components
 from gluon.dal import Row
 
 import serializers
@@ -3150,9 +3152,15 @@ class Auth(object):
         id = archive_table.insert(**new_record)
         return id
 
-    def wiki(self,slug=None,env=None,manage_permissions=False,force_prefix='', resolve=True):
+    def wiki(self,
+             slug=None,
+             env=None,
+             render=None,
+             manage_permissions=False,
+             force_prefix='', 
+             resolve=True):
         if not hasattr(self,'_wiki'):
-            self._wiki = Wiki(self,
+            self._wiki = Wiki(self,render=render,
                               manage_permissions=manage_permissions,
                               force_prefix=force_prefix,env=env)
         else:
@@ -4480,6 +4488,15 @@ class Wiki(object):
                     *[A(t.strip(),_href=URL(args='_search',vars=dict(q=t)))
                       for t in page.tags or [] if t.strip()]).xml()
         return html
+    def html_render(self,page):
+        html = page.body
+        # @///function -> http://..../function
+        html = replace_at_urls(html,URL)
+        # http://...jpg -> <img src="http://...jpg/> or oembed
+        html = replace_autolinks(html,lambda link: expand_one(link,{}))
+        # @{component:name} -> <script>embed component name</script>
+        html = replace_components(html,self.env)
+        return html
     @staticmethod
     def component(text):
         """
@@ -4494,6 +4511,7 @@ class Wiki(object):
         self.env = env or {}
         self.env['component'] = Wiki.component
         if render == 'markmin': render=self.markmin_render
+        elif render == 'html': render=self.html_render
         self.auth = auth
         if self.auth.user:
             self.force_prefix = force_prefix % self.auth.user
