@@ -107,11 +107,11 @@
       <div class="footer-content">
 	      <a href="{{=URL('about')}}">ABOUT US</a>
         <a href="{{=URL('howitworks')}}">HOW IT WORKS</a>
-        <a href="{{=URL('bussines')}}">BUSSINES MODEL</a>
+        <a href="{{=URL('business')}}">BUSSINES MODEL</a>
         <a href="{{=URL('terms')}}">TERMS &amp; CONDITIONS</a>
         <a href="{{=URL('faq')}}">FAQ</a>
         <a href="{{=URL('contact')}}">CONTACT US</a>
-        <a href="{{=URL('message')}}">MESSAGE FROM THE FOUNDER</a>
+        <a href="{{=URL('deatils', args=0)}}">MESSAGE FROM THE FOUNDER</a>
         <a href="{{=URL('index')}}">HOME</a>
         <a class="share" href="http://twitter.com/talkexperience"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
         <a class="share" href="http://twitter.com/talkexperience"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
@@ -126,5 +126,6 @@
       <script> DD_belatedPNG.fix('img, .png_bg'); //fix any <img> or .png_bg background-images </script>
       <![endif]-->
   {{if response.google_analytics_id:}}<script type="text/javascript"> var _gaq = _gaq || []; _gaq.push(['_setAccount', '{{=response.google_analytics_id}}']); _gaq.push(['_trackPageview']); (function() { var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); })(); </script> {{pass}} 
+  <script type="text/javascript" src="http://webplayer.yahooapis.com/player.js"></script>
 </body>
 </html>
