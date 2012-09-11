@@ -160,6 +160,15 @@ def terms():
 def howitworks():
     return dict()
 
+def buy():
+    return dict()
+
+def faq():
+    return dict()
+
+def business():
+    return dict()
+
 def contact():
     form=SQLFORM.factory(
         Field('your_name',requires=IS_NOT_EMPTY()),
@@ -174,6 +183,3 @@ def contact():
         else:
             form.errors.your_email = "Unable to send the email"
     return dict(form=form)
-
-def buy():
-    return dict()
