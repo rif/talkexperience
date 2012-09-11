@@ -3,6 +3,8 @@ from plugin_paginator import Paginator, PaginateSelector, PaginateInfo
 
 def index(): return dict()
 
+def index_new(): return dict()
+
 def index_real():
     paginate_selector = PaginateSelector(anchor='main')
     paginator = Paginator(paginate=paginate_selector.paginate,  extra_vars={'v':1}, anchor='main', renderstyle=True)
