@@ -44,6 +44,7 @@
   response.files.append(URL('static','css/bootstrap-responsive.min.css'))
   response.files.append(URL('static','css/web2py.css'))
   response.files.append(URL('static','css/web2py_bootstrap.css'))
+  response.files.append(URL('static','css/screen.css'))
   }}
 
   {{include 'web2py_ajax.html'}}
@@ -69,21 +70,9 @@
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container">
-	<!-- the next tag is necessary for bootstrap menus, do not remove -->
-	<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
+	      <a class="brand" href="{{=URL('index')}}">
+          <img id="logo" src="{{=URL('static','images/logo_icon.png')}}" alt="dark-logo" height="20">
         </a>
-	<a class="brand" href="#">web2py&trade;&nbsp;</a>
-	<div id="navbar">{{='auth' in globals() and auth.navbar() or ''}}</div>
-	<div class="nav-collapse">
-	  {{is_mobile=request.user_agent().is_mobile}}
-	  {{if response.menu:}}
-	  {{=MENU(response.menu, _class='mobile-menu nav' if is_mobile else 'nav',mobile=is_mobile,li_class='dropdown',ul_class='dropdown-menu')}}
-	  {{pass}}
-	</div><!--/.nav-collapse -->
-      </div>
     </div>
   </div><!--/top navbar -->
   
@@ -171,7 +160,6 @@
       <script src="{{=URL('static','js/dd_belatedpng.js')}}"></script>
       <script> DD_belatedPNG.fix('img, .png_bg'); //fix any <img> or .png_bg background-images </script>
       <![endif]-->
-  {{if response.google_analytics_id:}}<script type="text/javascript"> var _gaq = _gaq || []; _gaq.push(['_setAccount', '{{=response.google_analytics_id}}']); _gaq.push(['_trackPageview']); (function() { var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); })(); </script> {{pass}}
-  <script src="{{=URL('static','js/share.js',vars=dict(static=URL('static','images')))}}"></script>  
+  {{if response.google_analytics_id:}}<script type="text/javascript"> var _gaq = _gaq || []; _gaq.push(['_setAccount', '{{=response.google_analytics_id}}']); _gaq.push(['_trackPageview']); (function() { var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); })(); </script> {{pass}} 
 </body>
 </html>
