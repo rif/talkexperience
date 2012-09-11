@@ -5,7 +5,7 @@ def index(): return dict()
 
 def index_new(): return dict()
 
-def index_real():
+def search():
     paginate_selector = PaginateSelector(anchor='main')
     paginator = Paginator(paginate=paginate_selector.paginate,  extra_vars={'v':1}, anchor='main', renderstyle=True)
     paginator.records = db(active_sounds).count()
