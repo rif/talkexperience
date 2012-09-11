@@ -6,19 +6,73 @@ $dark-gray: #292424
 .navbar>.navbar-inner
   background-color: $dark-gray
   background-image: none
-  .container
-    margin: auto
-    background-image: url("../images/header.png")
-    background-repeat: no-repeat
-    background-position: center
-    height: 204px
+#te-head
+  background-image: url("../images/header.png")
+  background-repeat: no-repeat
+  height: 204px
 
 body 
   background-color: $dark-gray
+  padding-top: 0
 
-#logo
+.container.first
+  top: 0px
+
+#logo>img
+  float: left
   height: 30%
   width: auto
+
+hr
+  margin-top: 3%
+  border-bottom: 0px 
+  border-color: $green 
+
+a  
+  color: white
+  font-size: 12px
+  font-weight: bold
+  text-align: center
+  line-height: 1em
+  &:hover
+    text-decoration: none 
+  &>span.green  
+    color: $green
+
+footer
+  margin-bottom: 1em
+  border-top: 0
+  a  
+    color: white
+    font-size: 12px
+    font-weight: bold
+    margin-right: 50px
+  a.share
+    margin-right: 5px
+
+#top-first
+  clear: both
+  float: left
+  margin-top: 6.5%
+  margin-left: 4%
+
+#top-second, #top-third, #top-fourth, #top-fifth
+  float: left
+  margin-top: 6.5%
+  margin-left: 8.5%
+
+#bottom-first
+  clear: both
+  float: left
+  color: $green
+  margin-top: 3%
+  margin-left: 14%
+
+#bottom-second, #bottom-third, #bottom-fourth
+  float: left
+  color: $green
+  margin-top: 3%
+  margin-left: 12.5%
 
 div.sound 
   margin-bottom: 10px

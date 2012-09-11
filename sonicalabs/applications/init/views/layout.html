@@ -41,7 +41,7 @@
   <!-- include stylesheets -->
   {{
   response.files.append(URL('static','css/bootstrap.min.css'))
-  response.files.append(URL('static','css/bootstrap-responsive.min.css'))
+  #response.files.append(URL('static','css/bootstrap-responsive.min.css'))
   response.files.append(URL('static','css/web2py.css'))
   response.files.append(URL('static','css/web2py_bootstrap.css'))
   response.files.append(URL('static','css/screen.css'))
@@ -66,28 +66,27 @@
 </head>
 
 <body>
-  <!-- Navbar ================================================== -->
-  <div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-      <div class="container">
-	      <a class="brand" href="{{=URL('index')}}">
-          <img id="logo" src="{{=URL('static','images/logo_icon.png')}}" alt="dark-logo" height="20">
-        </a>
+
+  <div class="container first">
+    <div class="row">
+        <div class="span12" id="te-head">
+          <a id="logo" href="{{=URL('index')}}">
+            <img src="{{=URL('static','images/logo_icon.png')}}" alt="dark-logo" height="20">
+          </a>
+          <a id="top-first" href="#">MOST POPULAR<br>SUBJECTS</a>
+          <a id="top-second" href="#">MOST EXPERIENCES<br>BY LANGUAGE</a>
+          <a id="top-third" href="#">MOST EXPERIENCES<br>BY USER</a>
+          <a id="top-fourth" href="#">SEARCH FOR AN<br>EXPERIENCE</a>
+          <a id="top-fifth" href="#">CAPTURING GLOBAL<br>TACIT KNOWLEDGE</a>
+          <a id="bottom-first" href="#">UPLOAD AN<br>EXPERIENCE</a>
+          <a id="bottom-second" href="#">RECORD AN<br>EXPERIENCE</a>
+          <a id="bottom-third" href="#">MY<br>EXPERIENCES</a>
+          <a id="bottom-fourth" href="#">FUNDS &amp;<br>CERTIFICATES</a>
+        </div>
     </div>
-  </div><!--/top navbar -->
-  
+  </div>  
   <div class="container">
     <div class="flash">{{=response.flash or ''}}</div>
-
-    <!-- Masthead ================================================== -->
-    <header class="mastheader" id="header">
-      <div class="page-header">
-	<h1>
-	  {{=response.title or request.application}}
-	  <small>{{=response.subtitle or ''}}</small>
-	</h1>
-      </div>
-    </header>
     
     <section id="main" class="main span12">
       <div class="row">
@@ -116,45 +115,29 @@
 	{{pass}}
       </div><!--/row-->
     </section><!--/main-->
-    
+    </div> <!-- /container -->
+  <div class="container-fluid">
+  <hr/>
+    </div>
+    <div class="container">
     <!-- Footer ================================================== -->
     <footer class="footer" id="footer">
       {{block footer}} <!-- this is default footer -->
       <div class="footer-content">
-	<div class="copyright pull-left">{{=T('Copyright')}} &#169; {{=request.now.year}}</div>
-	<div id="poweredBy" class="pull-right">
-	  {{=T('Powered by')}}
-	  <a href="http://www.web2py.com/">web2py</a>
-	</div>
+	     <a href="{{=URL('about')}}">ABOUT US</a>
+    <a href="{{=URL('howitworks')}}">HOW IT WORKS</a>
+    <a href="{{=URL('bussines')}}">BUSSINES MODEL</a>
+    <a href="{{=URL('terms')}}">TERMS &amp; CONDITIONS</a>
+    <a href="{{=URL('faq')}}">FAQ</a>
+    <a href="{{=URL('contact')}}">CONTACT US</a>
+    <a class="share" href="http://twitter.com/talkexperience"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
+    <a class="share" href="http://twitter.com/talkexperience"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
       </div>
       {{end}}
     </footer>
     
   </div> <!-- /container -->
   
-  <!-- The javascript =============================================
-       (Placed at the end of the document so the pages load faster) -->
-  <script>
-    // this code improves bootstrap menus and adds dropdown support
-    jQuery(function(){
-      jQuery('.nav>li>a').each(function(){	        
-        if(jQuery(this).parent().find('ul').length)
-          jQuery(this).attr({'class':'dropdown-toggle','data-toggle':'dropdown'}).append('<b class="caret"></b>');
-      });
-      jQuery('.nav li li').each(function(){	        
-        if(jQuery(this).find('ul').length)
-          jQuery(this).children('a').contents().before('<i class="chevron-right"></i>'); 
-      });
-      if(jQuery(document).width()>=980) {
-        jQuery('ul.nav li.dropdown').hover(function() {
-          jQuery(this).find('.dropdown-menu').stop(true, true).delay(200).fadeIn(); 
-        }, function() {
-          jQuery(this).find('.dropdown-menu').stop(true, true).delay(200).fadeOut(); 
-        });
-      }
-      jQuery('ul.nav li.dropdown a').click(function(){window.location=jQuery(this).attr('href');});
-    });
-  </script>  
   <script src="{{=URL('static','js/bootstrap.min.js')}}"></script>  
   <!--[if lt IE 7 ]>
       <script src="{{=URL('static','js/dd_belatedpng.js')}}"></script>
