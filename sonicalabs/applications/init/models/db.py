@@ -124,16 +124,21 @@ Sounds = db.define_table("sounds",
     Field('download_server', writable=False, readable=False),
     Field('download_key', writable=False, readable=False),
     Field('status', writable=False, readable=False, default=T("Processing...")),
-    Field('language', 'list:string', requires=IS_IN_SET(languages), default='English'),
+    Field('language', 'list:string',
+          requires=IS_IN_SET(languages), default='English'),
     Field('price', 'double', default=0.0, comment='$USD'),
     Field('length', 'double', writable=False, readable=False),
     Field('play_count', 'integer', readable=False, writable=False, default=0),
-    Field('release_date', 'datetime', comment=T('Select a date to release this recording in the future. UTC(GMT) timezone.')),
-    Field('email', requires = IS_EMPTY_OR(IS_EMAIL(error_message=T('Invalid email!'))), comment=T('Email to be sent to (the release notification)')),
+    Field('release_date', 'datetime',
+          comment=T('Select a date to release this recording in the future. UTC(GMT) timezone.')),
+    Field('email',
+          requires = IS_EMPTY_OR(IS_EMAIL(error_message=T('Invalid email!'))),
+          comment=T('Email to be sent to (the release notification)')),
     auth.signature,
     format='%(title)s'
 )
-Sounds.mime_type = Field.Virtual(lambda row: 'audio/mpeg') #'audio/ogg' if row.sounds.file.rsplit('.', 1)[-1] == 'ogg' else 'audio/mpeg')
+#'audio/ogg' if row.sounds.file.rsplit('.', 1)[-1] == 'ogg' else 'audio/mpeg')
+Sounds.mime_type = Field.Virtual(lambda row: 'audio/mpeg')
 Sounds.username = Field.Virtual(get_username)
 Sounds.owner_email = Field.Virtual(get_email)
 Sounds.download_url = Field.Virtual(get_download_url)

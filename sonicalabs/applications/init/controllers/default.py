@@ -7,9 +7,11 @@ def index_new(): return dict()
 
 def search():
     paginate_selector = PaginateSelector(anchor='main')
-    paginator = Paginator(paginate=paginate_selector.paginate,  extra_vars={'v':1}, anchor='main', renderstyle=True)
+    paginator = Paginator(paginate=paginate_selector.paginate,
+                          extra_vars={'v':1}, anchor='main', renderstyle=True)
     paginator.records = db(active_sounds).count()
-    paginate_info = PaginateInfo(paginator.page, paginator.paginate, paginator.records)
+    paginate_info = PaginateInfo(paginator.page,
+                                 paginator.paginate, paginator.records)
 
     form = SQLFORM.factory(Field('query', default=T('Search')))
 
@@ -20,7 +22,8 @@ def search():
             limitby=paginator.limitby()).find(lambda s: values.lower() in s.title.lower() or \
              values.lower() in s.description.lower() or values.lower() in s.keywords.lower())
     else:
-        sounds = db(active_sounds).select(orderby=~Sounds.created_on, limitby=paginator.limitby())
+        sounds = db(active_sounds).select(orderby=~Sounds.created_on,
+                                          limitby=paginator.limitby())
     return locals()
 
 @auth.requires_login()
@@ -38,7 +41,7 @@ def create_sound():
                 form.vars.title = sound.title
             sound.update_record(**dict(form.vars))
             if sound.release_date and sound.release_date > request.now:
-                sound.status = T('Scheduled for') + ' ' + str(sound.release_date)
+                sound.status = T('Scheduled for')+' '+str(sound.release_date)
                 sound.is_active = False
             else:
                 sound.is_active = True
@@ -60,14 +63,18 @@ def set_download_info():
     # logger.info("sssssssssssssssssssssssssssssss")
     sound = db(Sounds.uuid == request.vars.uuid).select().first()
     if sound:
-        sound.update_record(uuid = request.vars.uuid, download_server=request.vars.host, download_key=request.vars.key)
+        sound.update_record(uuid = request.vars.uuid,
+                            download_server=request.vars.host,
+                            download_key=request.vars.key)
         if sound.release_date and sound.release_date > request.now:
             sound.status = T('Scheduled for') + ' ' + str(sound.release_date)
         else:
             sound.is_active = True
             sound.status = T('Ready')
     else:
-        id = Sounds.insert(uuid = request.vars.uuid, download_server=request.vars.host, download_key=request.vars.key)
+        id = Sounds.insert(uuid = request.vars.uuid,
+                           download_server=request.vars.host,
+                           download_key=request.vars.key)
         sound = Sounds(id)
         from os.path import splitext
         title = splitext(request.vars.filename)[0]
@@ -76,14 +83,17 @@ def set_download_info():
     return "done!"
 
 def activate_scheduled_sounds():
-    for_activation = db((Sounds.is_active == False) & (Sounds.release_date <= request.now)).select(orderby=Sounds.release_date)
+    for_activation = db((Sounds.is_active == False) & \
+        (Sounds.release_date<=request.now)).select(orderby=Sounds.release_date)
     activated_sounds = 0
     for sound in for_activation:
         sound.is_active=True
         sound.status = T('Ready')
         sound.update_record()
-        mail.send(to=sound.email, subject='%s released a recording' % (sound.username),
-            message = T('You can check the recording here: ') + URL('details', args=sound.id, scheme=True, host=True))
+        mail.send(to=sound.email,
+                  subject='%s released a recording' % (sound.username),
+                  message = T('You can check the recording here: ') + \
+                  URL('details', args=sound.id, scheme=True, host=True))
         activated_sounds += 1
     return 'Activated %d sounds. (%s)' % (activated_sounds, request.now )
 
@@ -91,7 +101,16 @@ def activate_scheduled_sounds():
 @auth.requires_signature()
 def update_sound():
     sound = Sounds(a0) or redirect(URL('index'))
-    form = SQLFORM(Sounds, sound, fields=['title', 'description', 'keywords', 'language', 'price', 'release_date', 'email' , 'is_active'], showid=False)
+    form = SQLFORM(Sounds, sound,\
+                   fields=['title',
+                           'description',
+                           'keywords',
+                           'language',
+                           'price',
+                           'release_date',
+                           'email' ,
+                           'is_active'],
+                   showid=False)
     if form.process().accepted:
         new_sound = Sounds(form.vars.id)
         if new_sound.release_date and new_sound.release_date > request.now:
@@ -109,17 +128,22 @@ def delete_sound():
         from google.appengine.api import urlfetch
         sound = Sounds(a0) or redirect(URL('index'))
         urlfetch.fetch(sound.delete_url)
-    crud.delete(Sounds, a0, next=URL('my_uploads', user_signature=True), message=T('Sound deleted!'))
+    crud.delete(Sounds, a0,
+                next=URL('my_uploads', user_signature=True),
+                message=T('Sound deleted!'))
     return locals()
 
 @auth.requires_login()
 @auth.requires_signature()
 def my_uploads():
-    paginator = Paginator(paginate=10, extra_vars={'v':1}, anchor='main', renderstyle=True)
+    paginator = Paginator(paginate=10,
+                          extra_vars={'v':1}, anchor='main', renderstyle=True)
     paginator.records = db(user_sounds).count()
-    paginate_info = PaginateInfo(paginator.page, paginator.paginate, paginator.records)
+    paginate_info = PaginateInfo(paginator.page,
+                                 paginator.paginate, paginator.records)
 
-    sounds = db(user_sounds).select(orderby=~Sounds.created_on, limitby=paginator.limitby())
+    sounds = db(user_sounds).select(orderby=~Sounds.created_on,
+                                    limitby=paginator.limitby())
     return locals()
 
 @auth.requires_login()
@@ -134,19 +158,30 @@ def details():
     detail_sound.update_record(play_count=new_count)
 
     paginate_selector = PaginateSelector(anchor='main')
-    paginator = Paginator(paginate=paginate_selector.paginate, extra_vars={'v':1}, anchor='main', renderstyle=True)
+    paginator = Paginator(paginate=paginate_selector.paginate,
+                          extra_vars={'v':1}, anchor='main', renderstyle=True)
     paginator.records = db(query).count()
-    paginate_info = PaginateInfo(paginator.page, paginator.paginate, paginator.records)
+    paginate_info = PaginateInfo(paginator.page,
+                                 paginator.paginate, paginator.records)
 
-    sounds = db(query).select(orderby=~Sounds.created_on, limitby=paginator.limitby())
+    sounds = db(query).select(orderby=~Sounds.created_on,
+                              limitby=paginator.limitby())
     return locals()
 
 def most_popular():
     paginate_selector = PaginateSelector(anchor='main')
-    paginator = Paginator(paginate=paginate_selector.paginate, extra_vars={'v':1}, anchor='main', renderstyle=True)
+    paginator = Paginator(paginate=paginate_selector.paginate,
+                          extra_vars={'v':1}, anchor='main', renderstyle=True)
     paginator.records = db(active_sounds).count()
 
-    sounds = db(active_sounds).select(orderby=~Sounds.play_count, limitby=paginator.limitby())
+    sounds = db(active_sounds).select(orderby=~Sounds.play_count,
+                                      limitby=paginator.limitby())
+    return locals()
+
+def by_user():
+    return locals()
+
+def by_language():
     return locals()
 
 def user():
