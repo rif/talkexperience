@@ -5,12 +5,12 @@
 ## Customize your APP title, subtitle and menus here
 #########################################################################
 
-response.title = 'Voice Your Experience'
+response.title = T('Voice Your Experience')
 response.subtitle = T('')
 
 ## read more at http://dev.w3.org/html5/markup/meta.name.html
-response.meta.author = 'Radu Fericean <radu.fericean@wisebiz-group.com>'
-response.meta.description = 'Talkexperience is a webapp for sounds/audio storage and presentation'
+response.meta.author = 'Radu Fericean radu@fericean.ro'
+response.meta.description = 'We are providing a simple and effective social platform for people to share their experiences in their own words. An Audio Storytelling told by regular people.'
 response.meta.keywords = 'audio, sound, music, record sound, sharing'
 response.meta.generator = 'Web2py Web Framework'
 
