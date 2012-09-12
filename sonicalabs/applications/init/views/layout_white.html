@@ -65,7 +65,7 @@
             <img src="{{=URL('static','images/logo.png')}}" alt="dark-logo" height="20">
           </a>
           <div id="ta-menu">
-            <form action="" enctype="multipart/form-data" method="post">
+            <form action="{{=URL('default', 'search')}}" enctype="multipart/form-data" method="post">
               <input id="ta-search" name="query" type="text" class="input-mir" placeholder="SEARCH">
             </form>
             <a href="#">ADD FACEBOOK</a> | <a href="#">TWITTER ACCOUNT</a><br>
@@ -118,5 +118,10 @@
       <script> DD_belatedPNG.fix('img, .png_bg'); //fix any <img> or .png_bg background-images </script>
       <![endif]-->
   {{if response.google_analytics_id:}}<script type="text/javascript"> var _gaq = _gaq || []; _gaq.push(['_setAccount', '{{=response.google_analytics_id}}']); _gaq.push(['_trackPageview']); (function() { var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); })(); </script> {{pass}} 
+  <script type="text/javascript">
+      $(function() {
+                $("#ta-search").focus();
+      });
+  </script>
 </body>
 </html>
