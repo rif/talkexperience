@@ -13,7 +13,7 @@ def search():
     paginate_info = PaginateInfo(paginator.page,
                                  paginator.paginate, paginator.records)
 
-    form = SQLFORM.factory(Field('query', default=T('Search')))
+    form = search_form
 
     sounds = None
     if form.process(message_onsuccess="").accepted and form.vars.query:

@@ -1,127 +1,27 @@
-<!DOCTYPE html>
-<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
-<!--[if lt IE 7]><html class="ie ie6 ie-lte9 ie-lte8 ie-lte7 no-js" lang="{{=T.accepted_language or 'en'}}"> <![endif]-->
-<!--[if IE 7]><html class="ie ie7 ie-lte9 ie-lte8 ie-lte7 no-js" lang="{{=T.accepted_language or 'en'}}"> <![endif]-->
-<!--[if IE 8]><html class="ie ie8 ie-lte9 ie-lte8 no-js" lang="{{=T.accepted_language or 'en'}}"> <![endif]-->
-<!--[if IE 9]><html class="ie9 ie-lte9 no-js" lang="{{=T.accepted_language or 'en'}}"> <![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js" lang="{{=T.accepted_language or 'en'}}"> <!--<![endif]-->
-<head>
-  <meta charset="utf-8" />
-  <!-- www.phpied.com/conditional-comments-block-downloads/ -->
-  <!-- Always force latest IE rendering engine
-       (even in intranet) & Chrome Frame
-       Remove this if you use the .htaccess -->
-  <!--[if IE]>
-      <meta http-equiv="X-UA-Compatible" content="IE=edge{{=not request.is_local and ',chrome=1' or ''}}">
-      <![endif]-->
-  
-  <title>{{=response.title or request.application}}</title>
-  
-  <!-- http://dev.w3.org/html5/markup/meta.name.html -->
-  <meta name="application-name" content="{{=request.application}}" />
-  
-  <!-- Speaking of Google, don't forget to set your site up:
-       http://google.com/webmasters -->
-  <meta name="google-site-verification" content="" />
-  
-  <!--  Mobile Viewport Fix
-	j.mp/mobileviewport & davidbcalhoun.com/2010/viewport-metatag
-	device-width: Occupy full width of the screen in its current orientation
-	initial-scale = 1.0 retains dimensions instead of zooming out if page height > device height
-	user-scalable = yes allows the user to zoom in -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <link rel="shortcut icon" href="{{=URL('static','images/favicon.ico')}}" type="image/x-icon">
-  <link rel="apple-touch-icon" href="{{=URL('static','images/favicon.png')}}">
-  
-  <!-- All JavaScript at the bottom, except for Modernizr which enables 
-       HTML5 elements & feature detects -->
-  <script src="{{=URL('static','js/modernizr.custom.js')}}"></script>   
-  
-  <!-- include stylesheets -->
-  {{
-  response.files.append(URL('static','css/bootstrap.min.css'))
-  response.files.append(URL('static','css/web2py.css'))
-  response.files.append(URL('static','css/web2py_bootstrap.css'))
-  response.files.append(URL('static','css/white.css'))
-  }}
+{{extend 'layout.html'}}
 
-  {{include 'web2py_ajax.html'}}
+{{block head}}
+<link href="/init/static/css/white.css" rel="stylesheet" type="text/css" />
+{{end}}
 
-  <!-- uncomment here to load jquery-ui
-       <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css" type="text/css" media="all" />
-       <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
-       uncomment to load jquery-ui //-->
-  <noscript><link href="{{=URL('static', 'css/web2py_bootstrap_nojs.css')}}" rel="stylesheet" type="text/css" /></noscript>
-  {{block head}}{{end}}
-</head>
+{{block ta-menu}}
+<div id="ta-menu">
+  {{=search_form.custom.begin}}
+  {{=search_form.custom.widget.query}}
+  {{=search_form.custom.end}}
+  <a href="#">ADD FACEBOOK</a> | <a href="#">TWITTER ACCOUNT</a><br>
+  {{if auth.is_logged_in():}}
+  <a href="{{=URL('user', 'profile')}}">WELCOME {{=auth.user.first_name.upper()}}</a>
+  {{else:}}
+  <a href="{{=URL('user', 'profile')}}">SIGN IN</a>
+  {{pass}}
+  | <a href="{{=URL('user', 'profile')}}">PROFILE</a><br>
+  <a href="{{=URL('default', 'record')}}">RECORD AN EXPERIENCE</a><br>
+  <a href="{{=URL('default', 'create_sound')}}">UPLOAD AN EXPERIENCE</a><br>
+  <a href="{{=URL('user', 'logout')}}">SIGN OUT</a>
+</div>
+{{end}}
 
-<body>
-
-  <div class="container first">
-    <div class="row">
-        <div class="span12" id="te-head">
-          <a id="logo" href="{{=URL('index')}}">
-            <img src="{{=URL('static','images/logo.png')}}" alt="dark-logo" height="20">
-          </a>
-          <div id="ta-menu">
-            <form action="{{=URL('default', 'search')}}" enctype="multipart/form-data" method="post">
-              <input id="ta-search" name="query" type="text" class="input-mir" placeholder="SEARCH">
-            </form>
-            <a href="#">ADD FACEBOOK</a> | <a href="#">TWITTER ACCOUNT</a><br>
-            <a href="#">WELCOME USER</a> | <a href="#">PROFILE</a><br>
-            <a href="#">RECORD AN EXPERIENCE</a><br>
-            <a href="#">UPLOAD AN EXPERIENCE</a><br>
-            <a href="#">SIGN OUT</a>
-          </div>
-        </div>
-    </div>
-  </div>  
-  <div class="container">
-    <div class="flash">{{=response.flash or ''}}</div>
-    
-    <section id="main" class="main span12">
-      <div class="row">
-      	<div class="span12">
-      	  {{block center}}
-      	  {{include}}
-      	  {{end}}
-      	</div>
-      </div><!--/row-->
-    </section><!--/main-->
-    </div> <!-- /container -->
-  <div class="container-fluid">
-  <hr/>
-    </div>
-    <div class="container">
-    <footer>
-      {{block footer}} <!-- this is default footer -->
-      <div class="footer-content">
-	      <a href="{{=URL('about')}}">ABOUT US</a>
-        <a href="{{=URL('howitworks')}}">HOW IT WORKS</a>
-        <a href="{{=URL('business')}}">BUSSINES MODEL</a>
-        <a href="{{=URL('terms')}}">TERMS &amp; CONDITIONS</a>
-        <a href="{{=URL('faq')}}">FAQ</a>
-        <a href="{{=URL('contact')}}">CONTACT US</a>
-        <a href="{{=URL('details', args=0)}}">MESSAGE FROM THE FOUNDER</a>
-        <a href="{{=URL('index')}}">HOME</a>
-        <a class="share" href="http://twitter.com/talkexperience"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
-        <a class="share" href="http://www.facebook.com/pages/Talkexperience/136783493132773"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
-      </div>
-      {{end}}
-    </footer>
-  </div> <!-- /container -->
-  
-  <script src="{{=URL('static','js/bootstrap.min.js')}}"></script>  
-  <!--[if lt IE 7 ]>
-      <script src="{{=URL('static','js/dd_belatedpng.js')}}"></script>
-      <script> DD_belatedPNG.fix('img, .png_bg'); //fix any <img> or .png_bg background-images </script>
-      <![endif]-->
-  {{if response.google_analytics_id:}}<script type="text/javascript"> var _gaq = _gaq || []; _gaq.push(['_setAccount', '{{=response.google_analytics_id}}']); _gaq.push(['_trackPageview']); (function() { var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); })(); </script> {{pass}} 
-  <script type="text/javascript">
-      $(function() {
-                $("#ta-search").focus();
-      });
-  </script>
-</body>
-</html>
+{{block center}}
+{{include}}
+{{end}}

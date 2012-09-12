@@ -25,8 +25,8 @@ else:
 ## none otherwise. a pattern can be 'controller/function.extension'
 response.generic_patterns = ['*'] if request.is_local else []
 ## (optional) optimize handling of static files
-# response.optimize_css = 'concat,minify,inline'
-# response.optimize_js = 'concat,minify,inline'
+#response.optimize_css = 'concat,minify,inline'
+#response.optimize_js = 'concat,minify,inline'
 
 from gluon.tools import Auth, Crud, Service, PluginManager, prettydate
 auth = Auth(db)
@@ -149,6 +149,11 @@ Sounds.is_active.default = False
 a0,a1 = request.args(0), request.args(1)
 active_sounds = Sounds.is_active == True
 user_sounds = Sounds.created_by == auth.user_id
+
+search_form= SQLFORM.factory(
+    Field('query', default=T('SEARCH')),
+    _action=URL('default', 'search')
+)
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)
