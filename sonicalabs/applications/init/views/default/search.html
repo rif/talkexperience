@@ -1,9 +1,5 @@
 {{extend 'layout.html'}}
 
-<h4>{{=T('What do we have here?')}}</h4>
-{{=form.custom.begin}}
-{{=form.custom.widget.query}}
-{{=form.custom.end}}
 {{ if form.vars.query:}}
 {{=T('Searching for:')}} {{=form.vars.query}}
 {{pass}}
@@ -17,9 +13,3 @@
 {{pass}}
 
 {{=paginator}}
-
-<script type="text/javascript">        
-  $("#no_table_query").one("focus", function() {
-      $(this).val("");
-  });  
-</script>

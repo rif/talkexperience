@@ -65,20 +65,22 @@
           <a id="logo" href="{{=URL('index')}}">
             <img src="{{=URL('static','images/logo.png')}}" alt="dark-logo" height="20">
           </a>
+          {{block ta-menu}}
           <div id="ta-menu">
-            <form action="{{=URL('default', 'search')}}" enctype="multipart/form-data" method="post">
-              <input id="ta-search" name="query" type="text" class="input-mir" placeholder="SEARCH">
-            </form>
+            {{=search_form.custom.begin}}
+            {{=search_form.custom.widget.query}}
+            {{=search_form.custom.end}}            
             <a href="#">ADD <span class="green">FACEBOOK</span></a>
             | <a href="#"><span class="green">TWITTER</span>
             ACCOUNT</a><br>
             {{if auth.is_logged_in():}}
-            <a href="{{=URL('user', 'profile')}}">WELCOME <span class="green">{{=auth.user.first_name}}</span></a>
+            <a href="{{=URL('user', 'profile')}}">WELCOME <span class="green">{{=auth.user.first_name.upper()}}</span></a>
             {{else:}}
             <a href="{{=URL('user', 'profile')}}"><span class="green">SIGN</span> IN</a>
             {{pass}}
             | <a href="{{=URL('user', 'profile')}}"><span class="green">PROFILE</span></a><br>
-            <a href="{{=URL('user', 'logout')}}"><span class="green">SIGN</span> OUT</a>
+            <a href="{{=URL('user',
+            'logout')}}"><span class="green">SIGN</span> OUT</a>
           </div>
           <a id="top-first" href="{{=URL('default', 'most_popular')}}">MOST POPULAR<br>SUBJECTS</a>
           <a id="top-second" href="{{=URL('default', 'by_language')}}">MOST EXPERIENCES<br>BY LANGUAGE</a>
@@ -88,7 +90,9 @@
           <a id="bottom-first" href="{{=URL('default', 'create_sound')}}">UPLOAD AN<br>EXPERIENCE</a>
           <a id="bottom-second" href="{{=URL('default', 'record')}}">RECORD AN<br>EXPERIENCE</a>
           <a id="bottom-third" href="{{=URL('default', 'my_uploads', user_signature=True)}}">MY<br>EXPERIENCES</a>
-          <a id="bottom-fourth" href="{{=URL('default', 'my_founds', user_signature=True)}}">FUNDS &amp;<br>CERTIFICATES</a>
+          <a id="bottom-fourth" href="{{=URL('default', 'my_founds',
+          user_signature=True)}}">FUNDS &amp;<br>CERTIFICATES</a>
+          {{end}}
         </div>
     </div>
   </div>  
@@ -97,7 +101,7 @@
     
     <section id="main" class="main span12">
       <div class="row">
-      	<div class="span=12">
+      	<div class="span12">
       	  {{block center}}
       	  {{include}}
       	  {{end}}
@@ -118,7 +122,7 @@
         <a href="{{=URL('terms')}}">TERMS &amp; CONDITIONS</a>
         <a href="{{=URL('faq')}}">FAQ</a>
         <a href="{{=URL('contact')}}">CONTACT US</a>
-        <a href="{{=URL('deatils', args=0)}}">MESSAGE FROM THE FOUNDER</a>
+        <a href="{{=URL('details', args=0)}}">MESSAGE FROM THE FOUNDER</a>
         <a href="{{=URL('index')}}">HOME</a>
         <a class="share" href="http://twitter.com/talkexperience"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
         <a class="share" href="http://www.facebook.com/pages/Talkexperience/136783493132773"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
@@ -135,10 +139,10 @@
   {{if response.google_analytics_id:}}<script type="text/javascript"> var _gaq = _gaq || []; _gaq.push(['_setAccount', '{{=response.google_analytics_id}}']); _gaq.push(['_trackPageview']); (function() { var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); })(); </script> {{pass}} 
   <script type="text/javascript"
   src="http://webplayer.yahooapis.com/player.js"></script>
-  <script type="text/javascript">
-      $(function() {
-                $("#ta-search").focus();
-      });
+  <script type="text/javascript">        
+  $("#no_table_query").one("focus", function() {
+      $(this).val("");
+  });  
   </script>
 </body>
 </html>
