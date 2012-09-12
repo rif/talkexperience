@@ -125,7 +125,7 @@ def delete_sound():
     if request.env.web2py_runtime_gae:
         from google.appengine.api import urlfetch
         sound = Sounds(a0) or redirect(URL('index'))
-        if sound.delete_url:
+        if sound.download_server and sound.download_key:
             urlfetch.fetch(sound.delete_url)
     crud.delete(Sounds, a0,
                 next=URL('my_uploads', user_signature=True),
