@@ -27,20 +27,20 @@
     <a href="#">MOST POPULAR <br/> <span class="green">SUBJECTS</span></a>
   </div>
   <div id="top-center-left">
-    <a href="#">SIGN <span class="green">IN</span></a>
+    <a href="{{=URL('user', 'login')}}">SIGN <span class="green">IN</span></a>
   </div>
   <div id="top-center-right">
-    <a href="#">SIGN <span class="green">UP</span></a>
+    <a href="{{=URL('user', 'logout')}}">SIGN <span class="green">UP</span></a>
   </div>
   <div id="logo">
-    <a href="{{=URL('index')}}"><img src="{{=URL('static', 'img/logo_new.png')}}" alt="logo"/></a>
+    <a href="{{=URL('index')}}"><img src="{{=URL('static', 'img/logo_no_icon.png')}}" alt="logo"/></a>
     <ul class="pretty">
       <li>Writing a blog, a book or an article requires time and
   some talent. Making an audio recording of a life or
-  professional experience is so much easier.</li>
-      <li>Selling an antique object? Attach your audio experience of owning it.</li>
-      <li>It’s easy, portable and can make you money.</li>
-      <li>Become a shareholder through sharing.</li>
+  professional experience is so much easier</li>
+      <li>Selling an antique object? Attach your audio experience of owning it</li>
+      <li>It’s easy, portable and can make you money</li>
+      <li>Become a shareholder through sharing</li>
     </ul>
   </div>
   <div id="center-left">
@@ -80,7 +80,20 @@
   </div>
 
 
-<script src="../assets/js/jquery.js"></script>
-<script src="../assets/js/bootstrap.min.js"></script>
+<script src="{{=URL('static','js/jquery.js')}}"></script>
+<script>
+  /*$(function(){
+  $('.green').hover(
+  function(){
+  console.log("test");
+  $(this).css('color', '#005580');
+  $(this).siblings().css('color', '#005580');
+  },
+  function(){
+  $(this).css('color', '#8dc63f');
+  $(this).siblings().css('color', '#8dc63f');
+  });
+  });*/
+</script>
 </body>
 </html>

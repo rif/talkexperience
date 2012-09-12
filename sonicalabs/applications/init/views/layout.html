@@ -63,25 +63,32 @@
     <div class="row">
         <div class="span12" id="te-head">
           <a id="logo" href="{{=URL('index')}}">
-            <img src="{{=URL('static','images/logo_icon.png')}}" alt="dark-logo" height="20">
+            <img src="{{=URL('static','images/logo.png')}}" alt="dark-logo" height="20">
           </a>
           <div id="ta-menu">
             <form action="" enctype="multipart/form-data" method="post">
               <input id="ta-search" name="query" type="text" class="input-mir" placeholder="SEARCH">
             </form>
-            <a href="#">ADD <span class="green">FACEBOOK</span></a> | <a href="#"><span class="green">TWITTER</span> ACCOUNT</a><br>
-            <a href="#">WELCOME <span class="green">USER</span></a> | <a href="#"><span class="green">PROFILE</span></a><br>
-            <a href="#"><span class="green">SIGN</span> OUT</a>
+            <a href="#">ADD <span class="green">FACEBOOK</span></a>
+            | <a href="#"><span class="green">TWITTER</span>
+            ACCOUNT</a><br>
+            {{if auth.is_logged_in():}}
+            <a href="{{=URL('user', 'profile')}}">WELCOME <span class="green">{{=auth.user.first_name}}</span></a>
+            {{else:}}
+            <a href="{{=URL('user', 'profile')}}"><span class="green">SIGN</span> IN</a>
+            {{pass}}
+            | <a href="{{=URL('user', 'profile')}}"><span class="green">PROFILE</span></a><br>
+            <a href="{{=URL('user', 'logout')}}"><span class="green">SIGN</span> OUT</a>
           </div>
           <a id="top-first" href="#">MOST POPULAR<br>SUBJECTS</a>
           <a id="top-second" href="#">MOST EXPERIENCES<br>BY LANGUAGE</a>
           <a id="top-third" href="#">MOST EXPERIENCES<br>BY USER</a>
           <a id="top-fourth" href="#">SEARCH FOR AN<br>EXPERIENCE</a>
           <a id="top-fifth" href="#">CAPTURING GLOBAL<br>TACIT KNOWLEDGE</a>
-          <a id="bottom-first" href="#">UPLOAD AN<br>EXPERIENCE</a>
-          <a id="bottom-second" href="#">RECORD AN<br>EXPERIENCE</a>
-          <a id="bottom-third" href="#">MY<br>EXPERIENCES</a>
-          <a id="bottom-fourth" href="#">FUNDS &amp;<br>CERTIFICATES</a>
+          <a id="bottom-first" href="{{=URL('default', 'create_sound')}}">UPLOAD AN<br>EXPERIENCE</a>
+          <a id="bottom-second" href="{{=URL('default', 'record')}}">RECORD AN<br>EXPERIENCE</a>
+          <a id="bottom-third" href="{{=URL('default', 'my_uploads', user_signature=True)}}">MY<br>EXPERIENCES</a>
+          <a id="bottom-fourth" href="{{=URL('default', 'my_founds', user_signature=True)}}">FUNDS &amp;<br>CERTIFICATES</a>
         </div>
     </div>
   </div>  
