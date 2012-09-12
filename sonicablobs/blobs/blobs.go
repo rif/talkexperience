@@ -65,7 +65,7 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
 	// setting download info
 	_, err = client.PostForm(MAIN_APPLICATION+"/init/default/set_download_info",
-		url.Values{"uuid": {uuid}, "host": {r.Host}, "key": {string(file[0].BlobKey)}, "filename": {file[0].Filename}})	
+		url.Values{"uuid": {uuid}, "host": {r.Host}, "key": {string(file[0].BlobKey)}, "filename": {file[0].Filename}})
 }
 
 func init() {
