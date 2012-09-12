@@ -10,9 +10,23 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+- kind: plugin_comments_comment
+  properties:
+  - name: record_id
+  - name: tablename
+  - name: created_on
+    direction: desc
+
 - kind: sounds
   properties:
   - name: created_by
+  - name: created_on
+    direction: desc
+
+- kind: sounds
+  properties:
+  - name: created_by
+  - name: is_active
   - name: created_on
     direction: desc
 
