@@ -24,7 +24,7 @@
   <div class="row">
   <div class="span12" id="main">    
   <div id="top-left">
-    <a href="#">MOST POPULAR <br/> <span class="green">SUBJECTS</span></a>
+    <a href="{{=URL('default', 'most_popular')}}">MOST POPULAR <br/> <span class="green">SUBJECTS</span></a>
   </div>
   <div id="top-center-left">
     <a href="{{=URL('user', 'login')}}">SIGN <span class="green">IN</span></a>
@@ -44,16 +44,16 @@
     </ul>
   </div>
   <div id="center-left">
-    <a href="#">MOST EXPERIENCES<br/>BY <span class="green">LANGUAGE</span></a>
+    <a href="{{=URL('default', 'by_language')}}">MOST EXPERIENCES<br/>BY <span class="green">LANGUAGE</span></a>
   </div>
   <div id="center-right">
     <a href="{{=URL('search')}}">SEARCH  <span class="green">FOR</span> AN <br/><span class="green">EXPERIENCE</span></a>
   </div>
   <div id="bottom-left">
-    <a href="#">MOST <span class="green">EXPERIENCES</span><br/>BY USER</a>
+    <a href="{{=URL('default', 'by_user')}}">MOST <span class="green">EXPERIENCES</span><br/>BY USER</a>
   </div>
   <div id="bottom-center">
-    <a href="#">MESSAGE FROM THE <span class="green">FOUNDER</span></a>
+    <a href="{{=URL('default', 'details', args=0)}}">MESSAGE FROM THE <span class="green">FOUNDER</span></a>
   </div>
   <div id="bottom-right">
     <a href="#">CAPTURING <span class="green">GLOBAL</span><br/>TACIT <span class="green">KNOWLEDGE</span></a>
