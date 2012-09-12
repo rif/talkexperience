@@ -14,6 +14,10 @@ import (
 	"strings"
 )
 
+var (
+	ACCEPTED_ORIGINS = []string{"http://sonicalabs.appspot.com", "http://www.talkexperience.com", "http://localhost:8080", "::1"}
+)
+
 const (
 	MAIN_APPLICATION = "http://sonicalabs.appspot.com"
 	//MAIN_APPLICATION = "http://localhost:8080"
@@ -22,21 +26,37 @@ const (
 	TRANSFORMER = "ffmpeg"
 )
 
+func checkOrigin(orig []string, ref string) (right bool) {
+	if (orig == nil) || (len(orig) != 1) {
+		return
+	}
+	for _, accO := range ACCEPTED_ORIGINS {
+		if strings.Contains(orig[0], accO) {
+			right = true
+			break
+		}
+	}
+	if !right {
+		return
+	}
+	right = false
+	for _, accO := range ACCEPTED_ORIGINS {
+		if strings.Contains(ref, accO) {
+			right = true
+			break
+		}
+	}
+	return
+}
+
 func handleProcess(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", MAIN_APPLICATION)
 	w.Header().Set("Access-Control-Allow-Headers", "X-Requested-With,X-File-Name,Content-Type")
 	if r.Method != "POST" {
 		return
-	}	
-	orig, ref := r.Header["Origin"], r.Referer()	
-	is_right_orig := (orig != nil) && (len(orig) == 1) &&
-		(strings.Contains(orig[0], "sonicalabs.appspot.com") ||		 
-		 strings.Contains(orig[0], "::1"))
-	is_right_ref := strings.Contains(ref, "sonicalabs.appspot.com") ||		
-		strings.Contains(ref, "::1")		
-
-	if !is_right_orig || !is_right_ref {
-		log.Print("Hacker request: ", r)
+	}
+	if !checkOrigin(r.Header["Origin"], r.Referer()) {
+		log.Printf("Hacker request: origin: %v, referer: %v", r.Header["Origin"], r.Referer())
 		return
 	}
 	uuid := r.FormValue("uuid")
