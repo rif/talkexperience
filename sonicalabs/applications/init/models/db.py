@@ -154,6 +154,7 @@ search_form= SQLFORM.factory(
     Field('query', default=T('SEARCH')),
     _action=URL('default', 'search')
 )
+proc = search_form.process(message_onsuccess="")
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)

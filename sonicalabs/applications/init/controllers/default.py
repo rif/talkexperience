@@ -13,11 +13,9 @@ def search():
     paginate_info = PaginateInfo(paginator.page,
                                  paginator.paginate, paginator.records)
 
-    form = search_form
-
     sounds = None
-    if form.process(message_onsuccess="").accepted and form.vars.query:
-        values = form.vars.query
+    if proc.accepted and search_form.vars.query:
+        values = search_form.vars.query
         sounds = db(active_sounds).select(orderby=~Sounds.created_on,
             limitby=paginator.limitby()).find(lambda s: values.lower() in s.title.lower() or \
              values.lower() in s.description.lower() or values.lower() in s.keywords.lower())

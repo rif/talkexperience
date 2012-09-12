@@ -1,8 +1,9 @@
 {{extend 'layout.html'}}
 
-{{ if form.vars.query:}}
-{{=T('Searching for:')}} {{=form.vars.query}}
+{{ if search_form.vars.query:}}
+{{=T('Searching for:')}} {{=search_form.vars.query}}
 {{pass}}
+
 {{=paginate_selector}}{{=paginate_info}}
 {{ for sound in sounds:}}
 <div class="sound">
@@ -13,3 +14,4 @@
 {{pass}}
 
 {{=paginator}}
+
