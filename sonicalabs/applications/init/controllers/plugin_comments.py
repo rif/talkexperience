@@ -60,7 +60,7 @@ def index():
         if not comment.deleted:
             return LI(
                 DIV(I('"'+comment.body+'"'),BR(),
-                    T('posted by %(first_name)s %(last_name)s',comment.created_by),
+                    T('posted by %(first_name)s %(last_name)s' % comment.created_by),
                     ' ',T('on %s',comment.created_on),' [',
                     A(T('toggle'),_id='toggle'),
                     '|' if auth.user_id else '',
