@@ -122,6 +122,11 @@ def my_uploads():
     sounds = db(user_sounds).select(orderby=~Sounds.created_on, limitby=paginator.limitby())
     return locals()
 
+@auth.requires_login()
+@auth.requires_signature()
+def my_founds():
+    return locals()
+
 def details():
     detail_sound = Sounds(a0) or redirect(URL('index'))
     query = active_sounds & (Sounds.created_by==detail_sound.created_by)

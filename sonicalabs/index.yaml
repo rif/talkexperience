@@ -12,6 +12,12 @@ indexes:
 
 - kind: sounds
   properties:
+  - name: created_by
+  - name: created_on
+    direction: desc
+
+- kind: sounds
+  properties:
   - name: is_active
   - name: created_on
     direction: desc
