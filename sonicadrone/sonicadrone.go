@@ -19,7 +19,7 @@ var (
 )
 
 const (
-	MAIN_APPLICATION = "http://sonicalabs.appspot.com"
+	MAIN_APPLICATION = "http://www.talkexperience.com"
 	//MAIN_APPLICATION = "http://localhost:8080"
 	BLOBS_APPLICATION = "http://sonicablobs.appspot.com"
 	//BLOBS_APPLICATION = "http://localhost:8081"
