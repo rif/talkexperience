@@ -14,7 +14,7 @@ def search():
                                  paginator.paginate, paginator.records)
 
     sounds = None
-    if proc.accepted and search_form.vars.query:
+    if search_form.process(session=None, formname=None, message_onsuccess="").accepted and search_form.vars.query:
         values = search_form.vars.query
         sounds = db(active_sounds).select(orderby=~Sounds.created_on,
             limitby=paginator.limitby()).find(lambda s: values.lower() in s.title.lower() or \
