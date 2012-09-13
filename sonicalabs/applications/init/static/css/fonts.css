@@ -1,0 +1,45 @@
+@font-face {
+    font-family: 'pigiarniqregular';
+    src: url('../fonts/pigiarniq_regular-webfont.ttf'),
+    url('../fonts/pigiarniq_regular-webfont.eot'); /* IE9 */
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'pigiarniqbold';
+    src: url('../fonts/pigiarniq_bold-webfont.ttf'), 
+    url('../fonts/pigiarniq_bold-webfont.eot'); /* IE9 */
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'amaranthbold';
+    src: url('../fonts/amaranth-bold-webfont.ttf'),
+    url('../fonts/amaranth-bold-webfont.eot'); /* IE9 */
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'amaranthregular';
+    src: url('../fonts/amaranth-webfont.ttf'),
+    url('../fonts/amaranth-webfont.eot'); /* IE9 */
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'enigmaregular';
+    src: url('../fonts/Enigma.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'enigmabold';
+    src: url('../fonts/EnigmaB.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
