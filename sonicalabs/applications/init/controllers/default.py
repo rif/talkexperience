@@ -103,6 +103,7 @@ def update_sound():
                    fields=['title',
                            'description',
                            'keywords',
+                           'category',
                            'language',
                            'price',
                            'release_date',
