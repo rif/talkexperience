@@ -1,7 +1,9 @@
 @import "compass/typography/links"
 
 $green: #8dc63f
-$dark-gray: #292424
+$fgcolor: white
+$bgcolor: #292424
+$hvcolor: #005580
 
 #te-head
   background-image: url("../images/header.png")
@@ -10,7 +12,7 @@ $dark-gray: #292424
 #ta-menu
   margin-top: 1%
   float: right
-  color: white
+  color: $fgcolor
   form
     margin: 0
     input
@@ -18,34 +20,36 @@ $dark-gray: #292424
       font-weight: bold
       color: $green
       width: 150px
-      background-color: $dark-gray
+      background-color: $bgcolor
   line-height: 1em
   text-align: right
 
 body 
-  background-color: $dark-gray
+  background-color: $bgcolor
   padding-top: 0
-  color: white
+  color: $fgcolor
 
-a  
-  color: white
+a
+  font-family: amaranthbold
+  color: $fgcolor
   font-size: 12px
-  font-weight: bold
   text-align: center
   line-height: 1em
   &:hover
     text-decoration: none 
   &>span.green  
     color: $green
+    &:hover
+      color: $hvcolor
 
 footer
   margin-top: -5%
   border-top: 0
-  a  
-    color: white
-    font-size: 12px
-    font-weight: bold
-    margin-right: 8px
+  a 
+    font-family: amaranthregular
+    color: $fgcolor
+    font-size: 12px  
+    margin-right: 21px
   a.share
     margin-right: 5px
 
@@ -74,20 +78,24 @@ hr
 #top-second, #top-third, #top-fourth, #top-fifth
   float: left
   margin-top: 3.5%
-  margin-left: 8.5%
+  margin-left: 10.5%
 
 #bottom-first
   clear: both
   float: left
-  color: $green
   margin-top: 3%
-  margin-left: 14%
+  margin-left: 15%
+  color: $green
+  &:hover
+    color: $hvcolor
 
 #bottom-second, #bottom-third, #bottom-fourth
   float: left
-  color: $green
   margin-top: 3%
-  margin-left: 12.5%
+  margin-left: 14%
+  color: $green
+  &:hover
+    color: $hvcolor
 
 div.sound 
   margin-bottom: 10px

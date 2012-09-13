@@ -1,7 +1,9 @@
 @import "compass/typography/links"
 
 $green: #8dc63f
-$dark-gray: #292424
+$fgcolor: #292424
+$bgcolor: white
+$hvcolor: #005580
 
 #te-head
   background-image: none
@@ -9,36 +11,21 @@ $dark-gray: #292424
 #ta-menu
   margin-top: 1%
   float: right
-  color: $dark-gray
+  color: $fgcolor
   form
     margin: 0
     input
       text-align: right
       font-weight: bold
-      color: $dark-gray
+      color: $fgcolor
       width: 150px
-      background-color: white
+      background-color: $bgcolor
   line-height: 1em
   text-align: right
 
-body 
-  background-color: white
-  padding-top: 0
-  color: $dark-gray
+body
+  font-family: enigmaregular
+  font-size: 14px
 
-a  
-  color: $dark-gray
-  font-size: 12px
-  font-weight: bold
-  text-align: center
-  line-height: 1em
-  &:hover
-    text-decoration: none 
-  &>span.green  
-    color: $green
-
-footer
-  a  
-    color: $dark-gray
 
 

@@ -4,16 +4,16 @@
 <meta charset="utf-8">
 <title>talkexperience</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="">
-<meta name="author" content="Radu Ioan Fericean">
+<meta name="description" content="We are providing a simple and effective social platform for people to share their experiences in their own words. An Audio Storytelling told by regular people.">
+<meta name="author" content="Radu Ioan Fericean <radu@fericean.ro>">
 
 <link href="{{=URL('static','css/bootstrap.min.css')}}" rel="stylesheet">
 
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
-
-<link href="{{=URL('static','css/index.css')}}" media="screen, projection" rel="stylesheet" type="text/css" />
+<link href="{{=URL('static','css/fonts.css')}}" rel="stylesheet" type="text/css" />
+<link href="{{=URL('static','css/index.css')}}" rel="stylesheet" type="text/css" />
 <!--[if IE]>
 <link href="css/ie.css" media="screen, projection" rel="stylesheet" type="text/css" />
 <![endif]-->
@@ -24,13 +24,13 @@
   <div class="row">
   <div class="span12" id="main">    
   <div id="top-left">
-    <a href="{{=URL('default', 'most_popular')}}">MOST POPULAR <br/> <span class="green">SUBJECTS</span></a>
+    <a class="mixed" href="{{=URL('default', 'most_popular')}}">MOST POPULAR <br/> <span class="green">SUBJECTS</span></a>
   </div>
   <div id="top-center-left">
-    <a href="{{=URL('user', 'login')}}">SIGN <span class="green">IN</span></a>
+    <a class="mixed" href="{{=URL('user', 'login')}}">SIGN <span class="green">IN</span></a>
   </div>
   <div id="top-center-right">
-    <a href="{{=URL('user', 'logout')}}">SIGN <span class="green">UP</span></a>
+    <a class="mixed" href="{{=URL('user', 'logout')}}">SIGN <span class="green">UP</span></a>
   </div>
   <div id="logo">
     <a href="{{=URL('index')}}"><img src="{{=URL('static', 'img/logo_no_icon.png')}}" alt="logo"/></a>
@@ -44,19 +44,19 @@
     </ul>
   </div>
   <div id="center-left">
-    <a href="{{=URL('default', 'by_language')}}">MOST EXPERIENCES<br/>BY <span class="green">LANGUAGE</span></a>
+    <a class="mixed" href="{{=URL('default', 'by_language')}}">MOST EXPERIENCES<br/>BY <span class="green">LANGUAGE</span></a>
   </div>
   <div id="center-right">
-    <a href="{{=URL('search')}}">SEARCH  <span class="green">FOR</span> AN <br/><span class="green">EXPERIENCE</span></a>
+    <a class="mixed" href="{{=URL('search')}}">SEARCH  <span class="green">FOR</span> AN <br/><span class="green">EXPERIENCE</span></a>
   </div>
   <div id="bottom-left">
-    <a href="{{=URL('default', 'by_user')}}">MOST <span class="green">EXPERIENCES</span><br/>BY USER</a>
+    <a class="mixed" href="{{=URL('default', 'by_user')}}">MOST <span class="green">EXPERIENCES</span><br/>BY USER</a>
   </div>
   <div id="bottom-center">
-    <a href="{{=URL('default', 'details', args=0)}}">MESSAGE FROM THE <span class="green">FOUNDER</span></a>
+    <a class="mixed" href="{{=URL('default', 'details', args=0)}}">MESSAGE FROM THE <span class="green">FOUNDER</span></a>
   </div>
   <div id="bottom-right">
-    <a href="#">CAPTURING <span class="green">GLOBAL</span><br/>TACIT <span class="green">KNOWLEDGE</span></a>
+    <a class="mixed" href="#">CAPTURING <span class="green">GLOBAL</span><br/>TACIT <span class="green">KNOWLEDGE</span></a>
   </div>
   </div> <!-- span12 -->
   </div> <!-- row -->
@@ -81,19 +81,15 @@
 
 
 <script src="{{=URL('static','js/jquery.js')}}"></script>
-<script>
-  /*$(function(){
-  $('.green').hover(
-  function(){
-  console.log("test");
-  $(this).css('color', '#005580');
-  $(this).siblings().css('color', '#005580');
-  },
-  function(){
-  $(this).css('color', '#8dc63f');
-  $(this).siblings().css('color', '#8dc63f');
+<script type="text/javascript">
+  $(function(){
+  $('a.mixed').mouseenter(function(){
+  $(this).children('.green').css("color", "#005580");
   });
-  });*/
+  $('a.mixed').mouseleave(function(){
+  $(this).children('.green').css("color", "#8dc63f");
+  });
+  });
 </script>
 </body>
 </html>

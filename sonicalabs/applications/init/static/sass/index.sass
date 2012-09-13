@@ -1,36 +1,40 @@
 @import "compass/typography/links"
 
 $green: #8dc63f
-$dark-gray: #292424
+$bgcolor: #292424
+$hvcolor: #005580
 
 body 
-  background-color: $dark-gray
+  background-color: $bgcolor
 
-a  
+a 
+  font-family: amaranthbold
   color: white
   font-size: 15px
-  font-weight: bold
   &:hover
     text-decoration: none 
   &>span.green  
     color: $green
+    &:hover
+      color: $hvcolor
+
 
 footer
   a  
+    font-family: amaranthregular
     color: white
-    font-size: 12px
-    font-weight: bold
-    margin-right: 50px
+    font-size: 14px
+    margin-right: 45px
   a.share
     margin-right: 5px
 
 ul.pretty>li
+  font-family: pigiarniqbold
   padding-left: 17px
   background: url('../images/bullet.png') no-repeat 1px 3px
   list-style-type: none
   color: white
   font-size: 14px
-  font-weight: bold
 
 .container.first
   margin-top: 4%
@@ -54,7 +58,7 @@ hr
 #top-center-left
   float: left
   margin-top: 0.5% 
-  margin-left: 22%  
+  margin-left: 25%  
 
 #top-center-right
   float: left

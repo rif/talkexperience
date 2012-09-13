@@ -44,6 +44,7 @@
   #response.files.append(URL('static','css/bootstrap-responsive.min.css'))
   response.files.append(URL('static','css/web2py.css'))
   response.files.append(URL('static','css/web2py_bootstrap.css'))
+  response.files.append(URL('static','css/fonts.css'))
   response.files.append(URL('static','css/screen.css'))
   }}
 
@@ -70,17 +71,16 @@
             {{=search_form.custom.begin}}
             {{=search_form.custom.widget.query}}
             {{=search_form.custom.end}}            
-            <a href="#">ADD <span class="green">FACEBOOK</span></a>
-            | <a href="#"><span class="green">TWITTER</span>
+            <a class="mixed" href="#">ADD <span class="green">FACEBOOK</span></a>
+            | <a class="mixed" href="#"><span class="green">TWITTER</span>
             ACCOUNT</a><br>
             {{if auth.is_logged_in():}}
-            <a href="{{=URL('user', 'profile')}}">WELCOME <span class="green">{{=auth.user.first_name.upper()}}</span></a>
+            <a class="mixed" href="{{=URL('user', 'profile')}}">WELCOME <span class="green">{{=auth.user.first_name.upper()}}</span></a>
             {{else:}}
-            <a href="{{=URL('user', 'profile')}}"><span class="green">SIGN</span> IN</a>
+            <a class="mixed" href="{{=URL('user', 'profile')}}"><span class="green">SIGN</span> IN</a>
             {{pass}}
-            | <a href="{{=URL('user', 'profile')}}"><span class="green">PROFILE</span></a><br>
-            <a href="{{=URL('user',
-            'logout')}}"><span class="green">SIGN</span> OUT</a>
+            | <a class="mixed" href="{{=URL('user', 'profile')}}"><span class="green">PROFILE</span></a><br>
+            <a class="mixed" href="{{=URL('user', 'logout')}}"><span class="green">SIGN</span> OUT</a>
           </div>
           <a id="top-first" href="{{=URL('default', 'most_popular')}}">MOST POPULAR<br>SUBJECTS</a>
           <a id="top-second" href="{{=URL('default', 'by_language')}}">MOST EXPERIENCES<br>BY LANGUAGE</a>
@@ -138,11 +138,19 @@
       <![endif]-->
   {{if response.google_analytics_id:}}<script type="text/javascript"> var _gaq = _gaq || []; _gaq.push(['_setAccount', '{{=response.google_analytics_id}}']); _gaq.push(['_trackPageview']); (function() { var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); })(); </script> {{pass}} 
   <script type="text/javascript"
-  src="http://webplayer.yahooapis.com/player.js"></script>
+          src="http://webplayer.yahooapis.com/player.js"></script>
   <script type="text/javascript">        
-  $("#no_table_query").one("focus", function() {
-      $(this).val("");
-  });  
+    $(function(){
+    $("#no_table_query").one("focus", function() {
+    $(this).val("");
+    });
+    $('a.mixed').mouseenter(function(){
+    $(this).children('.green').css("color", "#005580");
+    });
+    $('a.mixed').mouseleave(function(){
+    $(this).children('.green').css("color", "#8dc63f");
+    });
+    });
   </script>
 </body>
 </html>
