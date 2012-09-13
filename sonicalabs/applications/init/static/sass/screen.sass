@@ -1,5 +1,3 @@
-@import "compass/typography/links"
-
 $green: #8dc63f
 $fgcolor: white
 $bgcolor: #292424
@@ -9,6 +7,20 @@ $hvcolor: #005580
   background-image: url("../images/header.png")
   background-repeat: no-repeat
   height: 204px
+
+a  
+  font-family: amaranthbold
+  color: $fgcolor
+  font-size: 12px
+  text-align: center
+  line-height: 1em
+  &:hover
+    text-decoration: none 
+  &>span.green  
+    color: $green
+    &:hover
+      color: $hvcolor
+  
 #ta-menu
   margin-top: 1%
   float: right
@@ -29,18 +41,8 @@ body
   padding-top: 0
   color: $fgcolor
 
-a
-  font-family: amaranthbold
-  color: $fgcolor
-  font-size: 12px
-  text-align: center
-  line-height: 1em
-  &:hover
-    text-decoration: none 
-  &>span.green  
-    color: $green
-    &:hover
-      color: $hvcolor
+textarea
+  width: 300px
 
 footer
   margin-top: -5%
@@ -72,12 +74,12 @@ hr
 #top-first
   clear: both
   float: left
-  margin-top: 3.5%
+  margin-top: 4%
   margin-left: 4%
 
 #top-second, #top-third, #top-fourth, #top-fifth
   float: left
-  margin-top: 3.5%
+  margin-top: 4%
   margin-left: 10.5%
 
 #bottom-first
@@ -88,6 +90,7 @@ hr
   color: $green
   &:hover
     color: $hvcolor
+
 
 #bottom-second, #bottom-third, #bottom-fourth
   float: left

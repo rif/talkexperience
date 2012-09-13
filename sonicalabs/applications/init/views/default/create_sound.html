@@ -1,25 +1,40 @@
 {{extend 'layout.html'}}
 
 <h3>{{=T('Upload an Experience')}}</h3>
-<div id="file-uploader">       
-    <noscript>          
-        <p>{{=T("Please enable JavaScript to use the file uploader.")}}</p>
-        <!-- or put a simple form for upload here -->
-    </noscript>         
-</div>
 
-{{=form}}
+{{=form.custom.begin}}
+<table>
+    <tbody>
+        <tr><td>{{=T('Title')}}</td><td>{{=form.custom.widget.title}}</td></tr>
+        <tr><td>{{=T('Description')}}</td><td>{{=form.custom.widget.description}}</td></tr>
+        <tr><td>{{=T('Keywords')}}</td><td>{{=form.custom.widget.keywords}}</td></tr>
+        <tr><td>{{=T('Category')}}</td><td>{{=form.custom.widget.category}}</td></tr>
+        <tr id="sounds_uuid__row"><td></td><td>{{=form.custom.widget.uuid}}</td></tr>
+        <tr><td>{{=T('Language')}}</td><td>{{=form.custom.widget.language}}</td></tr>
+        <tr><td>{{=T('Price')}}</td><td>{{=form.custom.widget.price}}</td></tr>
+        <tr><td>{{=T('Release date')}}</td><td>{{=form.custom.widget.release_date}}</td></tr>
+        <tr><td>{{=T('Email')}}</td><td>{{=form.custom.widget.email}}</td></tr>
+        <tr>
+          <td>Upload an Experience</td>
+          <td>
+            <div id="file-uploader">       
+              <noscript>          
+                <p>{{=T("Please enable JavaScript to use the file uploader.")}}</p>
+                <!-- or put a simple form for upload here -->
+              </noscript>         
+            </div>
+          </td>
+      </tr>
+    </tbody>
+</table>
+
+{{=form.custom.submit}}
+{{=form.custom.end}}
 
 <div id="uploading" style="display:none">
   <h4>{{=T('Uploading...')}}</h4>
   <progress min="0" max="100" value="0">0% complete</progress> <br/>
 </div>
-
-<a href="{{=URL('index')}}">{{=T('Back')}}</a>
-
-{{block right_sidebar}}
-{{=A(T("Record"), _href=URL('record'), _class='button', _style='margin-top: 1em;')}}
-{{end}}
 
 <link href="{{=URL('static','css/select2.css')}}" rel="stylesheet" type="text/css" />
 <link href="{{=URL('static','css/fileuploader.css')}}" rel="stylesheet" type="text/css" />
@@ -28,12 +43,13 @@
 
 <script type="text/javascript">
 $(function(){
-  $("#sounds_language").select2({width:"100%",});
-  $("#sounds_category").select2({width:"100%",});
+  $("#sounds_language").select2({width:"315px",});
+  $("#sounds_category").select2({width:"315px",});
   $("#sounds_uuid__row").hide();
  
   var uploader = new qq.FileUploader({
     // pass the dom node (ex. $(selector)[0] for jQuery users)
+    uploadButtonText: "{{=T('Browse')}}",
     element: $("#file-uploader")[0],
     // path to server-side upload script
     action: 'http://avocadosoft.ro:6060/process',

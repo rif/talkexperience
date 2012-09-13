@@ -5,10 +5,6 @@
 
 <a href="{{=URL('my_uploads', user_signature=True)}}">{{=T('Back')}}</a>
 
-{{block right_sidebar}}
-{{=A(T("Record"), _href=URL('record'), _class='button', _style='margin-top: 1em;')}}
-{{end}}
-
 <link href="{{=URL('static','css/select2.css')}}" rel="stylesheet" type="text/css" />
 <script src="{{=URL('static','js/select2.min.js')}}" type="text/javascript"></script>
 
