@@ -1,5 +1,35 @@
 {{extend 'layout.html'}}
 
 <h3>{{=T('Record Your Experience')}}</h3>
-<iframe src="http://vocaroo.com/?minimal" width="525" height="450" frameborder="0"></iframe>
-<br>Powered by <a href="http://vocaroo.com" title="Voice Recorder">Vocaroo Voice Recorder</a>
+
+<a href="#" id="rec-link" class="ready">{{=T('Start recording')}}</a>
+
+<div id="status"></div>
+<div id="wami"></div>
+
+<!-- swfobject is a commonly used library to embed Flash content -->
+<script type="text/javascript"
+	src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+
+<!-- Setup the recorder interface -->
+<script type="text/javascript" src="{{=URL('static', 'js/recorder.js')}}"></script>
+
+<script type="text/javascript">
+  $(function(){
+  	Wami.setup("wami");
+	Wami.hide();
+	$("#rec-link").click(function(){
+		if($('#rec-link').hasClass('ready')){
+			$("#status").text("{{=T('Recording...')}}");
+			Wami.startRecording("http://avocadosoft.ro:6060/record?uuid=mamaaremere");			
+			//Wami.startRecording("http://localhost:6060/record?uuid=mamaaremere");
+			$(this).removeClass('ready');
+		} else{
+			$("#status").text("");
+			Wami.stopRecording();			
+			$(this).addClass('ready');
+		}
+		return false;
+	});
+  });
+</script>
