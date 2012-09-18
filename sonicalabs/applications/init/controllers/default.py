@@ -24,9 +24,8 @@ def search():
                                           limitby=paginator.limitby())
     return locals()
 
-@auth.requires_login()
 def record():
-    return locals()
+    return create_sound()  
 
 @auth.requires_login()
 def create_sound():
@@ -51,8 +50,7 @@ def create_sound():
         response.flash = T('Upload complete!')
         redirect(URL('my_uploads', user_signature=True))
     elif form.errors:
-       response.flash = T('form has errors')
-    response.subtitle='Upload Your Experience'
+       response.flash = T('form has errors')    
     return locals()
 
 def set_download_info():

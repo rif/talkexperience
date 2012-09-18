@@ -2,10 +2,30 @@
 
 <h3>{{=T('Record Your Experience')}}</h3>
 
-<a href="#" id="rec-link" class="ready">{{=T('Start recording')}}</a>
-
-<div id="status"></div>
-<div id="wami"></div>
+{{=form.custom.begin}}
+<table>
+    <tbody>
+        <tr><td>{{=T('Title')}}</td><td>{{=form.custom.widget.title}}</td></tr>
+        <tr><td>{{=T('Description')}}</td><td>{{=form.custom.widget.description}}</td></tr>
+        <tr><td>{{=T('Keywords')}}</td><td>{{=form.custom.widget.keywords}}</td></tr>
+        <tr><td>{{=T('Category')}}</td><td>{{=form.custom.widget.category}}</td></tr>
+        <tr id="sounds_uuid__row"><td></td><td>{{=form.custom.widget.uuid}}</td></tr>
+        <tr><td>{{=T('Language')}}</td><td>{{=form.custom.widget.language}}</td></tr>
+        <tr><td>{{=T('Price')}}</td><td>{{=form.custom.widget.price}}</td></tr>
+        <tr><td>{{=T('Release date')}}</td><td>{{=form.custom.widget.release_date}}</td></tr>
+        <tr><td>{{=T('Email')}}</td><td>{{=form.custom.widget.email}}</td></tr>
+        <tr>
+          <td>Record an Experience</td>
+          <td>
+            <a href="#" class="btn btn-large btn-danger" id="rec-link" class="ready">{{=T('Start recording')}}</a>
+			<div id="status"></div>
+			<div style="display:none;" id="wami"></div>
+          </td>
+      </tr>
+    </tbody>
+</table>
+{{=form.custom.submit}}
+{{=form.custom.end}}
 
 <!-- swfobject is a commonly used library to embed Flash content -->
 <script type="text/javascript"
@@ -16,13 +36,17 @@
 
 <script type="text/javascript">
   $(function(){
-  	Wami.setup("wami");
-	Wami.hide();
+    $("#sounds_uuid__row").hide();
+  	Wami.setup({  		
+			id : "wami",
+			swfUrl : "{{=URL('static', 'js/Wami.swf')}}",
+  	});   	 
 	$("#rec-link").click(function(){
+		console.log("rec");
 		if($('#rec-link').hasClass('ready')){
 			$("#status").text("{{=T('Recording...')}}");
-			Wami.startRecording("http://avocadosoft.ro:6060/record?uuid=mamaaremere");			
-			//Wami.startRecording("http://localhost:6060/record?uuid=mamaaremere");
+			Wami.startRecording("http://avocadosoft.ro:6060/record?uuid="+$("#sounds_uuid").val());			
+			//Wami.startRecording("http://localhost:6060/record?uuid="+$("#sounds_uuid").val());
 			$(this).removeClass('ready');
 		} else{
 			$("#status").text("");
