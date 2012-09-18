@@ -2,6 +2,8 @@ package main
 
 import (
 	"bytes"
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -11,7 +13,9 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"strconv"
 	"strings"
+	"time"
 )
 
 var (
@@ -23,7 +27,9 @@ const (
 	//MAIN_APPLICATION = "http://localhost:8080"
 	BLOBS_APPLICATION = "http://sonicablobs.appspot.com"
 	//BLOBS_APPLICATION = "http://localhost:8081"
-	TRANSFORMER = "ffmpeg"
+	TRANSFORMER   = "ffmpeg"
+	FOLDER_UPLOAD = "upload"
+	FOLDER_READY  = "ready"
 )
 
 func checkOrigin(orig []string, ref string) (right bool) {
@@ -66,7 +72,7 @@ func handleProcess(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "{error: 'Invalid form values!'}")
 		return
 	}
-	path := "./upload/" + uuid + "_" + fileName
+	path := path.Join(FOLDER_UPLOAD, uuid+"_"+fileName)
 	f, _ := os.Create(path)
 
 	if r.Header["X-Requested-With"] != nil && r.Header["X-Requested-With"][0] != "XMLHttpRequest" {
@@ -83,6 +89,37 @@ func handleProcess(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 	}
 	f.Close()
+	log.Print("Start processing ", fileName, " - ", uuid)
+	go process(path, fileName, uuid)
+	fmt.Fprint(w, "{success:true}")
+}
+
+func handleRecord(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		return
+	}
+	if !checkOrigin(r.Header["Origin"], r.Referer()) {
+		log.Printf("Hacker request: origin: %v, referer: %v", r.Header["Origin"], r.Referer())
+		return
+	}
+	r.ParseForm()
+	uuid := ""
+	if uuidFormValue, ok := r.Form["uuid"]; ok {
+		uuid = uuidFormValue[0]
+		log.Print("UUID missing, aborting")
+		return
+	}
+	data, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		fmt.Println(err)
+	}
+	fileName := "record_" + genUUID()
+	path := path.Join(FOLDER_UPLOAD, uuid+"_"+fileName)
+	err = ioutil.WriteFile(fileName, data, 0660)
+	if err != nil {
+		fmt.Println(err)
+	}
 	log.Print("Start processing ", fileName, " - ", uuid)
 	go process(path, fileName, uuid)
 	fmt.Fprint(w, "{success:true}")
@@ -169,7 +206,7 @@ func transcode(oldfn, basefn string) (newfn string) {
 	if err != nil {
 		log.Fatal(TRANSFORMER + " not installed!")
 	}
-	newfn = "ready/" + basefn + ".mp3"
+	newfn = path.Join(FOLDER_READY, basefn+".mp3")
 	log.Printf("Transcoding %s to %s", oldfn, newfn)
 	//err = exec.Command(TRANSFORMER, "-i", oldfn, "-vn", "-c:a", "libmp3lame", "-b:a", "96k", "-q:a", "9", "-y", newfn).Run()
 	err = exec.Command(TRANSFORMER, "-i", oldfn, "-vn", "-acodec", "libmp3lame", "-ab", "96k", "-aq", "9", "-y", newfn).Run()
@@ -183,8 +220,23 @@ func transcode(oldfn, basefn string) (newfn string) {
 	return
 }
 
+// helper function for uuid generation
+func genUUID() string {
+	uuid := make([]byte, 16)
+	n, err := rand.Read(uuid)
+	if n != len(uuid) || err != nil {
+		return strconv.FormatInt(time.Now().UnixNano(), 10)
+	}
+	// TODO: verify the two lines implement RFC 4122 correctly
+	uuid[8] = 0x80 // variant bits see page 5
+	uuid[4] = 0x40 // version 4 Pseudo Random, see page 7
+
+	return hex.EncodeToString(uuid)
+}
+
 func main() {
 	http.HandleFunc("/process", handleProcess)
+	http.HandleFunc("/record", handleRecord)
 	log.Print("Serving...")
 	err := http.ListenAndServe(":6060", nil)
 	if err != nil {
