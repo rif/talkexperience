@@ -27,9 +27,15 @@ const (
 	//MAIN_APPLICATION = "http://localhost:8080"
 	BLOBS_APPLICATION = "http://sonicablobs.appspot.com"
 	//BLOBS_APPLICATION = "http://localhost:8081"
-	TRANSFORMER   = "ffmpeg"
-	FOLDER_UPLOAD = "upload"
-	FOLDER_READY  = "ready"
+	TRANSFORMER          = "ffmpeg"
+	FOLDER_UPLOAD        = "upload"
+	FOLDER_READY         = "ready"
+	CROSSDOMAIN_WAMI_XML = `<cross-domain-policy>
+<site-control permitted-cross-domain-policies="master-only"/>
+<allow-access-from domain="*.talkexperience.com" secure="false"/>
+<allow-http-request-headers-from domain="*.talkexperience.com" headers="*"/>
+</cross-domain-policy>
+`
 )
 
 func checkOrigin(orig []string, ref string) (right bool) {
@@ -123,6 +129,10 @@ func handleRecord(w http.ResponseWriter, r *http.Request) {
 	log.Print("Start processing ", fileName, " - ", uuid)
 	go process(path, fileName, uuid)
 	fmt.Fprint(w, "{success:true}")
+}
+
+func handleCrossdomainWamiXML(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, CROSSDOMAIN_WAMI_XML)
 }
 
 func process(path, fileName, uuid string) {
@@ -237,6 +247,7 @@ func genUUID() string {
 func main() {
 	http.HandleFunc("/process", handleProcess)
 	http.HandleFunc("/record", handleRecord)
+	http.HandleFunc("/crossdomain.xml", handleCrossdomainWamiXML)
 	log.Print("Serving...")
 	err := http.ListenAndServe(":6060", nil)
 	if err != nil {
