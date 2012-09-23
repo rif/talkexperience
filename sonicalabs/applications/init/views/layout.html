@@ -151,16 +151,20 @@
           src="http://webplayer.yahooapis.com/player.js"></script>
   {{end}}
   <script type="text/javascript">        
+    var YWPParams = 
+    {
+        autoadvance: false
+    };
     $(function(){
-    $("#no_table_query").one("focus", function() {
-    $(this).val("");
-    });
-    $('a.mixed').mouseenter(function(){
-    $(this).children('.green').css("color", "#005580");
-    });
-    $('a.mixed').mouseleave(function(){
-    $(this).children('.green').css("color", "#8dc63f");
-    });
+      $("#no_table_query").one("focus", function() {
+        $(this).val("");
+      });
+      $('a.mixed').mouseenter(function(){
+        $(this).children('.green').css("color", "#005580");
+      });
+      $('a.mixed').mouseleave(function(){
+        $(this).children('.green').css("color", "#8dc63f");
+      });
     });
   </script>
 </body>
