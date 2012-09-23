@@ -26,7 +26,7 @@ const (
 	MAIN_APPLICATION = "http://www.talkexperience.com"
 	//MAIN_APPLICATION = "http://localhost:8080"
 	BLOBS_APPLICATION = "http://sonicablobs.appspot.com"
-	//BLOBS_APPLICATION = "http://localhost:8081"
+	//BLOBS_APPLICATION    = "http://localhost:8081"
 	TRANSFORMER          = "ffmpeg"
 	FOLDER_UPLOAD        = "./upload"
 	FOLDER_READY         = "./ready"
@@ -64,11 +64,17 @@ func checkOrigin(orig []string, ref string) (right bool) {
 func handleProcess(w http.ResponseWriter, r *http.Request) {
 	log.Print("process request", r)
 	w.Header().Set("Access-Control-Allow-Origin", MAIN_APPLICATION)
-	w.Header().Set("Access-Control-Allow-Headers", "X-Requested-With,X-File-Name,Content-Type")
-	if r.Method != "OPTIONS" {
-		log.Print("Not a OPTIONS request: ", r.Method)
+	//w.Header().Set("Access-Control-Allow-Headers", "X-Requested-With,X-File-Name,Content-Type")
+	w.Header().Set("Access-Control-Allow-Headers", "origin, x-mime-type, x-requested-with, x-file-name, content-type")
+	if r.Method == "OPTIONS" {
 		return
 	}
+
+	if r.Method != "POST" {
+		log.Print("Not a POST request, returning!")
+		return
+	}
+
 	if !checkOrigin(r.Header["Origin"], r.Referer()) {
 		log.Printf("Hacker request: origin: %v, referer: %v", r.Header["Origin"], r.Referer())
 		return
@@ -81,22 +87,27 @@ func handleProcess(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	path := path.Join(FOLDER_UPLOAD, uuid+"_"+fileName)
-	f, _ := os.Create(path)
+	f, err := os.Create(path)
+	if err != nil {
+		log.Print("Could not create ", path)
+	}
 
 	if r.Header["X-Requested-With"] != nil && r.Header["X-Requested-With"][0] != "XMLHttpRequest" {
 		fn, _, err := r.FormFile("qqfile")
-		defer fn.Close()
+
 		if err != nil {
 			log.Print("Could not get upload from main app!", err)
 			fmt.Fprint(w, "{error: 'Could not get upload from main app!'}")
 			return
 		}
 		io.Copy(f, fn)
+		fn.Close()
 	} else {
 		io.Copy(f, r.Body)
 		defer r.Body.Close()
 	}
 	f.Close()
+
 	log.Print("Start processing ", fileName, " - ", uuid)
 	go process(path, fileName, uuid)
 	fmt.Fprint(w, "{success:true}")
@@ -190,8 +201,7 @@ func process(path, fileName, uuid string) {
 	}
 
 	// Create the POST request to the URL with all fields mounted
-	log.Print("posting to: ", postUrl) 
-	req, err := http.NewRequest("POST", string(postUrl), buf)	
+	req, err := http.NewRequest("POST", string(postUrl), buf)
 	if err != nil {
 		log.Print("Could not create upload post request!")
 		return
@@ -206,9 +216,9 @@ func process(path, fileName, uuid string) {
 		log.Print("Could not execute upload post request!")
 		return
 	}
-	defer resp.Body.Close()	
+	defer resp.Body.Close()
 	rb, err := ioutil.ReadAll(resp.Body)
-	log.Printf("Posting to %s blob: %v, %v",postUrl, rb, err)
+	log.Printf("Posting blob: %v, %v", rb, err)
 	err = os.Remove(newFileName)
 	if err != nil {
 		log.Print("Could not delete transcoded file: ", path)

@@ -17,7 +17,13 @@
         <tr>
           <td>Record an Experience</td>
           <td>
-            <a style="display:none" href="#" class="btn btn-large btn-danger ready" id="rec-link">{{=T('Start recording')}}</a><span id="wami"></span>						
+            <a style="display:none" href="#" class="btn btn-large
+            btn-danger ready" id="rec-link">{{=T('Start
+            recording')}}</a><span id="wami"></span>
+			<noscript>          
+              <p>{{=T('Please enable JavaScript and Flash to use the
+              recorder feature.')}}</p>              
+            </noscript> 
       <div id="status"></div>
           </td>
       </tr>
