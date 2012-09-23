@@ -28,8 +28,8 @@ const (
 	BLOBS_APPLICATION = "http://sonicablobs.appspot.com"
 	//BLOBS_APPLICATION = "http://localhost:8081"
 	TRANSFORMER          = "ffmpeg"
-	FOLDER_UPLOAD        = "upload"
-	FOLDER_READY         = "ready"
+	FOLDER_UPLOAD        = "./upload"
+	FOLDER_READY         = "./ready"
 	CROSSDOMAIN_WAMI_XML = `<cross-domain-policy>
 <site-control permitted-cross-domain-policies="master-only"/>
 <allow-access-from domain="*.talkexperience.com" secure="false"/>
@@ -39,7 +39,7 @@ const (
 )
 
 func checkOrigin(orig []string, ref string) (right bool) {
-	if (orig == nil) || (len(orig) != 1) {
+	/*if (orig == nil) || (len(orig) != 1) {
 		return
 	}
 	for _, accO := range ACCEPTED_ORIGINS {
@@ -51,7 +51,7 @@ func checkOrigin(orig []string, ref string) (right bool) {
 	if !right {
 		return
 	}
-	right = false
+	right = false*/
 	for _, accO := range ACCEPTED_ORIGINS {
 		if strings.Contains(ref, accO) {
 			right = true
@@ -62,9 +62,11 @@ func checkOrigin(orig []string, ref string) (right bool) {
 }
 
 func handleProcess(w http.ResponseWriter, r *http.Request) {
+	log.Print("process request", r)
 	w.Header().Set("Access-Control-Allow-Origin", MAIN_APPLICATION)
 	w.Header().Set("Access-Control-Allow-Headers", "X-Requested-With,X-File-Name,Content-Type")
-	if r.Method != "POST" {
+	if r.Method != "OPTIONS" {
+		log.Print("Not a OPTIONS request: ", r.Method)
 		return
 	}
 	if !checkOrigin(r.Header["Origin"], r.Referer()) {
@@ -101,6 +103,7 @@ func handleProcess(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleRecord(w http.ResponseWriter, r *http.Request) {
+	log.Print("record request: ", r)
 	if r.Method != "POST" {
 		return
 	}
@@ -112,17 +115,19 @@ func handleRecord(w http.ResponseWriter, r *http.Request) {
 	uuid := ""
 	if uuidFormValue, ok := r.Form["uuid"]; ok {
 		uuid = uuidFormValue[0]
+	} else {
 		log.Print("UUID missing, aborting")
 		return
 	}
+
 	data, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
 		fmt.Println(err)
 	}
-	fileName := "record_" + genUUID()
+	fileName := fmt.Sprintf("record_%s.wav", genUUID())
 	path := path.Join(FOLDER_UPLOAD, uuid+"_"+fileName)
-	err = ioutil.WriteFile(fileName, data, 0660)
+	err = ioutil.WriteFile(path, data, 0660)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -167,9 +172,10 @@ func process(path, fileName, uuid string) {
 		log.Print("Could not open transcoded file for reading!")
 		return
 	}
+	log.Print("Loading to part: ", newFileName)
 	_, err = io.Copy(part, fd)
 	if err != nil {
-		log.Print("Could not write upload to local file!")
+		log.Print("Could not write upload to part!")
 		return
 	}
 	err = writer.Close()
@@ -183,8 +189,9 @@ func process(path, fileName, uuid string) {
 		return
 	}
 
-	// Create the POST request to the URL with all fields mounted 
-	req, err := http.NewRequest("POST", string(postUrl), buf)
+	// Create the POST request to the URL with all fields mounted
+	log.Print("posting to: ", postUrl) 
+	req, err := http.NewRequest("POST", string(postUrl), buf)	
 	if err != nil {
 		log.Print("Could not create upload post request!")
 		return
@@ -194,11 +201,14 @@ func process(path, fileName, uuid string) {
 	// Declare our HTTP client to execute the request 
 	client := new(http.Client)
 	// Finally send our POST HTTP request 
-	_, err = client.Do(req)
+	resp, err = client.Do(req)
 	if err != nil {
 		log.Print("Could not execute upload post request!")
 		return
 	}
+	defer resp.Body.Close()	
+	rb, err := ioutil.ReadAll(resp.Body)
+	log.Printf("Posting to %s blob: %v, %v",postUrl, rb, err)
 	err = os.Remove(newFileName)
 	if err != nil {
 		log.Print("Could not delete transcoded file: ", path)
@@ -227,6 +237,7 @@ func transcode(oldfn, basefn string) (newfn string) {
 	if err != nil {
 		log.Print("Could not delete: ", oldfn)
 	}
+	log.Print("Done ", newfn)
 	return
 }
 
