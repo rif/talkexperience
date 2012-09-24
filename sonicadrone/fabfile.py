@@ -18,3 +18,8 @@ def deploy():
     local('scp sonicadrone avocado:')
     sudo('supervisorctl start sonicadrone')
     clean()
+
+@task
+@hosts('rif@avocadosoft.ro:22011')
+def logs():
+    sudo("tail -f /var/log/supervisor/sonicadrone-stdout---supervisor-lUXEcG.log")

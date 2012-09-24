@@ -38,31 +38,31 @@ const (
 `
 )
 
-func checkOrigin(orig []string, ref string) (right bool) {
-	/*if (orig == nil) || (len(orig) != 1) {
-		return
+func checkOrigin(orig []string) bool {
+	if (orig == nil) || (len(orig) != 1) {
+		return false
 	}
 	for _, accO := range ACCEPTED_ORIGINS {
 		if strings.Contains(orig[0], accO) {
-			right = true
+			return true
 			break
 		}
 	}
-	if !right {
-		return
-	}
-	right = false*/
+	return false
+}
+
+func checkReferer(ref string) bool {
 	for _, accO := range ACCEPTED_ORIGINS {
 		if strings.Contains(ref, accO) {
-			right = true
+			return true
 			break
 		}
 	}
-	return
+	return false
 }
 
 func handleProcess(w http.ResponseWriter, r *http.Request) {
-	log.Print("process request", r)
+	log.Printf("record request: %+v", r)
 	w.Header().Set("Access-Control-Allow-Origin", MAIN_APPLICATION)
 	//w.Header().Set("Access-Control-Allow-Headers", "X-Requested-With,X-File-Name,Content-Type")
 	w.Header().Set("Access-Control-Allow-Headers", "origin, x-mime-type, x-requested-with, x-file-name, content-type")
@@ -75,7 +75,7 @@ func handleProcess(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !checkOrigin(r.Header["Origin"], r.Referer()) {
+	if !checkOrigin(r.Header["Origin"]) || !checkReferer(r.Referer()) {
 		log.Printf("Hacker request: origin: %v, referer: %v", r.Header["Origin"], r.Referer())
 		return
 	}
@@ -114,11 +114,11 @@ func handleProcess(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleRecord(w http.ResponseWriter, r *http.Request) {
-	log.Print("record request: ", r)
+	log.Printf("record request: %+v", r)
 	if r.Method != "POST" {
 		return
 	}
-	if !checkOrigin(r.Header["Origin"], r.Referer()) {
+	if !checkReferer(r.Referer()) {
 		log.Printf("Hacker request: origin: %v, referer: %v", r.Header["Origin"], r.Referer())
 		return
 	}
@@ -176,7 +176,7 @@ func process(path, fileName, uuid string) {
 		return
 	}
 	//transcode the file
-	newFileName := transcode(path, removeExt(fileName))
+	newFileName := transcode(path, prepareNewFileName(fileName, uuid))
 	// Open the file to upload	
 	fd, err := os.Open(newFileName)
 	if err != nil {
@@ -211,23 +211,20 @@ func process(path, fileName, uuid string) {
 	// Declare our HTTP client to execute the request 
 	client := new(http.Client)
 	// Finally send our POST HTTP request 
-	resp, err = client.Do(req)
+	_, err = client.Do(req)
 	if err != nil {
 		log.Print("Could not execute upload post request!")
 		return
 	}
-	defer resp.Body.Close()
-	rb, err := ioutil.ReadAll(resp.Body)
-	log.Printf("Posting blob: %v, %v", rb, err)
 	err = os.Remove(newFileName)
 	if err != nil {
 		log.Print("Could not delete transcoded file: ", path)
 	}
 }
 
-func removeExt(oldfn string) (basefn string) {
+func prepareNewFileName(oldfn, uuid string) (basefn string) {
 	ext := path.Ext(oldfn)
-	basefn = strings.TrimRight(oldfn, ext)
+	basefn = uuid + "_" + strings.TrimRight(oldfn, ext)
 	return
 }
 
