@@ -80,7 +80,9 @@ def set_download_info():
 
 def activate_scheduled_sounds():
     for_activation = db((Sounds.is_active == False) & \
-        (Sounds.release_date<=request.now)).select(orderby=Sounds.release_date)
+        (Sounds.release_date<=request.now) & \
+        (Sounds.download_server!="") & \
+        (Sounds.download_key!="")).select(orderby=Sounds.release_date)
     activated_sounds = 0
     for sound in for_activation:
         sound.is_active=True
@@ -213,7 +215,7 @@ def contact():
         Field('your_email',requires=IS_EMAIL()),
         Field('message', 'text', requires=IS_NOT_EMPTY()))
     if form.process().accepted:
-        if mail.send(to='radu.fericean@wisebiz-group.com;gmurgan@sympatico.ca;teodor.giles@wisebiz-group.com',
+        if mail.send(to='radu.fericean@wisebiz-group.com;gmurgan@sympatico.ca',
                   subject='from %s (%s)' % (form.vars.your_name, form.vars.your_email),
                   message = form.vars.message):
             response.flash = 'Thank you'
