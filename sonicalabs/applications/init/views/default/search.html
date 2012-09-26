@@ -5,9 +5,14 @@
 {{pass}}
 
 {{=paginate_selector}}{{=paginate_info}}
-{{ for sound in sounds:}}
+{{ for i,sound in enumerate(sounds):}}
 <div class="sound">
-  <div class="title"><a href="{{=sound.download_url}}" title="{{=sound.title}}" type="{{=sound.mime_type}}"><img src="{{=Gravatar(sound.owner_email, size=350).thumb}}" alt="" style="display:none" /></a><a href="{{=URL('details', args=sound.id)}}">{{=sound.title}}</a></div>
+  <div class="title">
+    <div><img src="{{=Gravatar(sound.owner_email, size=350).thumb}}" alt="" style="display:none" /></div>
+    <a href="{{=URL('details', args=sound.id)}}">{{=sound.title}}</a>
+  </div>
+  <div id="audioplayer_{{=i}}">{{=T('Please enable javascript and flash to use the player')}}</div>
+  <script type="text/javascript">AudioPlayer.embed("audioplayer_{{=i}}", {soundFile: "{{=sound.download_url}}"});</script> 
   <div class="info">{{=T('Added')}} {{=prettydate(sound.created_on)}} {{=T('by')}} {{=sound.username}} {{=sound.play_count}} {{=T('views')}}</div>
   <div class="description">{{if sound.description:}}{{=sound.description[:100]}}...{{else:}}{{pass}}</div>  
 </div>
@@ -15,3 +20,14 @@
 
 {{=paginator}}
 
+{{block head}}
+<script type="text/javascript" src="{{=URL('static', 'js/audio-player.js')}}"></script>  
+<script type="text/javascript">  
+    AudioPlayer.setup("{{=URL('static', 'js/player.swf')}}", {  
+        width: 290,
+        width: 290,
+        transparentpagebg: "yes",
+        rightbg: "8dc63f",        
+    });  
+</script>
+{{end}}

@@ -1,7 +1,14 @@
 {{extend 'layout.html'}}
 
 <div class="sound">
-	<div class="title"><a href="{{=detail_sound.download_url}}" title="{{=detail_sound.title}}" type="{{=detail_sound.mime_type}}"><img src="{{=Gravatar(detail_sound.owner_email, size=350).thumb}}" alt="" style="display:none" /></a> {{=detail_sound.title}}</h3></div>	
+	<div class="title">
+		<div><img src="{{=Gravatar(detail_sound.owner_email, size=350).thumb}}" alt="" style="display:none" /></div>
+		</a> {{=detail_sound.title}}</h3>
+	</div>
+	<div id="audioplayer">{{=T('Please enable javascript and flash to use the player')}}</div>
+  		  <script type="text/javascript">
+  		  	AudioPlayer.embed("audioplayer", {soundFile: "{{=detail_sound.download_url}}", autostart: "yes"});
+  		  </script>
 	<div class="info">{{=T('Added')}} {{=prettydate(detail_sound.created_on)}} {{=T('by')}} {{=detail_sound.username}} {{=detail_sound.play_count}} {{=T('views')}}</div>
 	<div class="description">{{=detail_sound.description}}</div>
 	{{if detail_sound.price > 0:}}
@@ -19,10 +26,17 @@
 	<h3>{{=T('By the same author')}}</h3>
 	<hr/>
 	{{=paginate_selector}} {{=paginate_info}}
-	{{ for sound in sounds:}}		
+	{{ for i,sound in enumerate(sounds):}}		
 		{{if sound.id != detail_sound.id:}}
 		<div class="sound">
-		  <div class="title"><a href="{{=sound.download_url}}" title="{{=sound.title}}" type="{{=sound.mime_type}}"><img src="{{=Gravatar(sound.owner_email, size=350).thumb}}" alt="" style="display:none" /></a><a href="{{=URL('details', args=sound.id)}}">{{=sound.title}}</a></div>		  
+		  <div class="title">
+		  	<div><img src="{{=Gravatar(sound.owner_email, size=350).thumb}}" alt="" style="display:none" /></div>
+		  	<a href="{{=URL('details', args=sound.id)}}">{{=sound.title}}</a>
+		  </div>
+		  <div id="audioplayer_{{=i}}">{{=T('Please enable javascript and flash to use the player')}}</div>
+  		  <script type="text/javascript">
+  		  	AudioPlayer.embed("audioplayer_{{=i}}", {soundFile: "{{=sound.download_url}}"});
+  		  </script> 		  
 		  <div class="info">{{=T('Added')}} {{=prettydate(sound.created_on)}} {{=sound.play_count}} {{=T('views')}}</div>
 		  <div class="description">{{=sound.description}}</div> 	  
 		</div>
@@ -32,13 +46,13 @@
 	{{=paginator}}
 {{pass}}
 
-<div class="back">
-<a class="button" href="{{=URL('index')}}">{{=T('Back')}}</a>
-</div>
-
-<script type="text/javascript">
-    var YWPParams = 
-    {
-        autoplay: true
-    };
+{{block head}}
+<script type="text/javascript" src="{{=URL('static', 'js/audio-player.js')}}"></script>  
+<script type="text/javascript">  
+    AudioPlayer.setup("{{=URL('static', 'js/player.swf')}}", {  
+        width: 290,
+        transparentpagebg: "yes",
+        rightbg: "8dc63f",        
+    });  
 </script>
+{{end}}

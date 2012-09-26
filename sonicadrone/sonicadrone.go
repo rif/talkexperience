@@ -26,8 +26,9 @@ const (
 	MAIN_APPLICATION = "http://www.talkexperience.com"
 	//MAIN_APPLICATION = "http://localhost:8080"
 	BLOBS_APPLICATION = "http://sonicablobs.appspot.com"
-	//BLOBS_APPLICATION    = "http://localhost:8081"
-	TRANSFORMER          = "ffmpeg"
+	//BLOBS_APPLICATION    = "http://localhost:8081"	
+	TRANSFORMER          = "avconv"
+	BITRATE              = "96k"
 	FOLDER_UPLOAD        = "./upload"
 	FOLDER_READY         = "./ready"
 	CROSSDOMAIN_WAMI_XML = `<cross-domain-policy>
@@ -236,7 +237,7 @@ func transcode(oldfn, basefn string) (newfn string) {
 	newfn = path.Join(FOLDER_READY, basefn+".mp3")
 	log.Printf("Transcoding %s to %s", oldfn, newfn)
 	//err = exec.Command(TRANSFORMER, "-i", oldfn, "-vn", "-c:a", "libmp3lame", "-b:a", "96k", "-q:a", "9", "-y", newfn).Run()
-	err = exec.Command(TRANSFORMER, "-i", oldfn, "-vn", "-acodec", "libmp3lame", "-ab", "96k", "-aq", "9", "-y", newfn).Run()
+	err = exec.Command(TRANSFORMER, "-i", oldfn, "-vn", "-acodec", "libmp3lame", "-ab", BITRATE, "-aq", "9", "-y", newfn).Run()
 	if err != nil {
 		log.Print(err)
 	}
