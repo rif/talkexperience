@@ -146,15 +146,7 @@
       '.google-analytics.com/ga.js'; var s =
       document.getElementsByTagName('script')[0];
       s.parentNode.insertBefore(ga, s); })(); </script> {{pass}} 
-  {{block player}}
-  <script type="text/javascript"
-          src="http://webplayer.yahooapis.com/player.js"></script>
-  {{end}}
-  <script type="text/javascript">        
-    var YWPParams = 
-    {
-        autoadvance: false
-    };
+  <script type="text/javascript">     
     $(function(){
       $("#no_table_query").one("focus", function() {
         $(this).val("");
