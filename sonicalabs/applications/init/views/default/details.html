@@ -11,9 +11,6 @@
   		  </script>
 	<div class="info">{{=T('Added')}} {{=prettydate(detail_sound.created_on)}} {{=T('by')}} {{=detail_sound.username}} {{=detail_sound.play_count}} {{=T('views')}}</div>
 	<div class="description">{{=detail_sound.description}}</div>
-	{{if detail_sound.price > 0:}}
-	<div id="buy"><span id="price">{{=detail_sound.price}}$</span> <a class="button" href="{{=URL('buy')}}">{{=T('Buy')}}</a></div>
-	{{pass}}
 </div>
 
 <h5>{{=T('Comments')}}</h5>
