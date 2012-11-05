@@ -12,17 +12,24 @@ Plural subsystem is created by Vladyslav Kozlovskyy (Ukraine)
 
 import os
 import re
+import sys
 import pkgutil
-from utf8 import Utf8
-from cgi import escape
-import portalocker
 import logging
 import marshal
-import copy_reg
+from cgi import escape
+from threading import RLock
+
+try:
+    import copyreg as copy_reg # python 3
+except ImportError:
+    import copy_reg # python 2
+
+from portalocker import read_locked, LockedFile
+from utf8 import Utf8
+
 from fileutils import listdir
 import settings
 from cfs import getcfs
-from thread import allocate_lock
 from html import XML, xmlescape
 from contrib.markmin.markmin2html import render, markmin_escape
 from string import maketrans
@@ -35,7 +42,7 @@ pjoin = os.path.join
 pexists = os.path.exists
 pdirname = os.path.dirname
 isdir = os.path.isdir
-is_gae = settings.global_settings.web2py_runtime_gae
+is_gae = False # settings.global_settings.web2py_runtime_gae
 
 DEFAULT_LANGUAGE = 'en'
 DEFAULT_LANGUAGE_NAME = 'English'
@@ -48,16 +55,16 @@ DEFAULT_GET_PLURAL_ID = lambda n: 0
 # word is unchangeable
 DEFAULT_CONSTRUCT_PLURAL_FORM = lambda word, plural_id: word
 
-NUMBERS = (int,long,float)
+NUMBERS = (int, long, float)
 
 # pattern to find T(blah blah blah) expressions
 PY_STRING_LITERAL_RE = r'(?<=[^\w]T\()(?P<name>'\
-     + r"[uU]?[rR]?(?:'''(?:[^']|'{1,2}(?!'))*''')|"\
-     + r"(?:'(?:[^'\\]|\\.)*')|" + r'(?:"""(?:[^"]|"{1,2}(?!"))*""")|'\
-     + r'(?:"(?:[^"\\]|\\.)*"))'
+    + r"[uU]?[rR]?(?:'''(?:[^']|'{1,2}(?!'))*''')|"\
+    + r"(?:'(?:[^'\\]|\\.)*')|" + r'(?:"""(?:[^"]|"{1,2}(?!"))*""")|'\
+    + r'(?:"(?:[^"\\]|\\.)*"))'
 
 regex_translate = re.compile(PY_STRING_LITERAL_RE, re.DOTALL)
-regex_param=re.compile(r'{(?P<s>.+?)}')
+regex_param = re.compile(r'{(?P<s>.+?)}')
 
 # pattern for a valid accept_language
 regex_language = \
@@ -66,8 +73,10 @@ regex_langfile = re.compile('^[a-z]{2}(-[a-z]{2})?\.py$')
 regex_backslash = re.compile(r"\\([\\{}%])")
 regex_plural = re.compile('%({.+?})')
 regex_plural_dict = re.compile('^{(?P<w>[^()[\]][^()[\]]*?)\((?P<n>[^()\[\]]+)\)}$')  # %%{word(varname or number)}
-regex_plural_tuple = re.compile('^{(?P<w>[^[\]()]+)(?:\[(?P<i>\d+)\])?}$') # %%{word[index]} or %%{word}
+regex_plural_tuple = re.compile(
+    '^{(?P<w>[^[\]()]+)(?:\[(?P<i>\d+)\])?}$')  # %%{word[index]} or %%{word}
 regex_plural_file = re.compile('^plural-[a-zA-Z]{2}(-[a-zA-Z]{2})?\.py$')
+
 
 def safe_eval(text):
     if text.strip():
@@ -75,24 +84,32 @@ def safe_eval(text):
             import ast
             return ast.literal_eval(text)
         except ImportError:
-            return eval(text,{},{})
+            return eval(text, {}, {})
     return None
 
 # used as default filter in translator.M()
+
+
 def markmin(s):
     def markmin_aux(m):
         return '{%s}' % markmin_escape(m.group('s'))
-    return render(regex_param.sub(markmin_aux,s),
+    return render(regex_param.sub(markmin_aux, s),
                   sep='br', autolinks=None, id_prefix='')
 
 # UTF8 helper functions
+
+
 def upper_fun(s):
-    return unicode(s,'utf-8').upper().encode('utf-8')
+    return unicode(s, 'utf-8').upper().encode('utf-8')
+
+
 def title_fun(s):
-    return unicode(s,'utf-8').title().encode('utf-8')
+    return unicode(s, 'utf-8').title().encode('utf-8')
+
+
 def cap_fun(s):
-    return unicode(s,'utf-8').capitalize().encode('utf-8')
-ttab_in  = maketrans("\\%{}", '\x1c\x1d\x1e\x1f')
+    return unicode(s, 'utf-8').capitalize().encode('utf-8')
+ttab_in = maketrans("\\%{}", '\x1c\x1d\x1e\x1f')
 ttab_out = maketrans('\x1c\x1d\x1e\x1f', "\\%{}")
 
 # cache of translated messages:
@@ -105,13 +122,14 @@ ttab_out = maketrans('\x1c\x1d\x1e\x1f', "\\%{}")
 #  ...
 # }
 
-global_language_cache={}
+global_language_cache = {}
+
 
 def get_from_cache(cache, val, fun):
     lang_dict, lock = cache
     lock.acquire()
     try:
-        result = lang_dict.get(val);
+        result = lang_dict.get(val)
     finally:
         lock.release()
     if result:
@@ -123,31 +141,35 @@ def get_from_cache(cache, val, fun):
         lock.release()
     return result
 
+
 def clear_cache(filename):
     cache = global_language_cache.setdefault(
-        filename, ({}, allocate_lock()))
+        filename, ({}, RLock()))
     lang_dict, lock = cache
     lock.acquire()
     try:
-        lang_dict.clear();
+        lang_dict.clear()
     finally:
         lock.release()
 
+
 def read_dict_aux(filename):
-    lang_text = portalocker.read_locked(filename).replace('\r\n', '\n')
+    lang_text = read_locked(filename).replace('\r\n', '\n')
     clear_cache(filename)
     try:
         return safe_eval(lang_text) or {}
-    except Exception, e:
+    except Exception:
+        e = sys.exc_info()[1]
         status = 'Syntax error in %s (%s)' % (filename, e)
         logging.error(status)
-        return {'__corrupted__':status}
+        return {'__corrupted__': status}
+
 
 def read_dict(filename):
     """ return dictionary with translation messages
     """
-    return getcfs('lang:'+filename, filename,
-                lambda: read_dict_aux(filename))
+    return getcfs('lang:' + filename, filename,
+                  lambda: read_dict_aux(filename))
 
 
 def read_possible_plural_rules():
@@ -155,29 +177,31 @@ def read_possible_plural_rules():
     create list of all possible plural rules files
     result is cached in PLURAL_RULES dictionary to increase speed
     """
+    plurals = {}
     try:
-        import gluon.contrib.plural_rules as package
-        plurals = {}
+        import contrib.plural_rules as package
         for importer, modname, ispkg in pkgutil.iter_modules(package.__path__):
-            if len(modname)==2:
-                module = __import__(package.__name__+'.'+modname,
+            if len(modname) == 2:
+                module = __import__(package.__name__ + '.' + modname,
                                     fromlist=[modname])
                 lang = modname
-                pname = modname+'.py'
-                nplurals = getattr(module,'nplurals', DEFAULT_NPLURALS)
+                pname = modname + '.py'
+                nplurals = getattr(module, 'nplurals', DEFAULT_NPLURALS)
                 get_plural_id = getattr(
-                    module,'get_plural_id', 
+                    module, 'get_plural_id',
                     DEFAULT_GET_PLURAL_ID)
                 construct_plural_form = getattr(
-                    module,'construct_plural_form',
+                    module, 'construct_plural_form',
                     DEFAULT_CONSTRUCT_PLURAL_FORM)
                 plurals[lang] = (lang, nplurals, get_plural_id,
                                  construct_plural_form)
-    except ImportError, e:
+    except ImportError:
+        e = sys.exc_info()[1]
         logging.warn('Unable to import plural rules: %s' % e)
     return plurals
 
 PLURAL_RULES = read_possible_plural_rules()
+
 
 def read_possible_languages_aux(langdir):
     def get_lang_struct(lang, langcode, langname, langfile_mtime):
@@ -189,45 +213,46 @@ def read_possible_languages_aux(langdir):
          nplurals,
          get_plural_id,
          construct_plural_form
-        ) = PLURAL_RULES.get(real_lang[:2],('default',
-                                            DEFAULT_NPLURALS,
-                                            DEFAULT_GET_PLURAL_ID,
-                                            DEFAULT_CONSTRUCT_PLURAL_FORM))
+         ) = PLURAL_RULES.get(real_lang[:2], ('default',
+                                              DEFAULT_NPLURALS,
+                                              DEFAULT_GET_PLURAL_ID,
+                                              DEFAULT_CONSTRUCT_PLURAL_FORM))
         if prules_langcode != 'default':
             (pluraldict_fname,
              pluraldict_mtime) = plurals.get(real_lang,
-                                    plurals.get(real_lang[:2],
-                                        ('plural-%s.py'%real_lang,0)))
+                                             plurals.get(real_lang[:2],
+                                                         ('plural-%s.py' % real_lang, 0)))
         else:
             pluraldict_fname = None
             pluraldict_mtime = 0
         return (langcode,        # language code from !langcode!
-                langname,        # language name in national spelling from !langname!
+                langname,
+                # language name in national spelling from !langname!
                 langfile_mtime,  # m_time of language file
-                pluraldict_fname,# name of plural dictionary file or None (when default.py is not exist)
-                pluraldict_mtime,# m_time of plural dictionary file or 0 if file is not exist
-                prules_langcode, # code of plural rules language or 'default'
+                pluraldict_fname,  # name of plural dictionary file or None (when default.py is not exist)
+                pluraldict_mtime,  # m_time of plural dictionary file or 0 if file is not exist
+                prules_langcode,  # code of plural rules language or 'default'
                 nplurals,        # nplurals for current language
                 get_plural_id,   # get_plural_id() for current language
-                construct_plural_form) # construct_plural_form() for current language
- 
+                construct_plural_form)  # construct_plural_form() for current language
+
     plurals = {}
     flist = oslistdir(langdir)
     # scan languages directory for plural dict files:
     for pname in flist:
         if regex_plural_file.match(pname):
             plurals[pname[7:-3]] = (pname,
-                ostat(pjoin(langdir,pname)).st_mtime)
+                                    ostat(pjoin(langdir, pname)).st_mtime)
     langs = {}
     # scan languages directory for langfiles:
     for fname in flist:
         if regex_langfile.match(fname) or fname == 'default.py':
-            fname_with_path = pjoin(langdir,fname)
-            d = read_dict(fname_with_path)    
+            fname_with_path = pjoin(langdir, fname)
+            d = read_dict(fname_with_path)
             lang = fname[:-3]
             langcode = d.get('!langcode!', lang if lang != 'default'
-                                              else DEFAULT_LANGUAGE)
-            langname = d.get('!langname!',langcode)
+                             else DEFAULT_LANGUAGE)
+            langname = d.get('!langname!', langcode)
             langfile_mtime = ostat(fname_with_path).st_mtime
             langs[lang] = get_lang_struct(lang, langcode,
                                           langname, langfile_mtime)
@@ -240,37 +265,42 @@ def read_possible_languages_aux(langdir):
     deflangcode = deflang[0]
     if deflangcode not in langs:
         # create language from default.py:
-        langs[deflangcode] = deflang[:2]+(0,)+deflang[3:]
-                            
+        langs[deflangcode] = deflang[:2] + (0,) + deflang[3:]
+
     return langs
 
-def read_possible_languages(appdir):
-    langdir = pjoin(appdir,'languages')
-    return getcfs('langs:'+langdir, langdir,
-                   lambda: read_possible_languages_aux(langdir))
+
+def read_possible_languages(langpath):
+    return getcfs('langs:' + langpath, langpath,
+                  lambda: read_possible_languages_aux(langpath))
+
 
 def read_plural_dict_aux(filename):
-    lang_text = portalocker.read_locked(filename).replace('\r\n', '\n')
+    lang_text = read_locked(filename).replace('\r\n', '\n')
     try:
         return eval(lang_text) or {}
-    except Exception, e:
-        status='Syntax error in %s (%s)' % (filename, e)
+    except Exception:
+        e = sys.exc_info()[1]
+        status = 'Syntax error in %s (%s)' % (filename, e)
         logging.error(status)
-        return {'__corrupted__':status}
+        return {'__corrupted__': status}
+
 
 def read_plural_dict(filename):
-    return getcfs('plurals:'+filename, filename,
-                      lambda: read_plural_dict_aux(filename))
+    return getcfs('plurals:' + filename, filename,
+                  lambda: read_plural_dict_aux(filename))
+
 
 def write_plural_dict(filename, contents):
     if '__corrupted__' in contents:
         return
     try:
-        fp = portalocker.LockedFile(filename, 'w')
+        fp = LockedFile(filename, 'w')
         fp.write('#!/usr/bin/env python\n{\n# "singular form (0)": ["first plural form (1)", "second plural form (2)", ...],\n')
         # coding: utf8\n{\n')
-        for key in sorted(contents,lambda x,y: cmp(unicode(x,'utf-8').lower(), unicode(y,'utf-8').lower())):
-            forms = '['+','.join([repr(Utf8(form)) for form in contents[key]])+']'
+        for key in sorted(contents, lambda x, y: cmp(unicode(x, 'utf-8').lower(), unicode(y, 'utf-8').lower())):
+            forms = '[' + ','.join([repr(Utf8(form))
+                                   for form in contents[key]]) + ']'
             fp.write('%s: %s,\n' % (repr(Utf8(key)), forms))
         fp.write('}\n')
     except (IOError, OSError):
@@ -285,17 +315,16 @@ def write_dict(filename, contents):
     if '__corrupted__' in contents:
         return
     try:
-        fp = portalocker.LockedFile(filename, 'w')
+        fp = LockedFile(filename, 'w')
     except (IOError, OSError):
         if not settings.global_settings.web2py_runtime_gae:
             logging.warning('Unable to write to file %s' % filename)
         return
     fp.write('# coding: utf8\n{\n')
-    for key in sorted(contents,lambda x,y: cmp(unicode(x,'utf-8').lower(), unicode(y,'utf-8').lower())):
+    for key in sorted(contents, lambda x, y: cmp(unicode(x, 'utf-8').lower(), unicode(y, 'utf-8').lower())):
         fp.write('%s: %s,\n' % (repr(Utf8(key)), repr(Utf8(contents[key]))))
     fp.write('}\n')
     fp.close()
-
 
 
 class lazyT(object):
@@ -309,12 +338,12 @@ class lazyT(object):
     def __init__(
         self,
         message,
-        symbols = {},
-        T = None,
-        filter = None,
-        ftag = None,
-        M = False
-        ):
+        symbols={},
+        T=None,
+        filter=None,
+        ftag=None,
+        M=False
+    ):
         if isinstance(message, lazyT):
             self.m = message.m
             self.s = message.s
@@ -354,7 +383,7 @@ class lazyT(object):
     def __mul__(self, other):
         return str(self) * other
 
-    def __cmp__(self,other):
+    def __cmp__(self, other):
         return cmp(str(self), str(other))
 
     def __hash__(self):
@@ -370,7 +399,8 @@ class lazyT(object):
         return str(self)[i:j]
 
     def __iter__(self):
-        for c in str(self): yield c
+        for c in str(self):
+            yield c
 
     def __len__(self):
         return len(str(self))
@@ -388,8 +418,10 @@ class lazyT(object):
         return str(self)
 
     def __mod__(self, symbols):
-        if self.is_copy: return lazyT(self)
+        if self.is_copy:
+            return lazyT(self)
         return lazyT(self.m, symbols, self.T, self.f, self.t, self.M)
+
 
 class translator(object):
     """
@@ -403,19 +435,18 @@ class translator(object):
 
     notice 1: there is no need to force since, by default, T uses
        http_accept_language to determine a translation file.
-    notice 2: 
+    notice 2:
        en and en-en are considered different languages!
-    notice 3: 
+    notice 3:
        if language xx-yy is not found force() probes other similar
-       languages using such algorithm: 
+       languages using such algorithm:
         xx-yy.py -> xx.py -> xx-yy*.py -> xx*.py
     """
 
-    def __init__(self, request):
-        self.request = request
-        self.folder = request.folder
-        self.langpath = pjoin(self.folder, 'languages')
-        self.http_accept_language = request.env.http_accept_language
+    def __init__(self, langpath, http_accept_language):
+        self.langpath = langpath
+        self.http_accept_language = http_accept_language
+        self.is_writable = not is_gae
         # filled in self.force():
         #------------------------
         # self.cache
@@ -458,7 +489,8 @@ class translator(object):
                returns dictionary with all possible languages:
             { langcode(from filename):
                 ( langcode,        # language code from !langcode!
-                  langname,        # language name in national spelling from !langname!
+                  langname,
+                      # language name in national spelling from !langname!
                   langfile_mtime,  # m_time of language file
                   pluraldict_fname,# name of plural dictionary file or None (when default.py is not exist)
                   pluraldict_mtime,# m_time of plural dictionary file or 0 if file is not exist
@@ -468,15 +500,16 @@ class translator(object):
                   construct_plural_form) # construct_plural_form() for current language
             }
         """
-        info = read_possible_languages(self.folder)
-        if lang: info = info.get(lang)
+        info = read_possible_languages(self.langpath)
+        if lang:
+            info = info.get(lang)
         return info
 
     def get_possible_languages(self):
         """ get list of all possible languages for current applications """
         return list(set(self.current_languages +
-            [lang for lang in read_possible_languages(self.folder).iterkeys()
-                 if lang != 'default']))
+                        [lang for lang in read_possible_languages(self.langpath).iterkeys()
+                         if lang != 'default']))
 
     def set_current_languages(self, *languages):
         """
@@ -485,12 +518,12 @@ class translator(object):
         turn translation off to use default language
         """
         if len(languages) == 1 and isinstance(
-            languages[0], (tuple, list)):
+                languages[0], (tuple, list)):
             languages = languages[0]
         if not languages or languages[0] is None:
-            # set default language from default.py/DEFAULT_LANGUAGE 
+            # set default language from default.py/DEFAULT_LANGUAGE
             pl_info = self.get_possible_languages_info('default')
-            if pl_info[2]==0: # langfile_mtime
+            if pl_info[2] == 0:  # langfile_mtime
                 # if languages/default.py is not found
                 self.default_language_file = self.langpath
                 self.default_t = {}
@@ -499,12 +532,11 @@ class translator(object):
                 self.default_language_file = pjoin(self.langpath,
                                                    'default.py')
                 self.default_t = read_dict(self.default_language_file)
-                self.current_languages = [pl_info[0]] # !langcode!
+                self.current_languages = [pl_info[0]]  # !langcode!
         else:
             self.current_languages = list(languages)
         self.force(self.http_accept_language)
 
-       
     def plural(self, word, n):
         """ get plural form of word for number *n*
             NOTE: *word" MUST be defined in current language
@@ -528,16 +560,16 @@ class translator(object):
             # etc.
             if id != 0:
                 forms = self.plural_dict.get(word, [])
-                if len(forms)>=id:
+                if len(forms) >= id:
                     # have this plural form:
-                    return forms[id-1]
+                    return forms[id - 1]
                 else:
                     # guessing this plural form
-                    forms += ['']*(self.nplurals-len(forms)-1)
+                    forms += [''] * (self.nplurals - len(forms) - 1)
                     form = self.construct_plural_form(word, id)
-                    forms[id-1] = form
+                    forms[id - 1] = form
                     self.plural_dict[word] = forms
-                    if self.plural_file and not is_gae:
+                    if self.is_writable and self.plural_file:
                         write_plural_dict(self.plural_file,
                                           self.plural_dict)
                     return form
@@ -556,7 +588,8 @@ class translator(object):
         default language will be selected if none
         of them matches possible_languages.
         """
-        pl_info = read_possible_languages(self.folder)
+        pl_info = read_possible_languages(self.langpath)
+
         def set_plural(language):
             """
             initialize plural forms subsystem
@@ -569,7 +602,7 @@ class translator(object):
                  self.nplurals,
                  self.get_plural_id,
                  self.construct_plural_form
-                ) = lang_info[3:]
+                 ) = lang_info[3:]
                 pdict = {}
                 if pname:
                     pname = pjoin(self.langpath, pname)
@@ -585,7 +618,7 @@ class translator(object):
                 self.plural_file = None
                 self.plural_dict = {}
         language = ''
-        if len(languages)==1 and isinstance(languages[0],str):
+        if len(languages) == 1 and isinstance(languages[0], str):
             languages = regex_language.findall(languages[0].lower())
         elif not languages or languages[0] is None:
             languages = []
@@ -593,7 +626,7 @@ class translator(object):
         if languages:
             all_languages = set(lang for lang in pl_info.iterkeys()
                                 if lang != 'default') \
-                                | set(self.current_languages)
+                | set(self.current_languages)
             for lang in languages:
                 # compare "aa-bb" | "aa" from *language* parameter
                 # with strings from langlist using such alghorythm:
@@ -603,27 +636,27 @@ class translator(object):
                     language = lang5
                 else:
                     lang2 = lang[:2]
-                    if len(lang5)>2 and lang2 in all_languages:
+                    if len(lang5) > 2 and lang2 in all_languages:
                         language = lang2
                     else:
                         for l in all_languages:
-                            if l[:2]==lang2:
+                            if l[:2] == lang2:
                                 language = l
                 if language:
                     if language in self.current_languages:
                         break
-                    self.language_file = pjoin(self.langpath, language+'.py')
+                    self.language_file = pjoin(self.langpath, language + '.py')
                     self.t = read_dict(self.language_file)
                     self.cache = global_language_cache.setdefault(
-                                         self.language_file,
-                                         ({},allocate_lock()))
+                        self.language_file,
+                        ({}, RLock()))
                     set_plural(language)
-                    self.accepted_language = language 
+                    self.accepted_language = language
                     return languages
         self.accepted_language = language or self.current_languages[0]
         self.language_file = self.default_language_file
         self.cache = global_language_cache.setdefault(self.language_file,
-                                                      ({}, allocate_lock()))
+                                                      ({}, RLock()))
         self.t = self.default_t
         set_plural(self.accepted_language)
         return languages
@@ -636,7 +669,7 @@ class translator(object):
         if lazy is None:
             lazy = self.lazy
         if not language:
-            if lazy :
+            if lazy:
                 return lazyT(message, symbols, self)
             else:
                 return self.translate(message, symbols)
@@ -644,7 +677,8 @@ class translator(object):
             try:
                 otherT = self.otherTs[language]
             except KeyError:
-                otherT = self.otherTs[language] = translator(self.request)
+                otherT = self.otherTs[language] = translator(
+                    self.langpath, self.http_accept_language)
                 otherT.force(language)
             return otherT(message, symbols, lazy=lazy)
 
@@ -653,18 +687,18 @@ class translator(object):
             s = self.get_t(message, prefix)
             return filter(s) if filter else self.filter(s)
         if filter:
-            prefix = '@'+(ftag or 'userdef')+'\x01'
+            prefix = '@' + (ftag or 'userdef') + '\x01'
         else:
-            prefix = '@'+self.ftag+'\x01'
+            prefix = '@' + self.ftag + '\x01'
         message = get_from_cache(
-            self.cache, prefix+message,
+            self.cache, prefix + message,
             lambda: get_tr(message, prefix, filter))
         if symbols or symbols == 0 or symbols == "":
             if isinstance(symbols, dict):
                 symbols.update(
                     (key, xmlescape(value).translate(ttab_in))
                     for key, value in symbols.iteritems()
-                    if not isinstance(value, NUMBERS) )
+                    if not isinstance(value, NUMBERS))
             else:
                 if not isinstance(symbols, tuple):
                     symbols = (symbols,)
@@ -675,7 +709,7 @@ class translator(object):
             message = self.params_substitution(message, symbols)
         return XML(message.translate(ttab_out))
 
-    def M(self, message, symbols={}, language=None, 
+    def M(self, message, symbols={}, language=None,
           lazy=None, filter=None, ftag=None):
         """
         get cached translated markmin-message with inserted parametes
@@ -685,7 +719,7 @@ class translator(object):
             lazy = self.lazy
         if not language:
             if lazy:
-                return lazyT(message, symbols, self, filter, ftag,  True)
+                return lazyT(message, symbols, self, filter, ftag, True)
             else:
                 return self.apply_filter(message, symbols, filter, ftag)
         else:
@@ -709,21 +743,22 @@ class translator(object):
         the ## notation is ignored in multiline strings and strings that
         start with ##. this is to allow markmin syntax to be translated
         """
-        if isinstance(message, unicode): 
-            message = message.encode('utf8') 
-        if isinstance(prefix, unicode): 
-            prefix = prefix.encode('utf8') 
-        key = prefix+message
+        if isinstance(message, unicode):
+            message = message.encode('utf8')
+        if isinstance(prefix, unicode):
+            prefix = prefix.encode('utf8')
+        key = prefix + message
         mt = self.t.get(key, None)
-        if mt is not None: return mt
+        if mt is not None:
+            return mt
         # we did not find a translation
-        if message.find('##')>0 and not '\n' in message:
+        if message.find('##') > 0 and not '\n' in message:
             # remove comments
             message = message.rsplit('##', 1)[0]
         # guess translation same as original
         self.t[key] = mt = self.default_t.get(key, message)
         # update language file for latter translation
-        if self.language_file != self.default_language_file and not is_gae:
+        if self.is_writable and self.language_file != self.default_language_file:
             write_dict(self.language_file, self.t)
         return regex_backslash.sub(
             lambda m: m.group(1).translate(ttab_in), mt)
@@ -755,7 +790,7 @@ class translator(object):
                     word, !word, !!word, !!!word, ?word?number, ??number, ?number
                     ?word?word[number], ?word?[number], ??word[number]
                 """
-                w,i = m.group('w','i')
+                w, i = m.group('w', 'i')
                 c = w[0]
                 if c not in '!?':
                     return self.plural(w, symbols[int(i or 0)])
@@ -763,15 +798,17 @@ class translator(object):
                     (p1, sep, p2) = w[1:].partition("?")
                     part1 = p1 if sep else ""
                     (part2, sep, part3) = (p2 if sep else p1).partition("?")
-                    if not sep: part3 = part2
+                    if not sep:
+                        part3 = part2
                     if i is None:
-                       # ?[word]?number[?number] or ?number
-                       if not part2: return m.group(0)
-                       num = int(part2)
+                        # ?[word]?number[?number] or ?number
+                        if not part2:
+                            return m.group(0)
+                        num = int(part2)
                     else:
-                       # ?[word]?word2[?word3][number]
-                       num = int(symbols[int(i or 0)])
-                    return part1 if num==1 else part3 if num==0 else part2
+                        # ?[word]?word2[?word3][number]
+                        num = int(symbols[int(i or 0)])
+                    return part1 if num == 1 else part3 if num == 0 else part2
                 elif w.startswith('!!!'):
                     word = w[3:]
                     fun = upper_fun
@@ -782,7 +819,7 @@ class translator(object):
                     word = w[1:]
                     fun = cap_fun
                 if i is not None:
-                   return fun(self.plural(word, symbols[int(i)]))
+                    return fun(self.plural(word, symbols[int(i)]))
                 return fun(word)
 
             def sub_dict(m):
@@ -791,7 +828,7 @@ class translator(object):
                     ?word2(var), ?word1?word2(var), ?word1?word2?word0(var)
                     ?word2(num), ?word1?word2(num), ?word1?word2?word0(num)
                 """
-                w,n = m.group('w','n')
+                w, n = m.group('w', 'n')
                 c = w[0]
                 n = int(n) if n.isdigit() else symbols[n]
                 if c not in '!?':
@@ -801,9 +838,10 @@ class translator(object):
                     (p1, sep, p2) = w[1:].partition("?")
                     part1 = p1 if sep else ""
                     (part2, sep, part3) = (p2 if sep else p1).partition("?")
-                    if not sep: part3 = part2
+                    if not sep:
+                        part3 = part2
                     num = int(n)
-                    return part1 if num==1 else part3 if num==0 else part2
+                    return part1 if num == 1 else part3 if num == 0 else part2
                 elif w.startswith('!!!'):
                     word = w[3:]
                     fun = upper_fun
@@ -823,21 +861,21 @@ class translator(object):
                     return m.group(0)
             return part
         message = message % symbols
-        message = regex_plural.sub(sub_plural, message )
+        message = regex_plural.sub(sub_plural, message)
         return message
 
     def translate(self, message, symbols):
         """
         get cached translated message with inserted parameters(symbols)
         """
-        message = get_from_cache(self.cache, message, 
+        message = get_from_cache(self.cache, message,
                                  lambda: self.get_t(message))
         if symbols or symbols == 0 or symbols == "":
             if isinstance(symbols, dict):
                 symbols.update(
                     (key, str(value).translate(ttab_in))
                     for key, value in symbols.iteritems()
-                    if not isinstance(value, NUMBERS) )
+                    if not isinstance(value, NUMBERS))
             else:
                 if not isinstance(symbols, tuple):
                     symbols = (symbols,)
@@ -847,6 +885,7 @@ class translator(object):
                     for value in symbols)
             message = self.params_substitution(message, symbols)
         return message.translate(ttab_out)
+
 
 def findT(path, language=DEFAULT_LANGUAGE):
     """
@@ -859,22 +898,22 @@ def findT(path, language=DEFAULT_LANGUAGE):
     vp = pjoin(path, 'views')
     mop = pjoin(path, 'modules')
     for filename in \
-            listdir(mp, '^.+\.py$', 0)+listdir(cp, '^.+\.py$', 0)\
-            +listdir(vp, '^.+\.html$', 0)+listdir(mop, '^.+\.py$', 0):
-        data = portalocker.read_locked(filename)
+            listdir(mp, '^.+\.py$', 0) + listdir(cp, '^.+\.py$', 0)\
+            + listdir(vp, '^.+\.html$', 0) + listdir(mop, '^.+\.py$', 0):
+        data = read_locked(filename)
         items = regex_translate.findall(data)
         for item in items:
             try:
                 message = safe_eval(item)
             except:
-                continue # silently ignore inproperly formatted strings
+                continue  # silently ignore inproperly formatted strings
             if not message.startswith('#') and not '\n' in message:
                 tokens = message.rsplit('##', 1)
             else:
                 # this allows markmin syntax in translations
                 tokens = [message]
             if len(tokens) == 2:
-                message = tokens[0].strip()+'##'+tokens[1].strip()
+                message = tokens[0].strip() + '##' + tokens[1].strip()
             if message and not message in sentences:
                 sentences[message] = message
     if not '!langcode!' in sentences:
@@ -887,8 +926,12 @@ def findT(path, language=DEFAULT_LANGUAGE):
     write_dict(lang_file, sentences)
 
 ### important to allow safe session.flash=T(....)
+
+
 def lazyT_unpickle(data):
     return marshal.loads(data)
+
+
 def lazyT_pickle(data):
     return lazyT_unpickle, (marshal.dumps(str(data)),)
 copy_reg.pickle(lazyT, lazyT_pickle, lazyT_unpickle)
