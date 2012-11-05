@@ -81,7 +81,6 @@ def set_download_info():
 def activate_scheduled_sounds():
     for_activation = db((Sounds.is_active == False) & \
         (Sounds.release_date<=request.now) & \
-        (Sounds.download_server!="") & \
         (Sounds.download_key!="")).select(orderby=Sounds.release_date)
     activated_sounds = 0
     for sound in for_activation:
@@ -105,9 +104,8 @@ def update_sound():
                            'keywords',
                            'category',
                            'language',
-                           'price',
                            'release_date',
-                           'email' ,
+                           'email',
                            'is_active'],
                    showid=False)
     if form.process().accepted:
