@@ -8,12 +8,10 @@
         <tr><td>{{=T('Title')}}</td><td>{{=form.custom.widget.title}}</td></tr>
         <tr><td>{{=T('Description')}}</td><td>{{=form.custom.widget.description}}</td></tr>
         <tr><td>{{=T('Keywords')}}</td><td>{{=form.custom.widget.keywords}}</td></tr>
-        <tr><td>{{=T('Category')}}</td><td>{{=form.custom.widget.category}}</td><td><img src="{{=URL('static','/images/help.png')}}" alt="help" rel="popover" data-trigger="hover" title="Keywords" data-content="Representative words for the recording."/></td></tr>
+        <tr><td>{{=T('Category')}}</td><td>{{=form.custom.widget.category}}</td><td><img src="{{=URL('static','/images/help.png')}}" alt="help" rel="popover" data-trigger="hover" title="{{=T('Keywords')}}" data-content="{{=T('Representative words for the recording.')}}"/></td></tr>
         <tr id="sounds_uuid__row"><td></td><td>{{=form.custom.widget.uuid}}</td></tr>
         <tr><td>{{=T('Language')}}</td><td>{{=form.custom.widget.language}}</td></tr>
-        <tr>
-          <td><span class="form_split">Time capsule</span><img src="{{=URL('static','/images/help.png')}}" alt="help" rel="popover" data-trigger="hover" title="Time capsule" data-content="Use when you want the sound to be released to a later date. An email will be send to the specified address."/></td>
-        </tr>
+        <tr><td><span class="form_split">Time capsule</span><img src="{{=URL('static','/images/help.png')}}" alt="help" rel="popover" data-trigger="hover" title="{{=T('Time capsule')}})" data-content="{{=T('Use when you want the sound to be released to a later date. An email will be send to the specified address.')}}"/></td></tr>
         <tr><td>{{=T('Release date')}}</td><td>{{=form.custom.widget.release_date}}</td></tr>
         <tr><td>{{=T('Email')}}</td><td>{{=form.custom.widget.email}}</td></tr>
         <tr>
