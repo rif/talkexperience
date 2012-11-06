@@ -3,8 +3,8 @@
 #  See http://code.google.com/appengine/docs/python/config/appconfig.html
 #  and http://web2py.com/book/default/chapter/11?search=app.yaml
 
-application: sonicalabs
-version: 5
+application: talk-experience
+version: 1
 api_version: 1
 
 # use this line for Python 2.5

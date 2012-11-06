@@ -19,13 +19,13 @@ import (
 )
 
 var (
-	ACCEPTED_ORIGINS = []string{"http://sonicalabs.appspot.com", "http://www.talkexperience.com", "http://localhost:8080", "::1"}
+	ACCEPTED_ORIGINS = []string{"http://talk-experience.appspot.com", "http://www.talkexperience.com", "http://localhost:8080", "::1"}
 )
 
 const (
 	MAIN_APPLICATION = "http://www.talkexperience.com"
 	//MAIN_APPLICATION = "http://localhost:8080"
-	BLOBS_APPLICATION = "http://sonicablobs.appspot.com"
+	BLOBS_APPLICATION = "http://talkexperienceblobs.appspot.com"
 	//BLOBS_APPLICATION    = "http://localhost:8081"	
 	TRANSFORMER          = "avconv"
 	BITRATE              = "96k"
