@@ -72,9 +72,10 @@ def set_download_info():
                            download_server=request.vars.host,
                            download_key=request.vars.key)
         sound = Sounds(id)
-        from os.path import splitext
-        title = splitext(request.vars.filename)[0]
-        sound.title = title
+        if request.vars.filename:
+            from os.path import splitext
+            title = splitext(request.vars.filename)[0]
+            sound.title = title
     sound.update_record()
     return "done!"
 
