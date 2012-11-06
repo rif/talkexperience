@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	MAIN_APPLICATION = "http://talkexperience.com"
+	MAIN_APPLICATION = "http://www.talkexperience.com"
 	//MAIN_APPLICATION = "http://localhost:8080"
 )
 
