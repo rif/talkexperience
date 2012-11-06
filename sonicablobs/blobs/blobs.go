@@ -66,6 +66,9 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 	// setting download info
 	_, err = client.PostForm(MAIN_APPLICATION+"/set_download_info",
 		url.Values{"uuid": {uuid}, "host": {r.Host}, "key": {string(file[0].BlobKey)}, "filename": {file[0].Filename}})
+	if err != nil {
+	     c.Errorf("Error uploading blob information: %v", err)
+	}
 }
 
 func init() {

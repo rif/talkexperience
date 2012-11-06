@@ -134,7 +134,8 @@ Sounds = db.define_table("sounds",
           comment=T('Select a date to release this recording in the future. UTC(GMT) timezone.')),
     Field('email',
           requires = IS_EMPTY_OR(IS_EMAIL(error_message=T('Invalid email!'))),
-          comment=T('Email to be sent to (the release notification)')),
+          comment=T('Email to be sent to (the release notification)')),\
+    Field('comments', 'text'),
     auth.signature,
     format='%(title)s'
 )

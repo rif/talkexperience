@@ -90,7 +90,7 @@ def activate_scheduled_sounds():
         sound.update_record()
         mail.send(to=sound.email,
                   subject='%s released a recording' % (sound.username),
-                  message = T('You can check the recording here: ') + \
+                  message = sound.comments + T('\n\nYou can hear the recording here: ') + \
                   URL('details', args=sound.id, scheme=True, host=True))
         activated_sounds += 1
     return 'Activated %d sounds. (%s)' % (activated_sounds, request.now )
