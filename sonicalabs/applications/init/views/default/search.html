@@ -6,15 +6,42 @@
 
 {{=paginate_selector}}{{=paginate_info}}
 {{ for i,sound in enumerate(sounds):}}
-<div class="sound">
-  <div class="title">
-    <div><img src="{{=Gravatar(sound.owner_email, size=350).thumb}}" alt="" style="display:none" /></div>
-    <a href="{{=URL('details', args=sound.id)}}">{{=sound.title}}</a>
-  </div>
-  <div id="audioplayer_{{=i}}">{{=T('Please enable javascript and flash to use the player')}}</div>
-  <script type="text/javascript">AudioPlayer.embed("audioplayer_{{=i}}", {soundFile: "{{=sound.download_url}}"});</script> 
-  <div class="info">{{=T('Added')}} {{=prettydate(sound.created_on)}} {{=T('by')}} {{=sound.username}} {{=sound.play_count}} {{=T('views')}}</div>
-  <div class="description">{{if sound.description:}}{{=sound.description[:100]}}...{{else:}}{{pass}}</div>  
+  
+  
+  
+</div>
+
+
+<div class="sound {{=row}}">
+    <div class="sound-container">
+        <div class="sound-left">            
+            <div class="row">
+                <div class="span1">
+                    <img src="{{=Gravatar(sound.owner_email, size=60).thumb}}" alt="" style="float:right"/>
+                </div>
+                <div class="span3 title">
+                    {{=sound.username}}<br/>
+                    {{=sound.category}}: <a href="{{=URL('details', args=sound.id)}}">{{=sound.title}}</a>
+                </div>                
+            </div>
+            <div class="row">
+                <div class="span1">
+                    <img src="{{=Gravatar(sound.owner_email, size=60).thumb}}" alt="" style="float:right"/>
+                </div>                
+                <div class="span3 description">{{if sound.description:}}<b>{{=T('Description:')}}</b>{{=sound.description[:100]}}...{{else:}}{{pass}}</div>  
+            </div>
+            
+        </div>
+        <div class="sound-divider">
+            <img src="{{=URL('static', 'images/sound-divider-'+row+'.png')}}" alt="sound-divider"/>
+        </div>   
+       <div class="sound-right">
+        <div id="audioplayer_{{=i}}">{{=T('Please enable javascript and flash to use the player')}}</div>
+        <script type="text/javascript">AudioPlayer.embed("audioplayer_{{=i}}", {soundFile: "{{=sound.download_url}}"});</script> 
+         <div class="info">{{=T('Added')}} {{=prettydate(sound.created_on)}} {{=T('by')}} {{=sound.username}} {{=sound.play_count}} {{=T('views')}}</div>          
+       </div>   
+   </div>
+  <div class="social"></div>   
 </div>
 {{pass}}
 
@@ -29,6 +56,7 @@
         transparentpagebg: "yes",
         rightbg: "8dc63f",
         remaining: "yes",        
-    });  
+    });
+    $(".description").jTruncate({length: 100}); 
 </script>
 {{end}}
