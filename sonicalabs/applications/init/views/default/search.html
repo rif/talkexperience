@@ -5,13 +5,10 @@
 {{pass}}
 
 {{=paginate_selector}}{{=paginate_info}}
-{{ for i,sound in enumerate(sounds):}}
-  
-  
-  
-</div>
-
-
+{{ for i,sound in enumerate(sounds):
+row='odd'
+if i % 2 == 0: row='even'
+}}
 <div class="sound {{=row}}">
     <div class="sound-container">
         <div class="sound-left">            
