@@ -4,17 +4,49 @@
 
 {{=paginate_info}}
 <br/>
-{{ for sound in sounds:}}
-<div class="sound">
-   <div class="actions">
-  	<a href="{{=URL('delete_sound', args=sound.id, user_signature=True)}}" class="negative button">{{=T('Delete')}}</a>
-  	<a href="{{=URL('update_sound', args=sound.id, user_signature=True)}}" class="button">{{=T('Edit')}}</a>
-  </div> 
-  <div class="title"><a href="{{=sound.download_url}}" type="{{=sound.mime_type}}"><img src="{{=Gravatar(auth.user.email, size=350).thumb}}" alt="" style="display:none" /></a><a href="{{=URL('details', args=sound.id)}}">{{=sound.title}}</a></div>
-  <div class="status">{{=T('Status')}}: {{=sound.status}}</div>
-  <div class="info">{{=T('Added')}} {{=prettydate(sound.created_on)}} {{=sound.play_count}} {{=T('views')}}</div>
-  <div class="description">{{=sound.description}}</div>   
+{{ for i,sound in enumerate(sounds):
+row='odd'
+if i % 2 == 0: row='even'
+}}
+<div class="sound {{=row}}">
+    <div class="sound-container">
+        <div class="sound-left">            
+            <div class="row">
+                <div class="span1">
+                    <img src="{{=Gravatar(sound.owner_email, size=60).thumb}}" alt="" style="float:right"/>
+                </div>
+                <div class="span3 title">
+                    {{=sound.username}}<br/>
+                    {{=sound.category}}: <a href="{{=URL('details', args=sound.id)}}">{{=sound.title}}</a>
+                </div>                
+            </div>
+            <div class="row">
+                <div class="span1">
+                    <img src="{{=Gravatar(sound.owner_email, size=60).thumb}}" alt="" style="float:right"/>
+                </div>
+                <div class="span3 description"><b>{{=T('Description:')}}</b> {{=sound.description}}</div>
+            </div>
+            
+        </div>
+        <div class="sound-divider">
+            <img src="{{=URL('static', 'images/sound-divider-'+row+'.png')}}" alt="sound-divider"/>
+        </div>   
+       <div class="sound-right">
+        <div class="actions">
+                <a href="{{=URL('delete_sound', args=sound.id, user_signature=True)}}" class="negative button">{{=T('Delete')}}</a>
+                <a href="{{=URL('update_sound', args=sound.id, user_signature=True)}}" class="button">{{=T('Edit')}}</a>
+            </div>
+            <div class="status">{{=T('Status')}}: {{=sound.status}}</div>
+            <div class="info">{{=T('Added')}} {{=prettydate(sound.created_on)}} {{=sound.play_count}} {{=T('views')}}</div>
+       </div>   
+   </div>
+  <div class="social"></div>   
 </div>
 {{pass}}
-
 {{=paginator}}
+
+<script>
+    $(function(){
+       $(".description").jTruncate({length: 100});  
+    });
+</script>
