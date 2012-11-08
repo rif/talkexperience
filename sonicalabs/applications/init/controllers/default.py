@@ -222,3 +222,6 @@ def contact():
         else:
             form.errors.your_email = "Unable to send the email"
     return dict(form=form)
+
+def comments():
+    return dict(sound_id=a0)

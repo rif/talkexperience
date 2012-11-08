@@ -1,5 +1,7 @@
 {{extend 'layout.html'}}
 
+{{from html import truncate_string}}
+
 <h3>{{=T('My Experiences')}}</h3>
 
 {{=paginate_info}}
@@ -17,7 +19,7 @@ if i % 2 == 0: row='even'
                 </div>
                 <div class="span3 title">
                     {{=sound.username}}<br/>
-                    {{=sound.category}}: <a href="{{=URL('details', args=sound.id)}}">{{=sound.title}}</a>
+                    {{=sound.category}}: <a href="{{=URL('details', args=sound.id)}}">{{=truncate_string(sound.title,32)}}</a>
                 </div>                
             </div>
             <div class="row">
@@ -32,12 +34,21 @@ if i % 2 == 0: row='even'
             <img src="{{=URL('static', 'images/sound-divider-'+row+'.png')}}" alt="sound-divider"/>
         </div>   
        <div class="sound-right">
-        <div class="actions">
-                <a href="{{=URL('delete_sound', args=sound.id, user_signature=True)}}" class="negative button">{{=T('Delete')}}</a>
-                <a href="{{=URL('update_sound', args=sound.id, user_signature=True)}}" class="button">{{=T('Edit')}}</a>
-            </div>
             <div class="status">{{=T('Status')}}: {{=sound.status}}</div>
-            <div class="info">{{=T('Added')}} {{=prettydate(sound.created_on)}} {{=sound.play_count}} {{=T('views')}}</div>
+            <div class="row sound-player">
+                <div id="audioplayer_{{=i}}">{{=T('Please enable javascript and flash to use the player')}}</div>        
+                <script type="text/javascript">AudioPlayer.embed("audioplayer_{{=i}}", {soundFile: "{{=sound.download_url}}"});</script>
+            </div>
+            <div class="row">
+                <div class="span3 sound-buttons">
+                    <a href="{{=URL('delete_sound', args=sound.id, user_signature=True)}}" class="sound-button">{{=T('Delete')}}</a>
+                    <a href="{{=URL('update_sound', args=sound.id, user_signature=True)}}" class="sound-button">{{=T('Edit')}}</a>
+                </div>
+                <div class="span1 sound-added">
+                    <b>{{=T('Plays')}}</b>: {{=sound.play_count}}<br/>
+                    <b>{{=T('Added')}}</b>: <br/>{{=prettydate(sound.created_on)}}
+                </div>  
+            </div>            
        </div>   
    </div>
   <div class="social"></div>   
@@ -45,8 +56,19 @@ if i % 2 == 0: row='even'
 {{pass}}
 {{=paginator}}
 
-<script>
+{{block head}}
+<script type="text/javascript" src="{{=URL('static', 'js/audio-player.js')}}"></script>  
+<script type="text/javascript">    
+        AudioPlayer.setup("{{=URL('static', 'js/player.swf')}}", {  
+            width: 290,
+            transparentpagebg: "yes",            
+            //rightbg: "#000",
+            righticon: "#98FF00",
+            righticonhover: "#8dc63f",
+            remaining: "yes",        
+        });
     $(function(){
        $(".description").jTruncate({length: 100});  
     });
 </script>
+{{end}}

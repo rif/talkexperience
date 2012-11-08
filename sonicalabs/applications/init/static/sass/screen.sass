@@ -2,6 +2,7 @@ $green: #8dc63f
 $fgcolor: white
 $bgcolor: #292424
 $hvcolor: #005580
+$gray: #a5a3a3
 
 #te-head
   background-image: url("../images/header.png")
@@ -116,6 +117,7 @@ div.sound
       margin-left: 5px
       margin-top: 5px
   div.sound-left
+    padding-top: 5px
     float: left
     width: 47%
   div.sound-divider
@@ -124,25 +126,66 @@ div.sound
     float: left
     width: 6%    
   div.sound-right
+    padding-top: 5px
     float: left
     width: 47%  
   div.social    
     height: 50px
 
 div.sound.odd
-  border-top: 10px solid #8DC63F
-  background: #A5A3A3
-  div.social
-    background: #8DC63F
+  border-top: 10px solid $green
+  background: $gray
+  div.social    
+    background: $green
+    a.sound-button
+      border: 2px dotted $gray
+  a.sound-button
+    border: 2px dotted $green
+
+div.sound-buttons
+  margin-left: 0px
+
+.modal-body, .modal-header, .modal-footer, .close
+  color: $bgcolor  
   
 div.sound.even
-  border-top: 10px solid #A5A3A3
-  background: #8DC63F
-  div.social
-    background: #A5A3A3
+  border-top: 10px solid $gray
+  background: $green
+  div.social    
+    background: $gray
+    a.sound-button
+      border: 2px dotted $green
+  a.sound-button
+    border: 2px dotted $gray
 
-div.sound div.description
+div.sound-added, div.sound div.description
   font-size: 85%
+  max-height: 80px
+  overflow: auto
+
+a.sound-button
+  display: inline-block
+  padding: 3px 7px
+  margin-bottom: 0
+  font-size: 14px
+  font-weight: bold  
+  color: $green
+  text-align: center  
+  vertical-align: middle
+  cursor: pointer
+  background-color: #000
+
+div.sound-share
+  display: inline-block
+  margin-left: -60%
+  margin-top: 10px
+
+div.sound-comments
+  display: inline-block
+  margin-top: 10px
+  float: left
+  a.sound-button
+    color: #fff
 
 #most_popular div.sound
   margin-bottom: 0px
