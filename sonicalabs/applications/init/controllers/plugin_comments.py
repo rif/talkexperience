@@ -61,19 +61,18 @@ def index():
             return LI(
                 DIV(I('"'+comment.body+'"'),BR(),
                     T('posted by %(first_name)s %(last_name)s' % comment.created_by),
-                    ' ',T('on %s',comment.created_on),' [',
-                    A(T('toggle'),_id='toggle'),
-                    '|' if auth.user_id else '',
-                    A(T('reply'),_id='reply') if auth.user_id else '',
-                    '|' if comment.created_by == auth.user_id else '',
-                    A(T('delete'),_id='delete') if comment.created_by == auth.user_id else '',
-                    ']',_id='r%s' % comment.id),
+                    ' ',T('on %s',comment.created_on),
+                    DIV(
+                    A(T('toggle'),_id='toggle', _class="btn btn-mini"),                    
+                    A(T('reply'),_id='reply', _class="btn btn-mini") if auth.user_id else '',                    
+                    A(T('delete'),_id='delete', _class="btn btn-mini"),_class="btn-group") if comment.created_by == auth.user_id else '',
+                    _id='r%s' % comment.id),
                 DIV(_class='reply'),
                 SUL(*[node(comment) for comment in thread.get(comment.id,[])]))
         elif comment.id in thread:
             return LI(
-                DIV(T('DELETED'),' [',
-                    A(T('toggle'),_id='toggle'),']'),
+                DIV(T('DELETED'),
+                    A(T('toggle'),_id='toggle', _class="btn btn-mini")),
                 DIV(_class='reply'),
                 SUL(*[node(comment) for comment in thread.get(comment.id,[])]))
         else: 
@@ -99,12 +98,13 @@ def index():
     for comment in comments:
         thread[comment.parent_node] = thread.get(comment.parent_node,[])+[comment]
     return DIV(script,
-               DIV(A(T('post'),_id='reply'),_id='r0') if auth.user_id \
+               DIV(A(T('post'),_id='reply', _class="btn btn-mini btn-primary"),_id='r0') if auth.user_id \
                    else A(T('login to post'),_href=URL(r=request,c='default',f='user')),
-               DIV(FORM(TEXTAREA(_name='body',_style='width:100%; height: 40px'),
-                        INPUT(_type='submit',_value=T('post'),_style='float:right'), 
+               DIV(FORM(TEXTAREA(_name='body',_style='width:97%; height: 40px'),                        
+                        INPUT(_type='submit',_value=T('post'), _style="float:right;margin-left: 8px", _class="btn btn-mini btn-primary"),
+                        DIV(
+                        A(T('close'),_id='close',_class="btn btn-mini"),
                         A(T('help'),_href='http://daringfireball.net/projects/markdown/',
-                          _target='_blank',_style='float:right; padding-right: 10px'),
-                        A(T('close'),_id='close',_style='float:right; padding-right: 10px'),
-                        _method='post',_action=URL(r=request,args=[tablename,record_id])),_class='reply'),
+                          _target='_blank',_class="btn btn-mini"),                        
+                       _class="btn-group pull-right"),_method='post',_action=URL(r=request,args=[tablename,record_id])),_class='reply'),
                SUL(*[node(comment) for comment in thread[0]]),_class='plugin_comments')

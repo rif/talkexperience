@@ -1,21 +1,67 @@
 {{extend 'layout.html'}}
+{{from html import truncate_string}}
 
-<div class="sound">
-	<div class="title">
-		<div><img src="{{=Gravatar(detail_sound.owner_email, size=350).thumb}}" alt="" style="display:none" /></div>
-		</a> {{=detail_sound.title}}</h3>
-	</div>
-	<div id="audioplayer">{{=T('Please enable javascript and flash to use the player')}}</div>
-  		  <script type="text/javascript">
-  		  	AudioPlayer.embed("audioplayer", {soundFile: "{{=detail_sound.download_url}}", autostart: "yes"});
-  		  </script>
-	<div class="info">{{=T('Added')}} {{=prettydate(detail_sound.created_on)}} {{=T('by')}} {{=detail_sound.username}} {{=detail_sound.play_count}} {{=T('views')}}</div>
-	<div class="description">{{=detail_sound.description}}</div>
+<div class="sound even">
+    <div class="sound-container">
+        <div class="sound-left">            
+            <div class="row">
+                <div class="span1">
+                    <img src="{{=Gravatar(detail_sound.owner_email, size=60).thumb}}" alt="" style="float:right"/>
+                </div>
+                <div class="span3 title">
+                    {{=detail_sound.username}}<br/>
+                    {{=detail_sound.category}}: <a href="{{=URL('details', args=detail_sound.id)}}">{{=truncate_string(detail_sound.title,32)}}</a>
+                </div>                
+            </div>
+            <div class="row">
+                <div class="span1">
+                    <img src="{{=Gravatar(detail_sound.owner_email, size=60).thumb}}" alt="" style="float:right"/>
+                </div>                
+                <div class="span3 description"><b>{{=T('Description:')}}</b>{{=detail_sound.description}}</div>  
+            </div>
+            
+        </div>
+        <div class="sound-divider">
+            <img src="{{=URL('static', 'images/sound-divider-even.png')}}" alt="sound-divider"/>
+        </div>   
+        <div class="sound-right">
+            <div class="row sound-player">
+                <div id="audioplayer">{{=T('Please enable javascript and flash to use the player')}}</div>        
+                <script type="text/javascript">AudioPlayer.embed("audioplayer", {soundFile: "{{=detail_sound.download_url}}"});</script>
+            </div>
+            <div class="row">
+                <div class="span3 sound-buttons">
+                    <a href="{{=detail_sound.download_url}}" class="sound-button">{{=T('Download')}}</a>
+                    <a href="#" class="sound-button">{{=T('Add to')}}<br/>{{=T('favorite')}}</a>
+                    <a href="#" class="sound-button">{{=T('Add to')}}<br/>{{=T('playlist')}}</a>
+                </div>
+                <div class="span1 sound-added">
+                    <b>{{=T('Plays')}}</b>: {{=detail_sound.play_count}}<br/>
+                    <b>{{=T('Added')}}</b>: <br/>{{=prettydate(detail_sound.created_on)}}
+                </div>  
+            </div> 
+       </div>   
+   </div>
+  <div class="social">
+    <div class="sound-share">
+            <a href="http://twitter.com/talkexperience"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
+            <a href="http://www.facebook.com/pages/Talkexperience/136783493132773"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
+        </div>
+        <div class="sound-comments">
+            <a data-target="#commentsModal" role="button" data-toggle="modal" href="{{=URL('default','comments', args=detail_sound.id)}}" class="sound-button">{{=T('Comment')}}</a>
+        </div>
+  </div>   
 </div>
 
-<h5>{{=T('Comments')}}</h5>
-<div id="comments">
-{{=plugin_comments('sounds',detail_sound.id)}}
+<div id="commentsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="commentsModalLabel" aria-hidden="true">
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+  <h3 id="commentsModalLabel">Comments</h3>
+</div>
+<div class="modal-body"></div>
+<div class="modal-footer">
+  <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>  
+</div>
 </div>
 
 {{if len(sounds) > 0:}}	
@@ -23,24 +69,68 @@
 	<h3>{{=T('By the same author')}}</h3>
 	<hr/>
 	{{=paginate_selector}} {{=paginate_info}}
-	{{ for i,sound in enumerate(sounds):}}		
+	{{ for i,sound in enumerate(sounds):
+        row='odd'
+        if i % 2 == 0: row='even'
+        }}		
 		{{if sound.id != detail_sound.id:}}
-		<div class="sound">
-		  <div class="title">
-		  	<div><img src="{{=Gravatar(sound.owner_email, size=350).thumb}}" alt="" style="display:none" /></div>
-		  	<a href="{{=URL('details', args=sound.id)}}">{{=sound.title}}</a>
-		  </div>
-		  <div id="audioplayer_{{=i}}">{{=T('Please enable javascript and flash to use the player')}}</div>
-  		  <script type="text/javascript">
-  		  	AudioPlayer.embed("audioplayer_{{=i}}", {soundFile: "{{=sound.download_url}}"});
-  		  </script> 		  
-		  <div class="info">{{=T('Added')}} {{=prettydate(sound.created_on)}} {{=sound.play_count}} {{=T('views')}}</div>
-		  <div class="description">{{=sound.description}}</div> 	  
-		</div>
+		<div class="sound {{=row}}">
+                    <div class="sound-container">
+                        <div class="sound-left">            
+                            <div class="row">
+                                <div class="span1">
+                                    <img src="{{=Gravatar(sound.owner_email, size=60).thumb}}" alt="" style="float:right"/>
+                                </div>
+                                <div class="span3 title">
+                                    {{=sound.username}}<br/>
+                                    {{=sound.category}}: <a href="{{=URL('details', args=sound.id)}}">{{=truncate_string(sound.title,32)}}</a>
+                                </div>                
+                            </div>
+                            <div class="row">
+                                <div class="span1">
+                                    <img src="{{=Gravatar(sound.owner_email, size=60).thumb}}" alt="" style="float:right"/>
+                                </div>                
+                                <div class="span3 description"><b>{{=T('Description:')}}</b>{{=sound.description}}</div>  
+                            </div>
+                            
+                        </div>
+                        <div class="sound-divider">
+                            <img src="{{=URL('static', 'images/sound-divider-'+row+'.png')}}" alt="sound-divider"/>
+                        </div>   
+                        <div class="sound-right">
+                            <div class="row sound-player">
+                                <div id="audioplayer_{{=i}}">{{=T('Please enable javascript and flash to use the player')}}</div>        
+                                <script type="text/javascript">AudioPlayer.embed("audioplayer_{{=i}}", {soundFile: "{{=sound.download_url}}"});</script>
+                            </div>
+                            <div class="row">
+                                <div class="span3 sound-buttons">
+                                    <a href="{{=sound.download_url}}" class="sound-button">{{=T('Download')}}</a>
+                                    <a href="#" class="sound-button">{{=T('Add to')}}<br/>{{=T('favorite')}}</a>
+                                    <a href="#" class="sound-button">{{=T('Add to')}}<br/>{{=T('playlist')}}</a>
+                                </div>
+                                <div class="span1 sound-added">
+                                    <b>{{=T('Plays')}}</b>: {{=sound.play_count}}<br/>
+                                    <b>{{=T('Added')}}</b>: <br/>{{=prettydate(sound.created_on)}}
+                                </div>  
+                            </div> 
+                       </div>   
+                   </div>
+                  <div class="social">
+                    <div class="sound-share">
+                            <a href="http://twitter.com/talkexperience"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
+                            <a href="http://www.facebook.com/pages/Talkexperience/136783493132773"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
+                        </div>
+                        <div class="sound-comments">
+                            <a data-target="#commentsModal" role="button" class="btn" data-toggle="modal" href="{{=URL('default','comments', args=detail_sound.id)}}" class="sound-button">{{=T('Commentaaa')}}</a>
+                        </div>
+                  </div>   
+                </div>
 		{{pass}}
 	{{pass}}
 
 	{{=paginator}}
+        
+        
 {{pass}}
 
 {{block head}}
@@ -51,6 +141,9 @@
         transparentpagebg: "yes",
         rightbg: "8dc63f",
         remaining: "yes",        
-    });  
+    });
+    $(function(){
+        $(".description").jTruncate({length: 100});
+    });
 </script>
 {{end}}

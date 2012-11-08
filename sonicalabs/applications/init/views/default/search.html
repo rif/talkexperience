@@ -4,6 +4,8 @@
 {{=T('Searching for:')}} {{=search_form.vars.query}}
 {{pass}}
 
+{{from html import truncate_string}}
+
 {{=paginate_selector}}{{=paginate_info}}
 {{ for i,sound in enumerate(sounds):
 row='odd'
@@ -18,31 +20,62 @@ if i % 2 == 0: row='even'
                 </div>
                 <div class="span3 title">
                     {{=sound.username}}<br/>
-                    {{=sound.category}}: <a href="{{=URL('details', args=sound.id)}}">{{=sound.title}}</a>
+                    {{=sound.category}}: <a href="{{=URL('details', args=sound.id)}}">{{=truncate_string(sound.title,32)}}</a>
                 </div>                
             </div>
             <div class="row">
                 <div class="span1">
                     <img src="{{=Gravatar(sound.owner_email, size=60).thumb}}" alt="" style="float:right"/>
                 </div>                
-                <div class="span3 description">{{if sound.description:}}<b>{{=T('Description:')}}</b>{{=sound.description[:100]}}...{{else:}}{{pass}}</div>  
+                <div class="span3 description"><b>{{=T('Description:')}}</b>{{=sound.description}}</div>  
             </div>
             
         </div>
         <div class="sound-divider">
             <img src="{{=URL('static', 'images/sound-divider-'+row+'.png')}}" alt="sound-divider"/>
         </div>   
-       <div class="sound-right">
-        <div id="audioplayer_{{=i}}">{{=T('Please enable javascript and flash to use the player')}}</div>
-        <script type="text/javascript">AudioPlayer.embed("audioplayer_{{=i}}", {soundFile: "{{=sound.download_url}}"});</script> 
-         <div class="info">{{=T('Added')}} {{=prettydate(sound.created_on)}} {{=T('by')}} {{=sound.username}} {{=sound.play_count}} {{=T('views')}}</div>          
+        <div class="sound-right">
+            <div class="row sound-player">
+                <div id="audioplayer_{{=i}}">{{=T('Please enable javascript and flash to use the player')}}</div>        
+                <script type="text/javascript">AudioPlayer.embed("audioplayer_{{=i}}", {soundFile: "{{=sound.download_url}}"});</script>
+            </div>
+            <div class="row">
+                <div class="span3 sound-buttons">
+                    <a href="{{=sound.download_url}}" class="sound-button">{{=T('Download')}}</a>
+                    <a href="#" class="sound-button">{{=T('Add to')}}<br/>{{=T('favorite')}}</a>
+                    <a href="#" class="sound-button">{{=T('Add to')}}<br/>{{=T('playlist')}}</a>
+                </div>
+                <div class="span1 sound-added">
+                    <b>{{=T('Plays')}}</b>: {{=sound.play_count}}<br/>
+                    <b>{{=T('Added')}}</b>: <br/>{{=prettydate(sound.created_on)}}
+                </div>  
+            </div> 
        </div>   
    </div>
-  <div class="social"></div>   
+  <div class="social">
+    <div class="sound-share">
+            <a href="http://twitter.com/talkexperience"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
+            <a href="http://www.facebook.com/pages/Talkexperience/136783493132773"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
+        </div>
+        <div class="sound-comments">
+            <a data-target="#commentsModal" role="button" data-toggle="modal" href="{{=URL('default','comments', args=detail_sound.id)}}" class="sound-button">{{=T('Comment')}}</a>
+        </div>
+  </div>   
 </div>
 {{pass}}
 
 {{=paginator}}
+
+<div id="commentsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="commentsModalLabel" aria-hidden="true">
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+  <h3 id="commentsModalLabel">Comments</h3>
+</div>
+<div class="modal-body"></div>
+<div class="modal-footer">
+  <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>  
+</div>
+</div>
 
 {{block head}}
 <script type="text/javascript" src="{{=URL('static', 'js/audio-player.js')}}"></script>  
@@ -54,6 +87,8 @@ if i % 2 == 0: row='even'
         rightbg: "8dc63f",
         remaining: "yes",        
     });
-    $(".description").jTruncate({length: 100}); 
+    $(function(){
+        $(".description").jTruncate({length: 100});
+    });
 </script>
 {{end}}
