@@ -32,6 +32,8 @@ from gluon.tools import Auth, Crud, Service, PluginManager, prettydate
 auth = Auth(db)
 crud, service, plugins = Crud(db), Service(), PluginManager()
 
+#auth.settings.extra_fields['auth_user']= [Field('avatar', 'upload')]
+
 ## create all tables needed by auth if not custom tables
 auth.define_tables()#(username=False, signature=False)
 
@@ -136,6 +138,7 @@ Sounds = db.define_table("sounds",
           requires = IS_EMPTY_OR(IS_EMAIL(error_message=T('Invalid email!'))),
           comment=T('Email to be sent to (the release notification)')),\
     Field('comments', 'text'),
+    Field('picture', 'upload', requires=IS_UPLOAD_FILENAME(extension='jpg|jpeg|png')),
     auth.signature,
     format='%(title)s'
 )

@@ -1,5 +1,6 @@
 {{extend 'layout.html'}}
 {{from html import truncate_string}}
+{{from urllib import quote}}
 
 <div class="sound even">
     <div class="sound-container">
@@ -15,7 +16,9 @@
             </div>
             <div class="row">
                 <div class="span1">
-                    <img src="{{=Gravatar(detail_sound.owner_email, size=60).thumb}}" alt="" style="float:right"/>
+                    {{if detail_sound.picture:}}
+                    <img src="{{=URL('download', args=detail_sound.picture)}}" alt="" style="float:right"/>
+                    {{pass}}
                 </div>                
                 <div class="span3 description"><b>{{=T('Description:')}}</b>{{=detail_sound.description}}</div>  
             </div>
@@ -30,22 +33,25 @@
                 <script type="text/javascript">AudioPlayer.embed("audioplayer", {soundFile: "{{=detail_sound.download_url}}"});</script>
             </div>
             <div class="row">
-                <div class="span3 sound-buttons">
+                <div class="span4 sound-buttons">
                     <a href="{{=detail_sound.download_url}}" class="sound-button">{{=T('Download')}}</a>
                     <a href="#" class="sound-button">{{=T('Add to')}}<br/>{{=T('favorite')}}</a>
                     <a href="#" class="sound-button">{{=T('Add to')}}<br/>{{=T('playlist')}}</a>
                 </div>
-                <div class="span1 sound-added">
+            </div>
+            <div class="row">
+                <div class="span4 sound-added">
                     <b>{{=T('Plays')}}</b>: {{=detail_sound.play_count}}<br/>
-                    <b>{{=T('Added')}}</b>: <br/>{{=prettydate(detail_sound.created_on)}}
+                    <b>{{=T('Added')}}</b>: {{=prettydate(detail_sound.created_on)}}
                 </div>  
             </div> 
        </div>   
    </div>
   <div class="social">
-    <div class="sound-share">
-            <a href="http://twitter.com/talkexperience"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
-            <a href="http://www.facebook.com/pages/Talkexperience/136783493132773"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
+    <div class="sound-share">                                    
+            <a href="https://www.facebook.com/sharer.php?u={{=quote('http://'+request.env.http_host + URL('details', args=detail_sound.id))}}&t={{=quote(detail_sound.title)}}"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
+            <a href="http://twitter.com/intent/tweet?source=sharethiscom&text={{=quote(detail_sound.title)}}&url={{=quote('http://'+request.env.http_host + URL('details', args=detail_sound.id))}}"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
+            <a href="https://plus.google.com/share?url={{=quote('http://'+request.env.http_host + URL('details', args=detail_sound.id))}}"><img src="{{=URL('static', 'images/gplus-32.png')}}" alt="gplus" </a>
         </div>
         <div class="sound-comments">
             <a data-target="#commentsModal" role="button" data-toggle="modal" href="{{=URL('default','comments', args=detail_sound.id)}}" class="sound-button">{{=T('Comment')}}</a>
@@ -88,7 +94,9 @@
                             </div>
                             <div class="row">
                                 <div class="span1">
-                                    <img src="{{=Gravatar(sound.owner_email, size=60).thumb}}" alt="" style="float:right"/>
+                                    {{if sound.picture:}}
+                                    <img src="{{=URL('download', args=sound.picture)}}" alt="" style="float:right"/>
+                                    {{pass}}
                                 </div>                
                                 <div class="span3 description"><b>{{=T('Description:')}}</b>{{=sound.description}}</div>  
                             </div>
@@ -103,25 +111,28 @@
                                 <script type="text/javascript">AudioPlayer.embed("audioplayer_{{=i}}", {soundFile: "{{=sound.download_url}}"});</script>
                             </div>
                             <div class="row">
-                                <div class="span3 sound-buttons">
+                                <div class="span4 sound-buttons">
                                     <a href="{{=sound.download_url}}" class="sound-button">{{=T('Download')}}</a>
                                     <a href="#" class="sound-button">{{=T('Add to')}}<br/>{{=T('favorite')}}</a>
                                     <a href="#" class="sound-button">{{=T('Add to')}}<br/>{{=T('playlist')}}</a>
                                 </div>
-                                <div class="span1 sound-added">
+                            </div>
+                            <div class="row">
+                                <div class="span4 sound-added">
                                     <b>{{=T('Plays')}}</b>: {{=sound.play_count}}<br/>
-                                    <b>{{=T('Added')}}</b>: <br/>{{=prettydate(sound.created_on)}}
+                                    <b>{{=T('Added')}}</b>: {{=prettydate(sound.created_on)}}
                                 </div>  
-                            </div> 
+                            </div>
                        </div>   
                    </div>
                   <div class="social">
                     <div class="sound-share">
-                            <a href="http://twitter.com/talkexperience"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
-                            <a href="http://www.facebook.com/pages/Talkexperience/136783493132773"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
+                            <a href="https://www.facebook.com/sharer.php?u={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}&t={{=quote(sound.title)}}"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
+                            <a href="http://twitter.com/intent/tweet?source=sharethiscom&text={{=quote(sound.title)}}&url={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
+                            <a href="https://plus.google.com/share?url={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}"><img src="{{=URL('static', 'images/gplus-32.png')}}" alt="gplus"</a>
                         </div>
                         <div class="sound-comments">
-                            <a data-target="#commentsModal" role="button" class="btn" data-toggle="modal" href="{{=URL('default','comments', args=detail_sound.id)}}" class="sound-button">{{=T('Commentaaa')}}</a>
+                            <a data-target="#commentsModal" role="button" class="btn" data-toggle="modal" href="{{=URL('default','comments', args=sound.id)}}" class="sound-button">{{=T('Commentaaa')}}</a>
                         </div>
                   </div>   
                 </div>
@@ -144,6 +155,9 @@
     });
     $(function(){
         $(".description").jTruncate({length: 100});
+        $('body').on('hidden', '.modal', function () {
+               $(this).removeData('modal');
+        });
     });
 </script>
 {{end}}

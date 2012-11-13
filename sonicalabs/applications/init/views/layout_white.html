@@ -9,7 +9,6 @@
   {{=search_form.custom.begin}}
   {{=search_form.custom.widget.query}}
   {{=search_form.custom.end}}
-  <a href="#">ADD FACEBOOK</a> | <a href="#">TWITTER ACCOUNT</a><br>
   {{if auth.is_logged_in():}}
   <a href="{{=URL('user', 'profile')}}">WELCOME {{=auth.user.first_name.upper()}}</a>
   {{else:}}
