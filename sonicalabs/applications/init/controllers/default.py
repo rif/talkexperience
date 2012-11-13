@@ -95,7 +95,6 @@ def activate_scheduled_sounds():
         activated_sounds += 1
     return 'Activated %d sounds. (%s)' % (activated_sounds, request.now )
 
-@auth.requires_login()
 @auth.requires_signature()
 def update_sound():
     sound = Sounds(a0) or redirect(URL('index'))
@@ -105,6 +104,7 @@ def update_sound():
                            'keywords',
                            'category',
                            'language',
+                           'picture',
                            'release_date',
                            'email',
                            'is_active'],
@@ -119,7 +119,6 @@ def update_sound():
         response.flash = T('form has errors')
     return locals()
 
-@auth.requires_login()
 @auth.requires_signature()
 def delete_sound():
     if request.env.web2py_runtime_gae:
@@ -132,7 +131,6 @@ def delete_sound():
                 message=T('Sound deleted!'))
     return locals()
 
-@auth.requires_login()
 @auth.requires_signature()
 def my_uploads():
     paginator = Paginator(paginate=10,
@@ -143,11 +141,6 @@ def my_uploads():
 
     sounds = db(user_sounds).select(orderby=~Sounds.created_on,
                                     limitby=paginator.limitby())
-    return locals()
-
-@auth.requires_login()
-@auth.requires_signature()
-def my_founds():
     return locals()
 
 def details():

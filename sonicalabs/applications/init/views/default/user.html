@@ -10,9 +10,18 @@ if request.args(0)=='login':
         form.add_button(T('Lost Password'),URL(args='request_reset_password'))
     pass
 pass
-=form
 }}
+{{if auth.user:}}
+<a href="http://www.gravatar.com" target="_blank">
+    <img src="{{=Gravatar(auth.user.email, size=80).thumb}}" alt=""/><br/>
+    Change on Gravatar
+</a>
+{{pass}}
+{{=form}}
 </div>
+<a class="mixed" href="#">ADD <span class="green">FACEBOOK</span></a>
+            | <a class="mixed" href="#"><span class="green">TWITTER</span>
+            ACCOUNT</a><br>
 <script language="javascript"><!--
       jQuery("#web2py_user_form input:visible:enabled:first").focus();
       //--></script>

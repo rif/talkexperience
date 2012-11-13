@@ -24,7 +24,9 @@ if i % 2 == 0: row='even'
             </div>
             <div class="row">
                 <div class="span1">
-                    <img src="{{=Gravatar(sound.owner_email, size=60).thumb}}" alt="" style="float:right"/>
+                    {{if sound.picture:}}
+                    <img src="{{=URL('download', args=sound.picture)}}" alt="" style="float:right"/>
+                    {{pass}}
                 </div>
                 <div class="span3 description"><b>{{=T('Description:')}}</b> {{=sound.description}}</div>
             </div>
@@ -40,15 +42,17 @@ if i % 2 == 0: row='even'
                 <script type="text/javascript">AudioPlayer.embed("audioplayer_{{=i}}", {soundFile: "{{=sound.download_url}}"});</script>
             </div>
             <div class="row">
-                <div class="span3 sound-buttons">
+                <div class="span4 sound-buttons">
                     <a href="{{=URL('delete_sound', args=sound.id, user_signature=True)}}" class="sound-button">{{=T('Delete')}}</a>
                     <a href="{{=URL('update_sound', args=sound.id, user_signature=True)}}" class="sound-button">{{=T('Edit')}}</a>
                 </div>
-                <div class="span1 sound-added">
+              </div>
+            <div class="row">
+                <div class="span4 sound-added">
                     <b>{{=T('Plays')}}</b>: {{=sound.play_count}}<br/>
-                    <b>{{=T('Added')}}</b>: <br/>{{=prettydate(sound.created_on)}}
+                    <b>{{=T('Added')}}</b>: {{=prettydate(sound.created_on)}}
                 </div>  
-            </div>            
+            </div>           
        </div>   
    </div>
   <div class="social"></div>   
@@ -66,7 +70,7 @@ if i % 2 == 0: row='even'
             righticon: "#98FF00",
             righticonhover: "#8dc63f",
             remaining: "yes",        
-        });
+        });    
     $(function(){
        $(".description").jTruncate({length: 100});  
     });

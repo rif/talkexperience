@@ -70,10 +70,7 @@
           <div id="ta-menu">
             {{=search_form.custom.begin}}
             {{=search_form.custom.widget.query}}
-            {{=search_form.custom.end}}            
-            <a class="mixed" href="#">ADD <span class="green">FACEBOOK</span></a>
-            | <a class="mixed" href="#"><span class="green">TWITTER</span>
-            ACCOUNT</a><br>
+            {{=search_form.custom.end}}                        
             {{if auth.is_logged_in():}}
             <a class="mixed" href="{{=URL('user', 'profile')}}">WELCOME <span class="green">{{=auth.user.first_name.upper()}}</span></a>
             {{else:}}
@@ -90,8 +87,7 @@
           <a id="bottom-first" href="{{=URL('default', 'create_sound')}}">UPLOAD AN<br>EXPERIENCE</a>
           <a id="bottom-second" href="{{=URL('default', 'record')}}">RECORD AN<br>EXPERIENCE</a>
           <a id="bottom-third" href="{{=URL('default', 'my_uploads', user_signature=True)}}">MY<br>EXPERIENCES</a>
-          <a id="bottom-fourth" href="{{=URL('default', 'my_founds',
-          user_signature=True)}}">FUNDS &amp;<br>CERTIFICATES</a>
+          <a id="bottom-fourth" href="{{=URL('user', 'profile')}}">MY<br/>PROFILE</a>
           {{end}}
         </div>
     </div>
@@ -131,7 +127,8 @@
     </footer>
   </div> <!-- /container -->
     
-  <script src="{{=URL('static','js/bootstrap.min.js')}}"></script>  
+  <script src="{{=URL('static','js/bootstrap.min.js')}}"></script>
+  {{block script}}{{end}}
   <!--[if lt IE 7 ]>
       <script src="{{=URL('static','js/dd_belatedpng.js')}}"></script>
       <script> DD_belatedPNG.fix('img, .png_bg'); //fix any <img> or .png_bg background-images </script>
