@@ -1,3 +1,12 @@
 {{extend 'layout.html'}}
 
-<h2>{{=T('Not yet implemented')}}</h2>
+<h2>Most experiences by user</h2>
+
+{{=paginate_selector}}{{=paginate_info}}
+{{ for i,s in enumerate(sounds): }}
+<div class="mostsound">
+<a href="{{=URL('search', vars={'user':s.sounds.created_by})}}">{{=s.sounds.username}}</a> {{=s[count]}}
+</div>
+{{pass}}
+
+{{=paginator}}
