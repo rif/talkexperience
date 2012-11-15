@@ -112,11 +112,11 @@
     <footer>
       {{block footer}} <!-- this is default footer -->
       <div class="footer-content">
-	      <a href="{{=URL('about')}}">ABOUT US</a>
-        <a href="{{=URL('howitworks')}}">HOW IT WORKS</a>
-        <a href="{{=URL('business')}}">BUSINESS MODEL</a>
+	      <a href="{{=URL('staticpage', args='about')}}">ABOUT US</a>
+        <a href="{{=URL('staticpage', args='howitworks')}}">HOW IT WORKS</a>
+        <a href="{{=URL('staticpage', args='business')}}">BUSINESS MODEL</a>
         <!--a href="{{=URL('terms')}}">TERMS &amp; CONDITIONS</a-->
-        <a href="{{=URL('faq')}}">FAQ</a>
+        <a href="{{=URL('staticpage', args='faq')}}">FAQ</a>
         <a href="{{=URL('contact')}}">CONTACT US</a>
         <a href="{{=URL('details', args=0)}}">MESSAGE FROM THE FOUNDER</a>
         <a href="{{=URL('index')}}">HOME</a>
