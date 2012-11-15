@@ -12,3 +12,4 @@ sessions/*
 errors/*
 *.sublime*
 .sass-cache/*
+httpserver.pid
