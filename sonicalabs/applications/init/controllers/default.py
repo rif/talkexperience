@@ -154,8 +154,8 @@ def my_uploads():
 def details():
     detail_sound = Sounds(a0) or redirect(URL('index'))
     query = active_sounds & (Sounds.created_by==detail_sound.created_by)
-    new_count = detail_sound.play_count or 0 + 1
-    detail_sound.update_record(play_count=new_count)
+    print detail_sound
+    detail_sound.update_record(play_count=(detail_sound.play_count or 0) + 1)
 
     paginate_selector = PaginateSelector(anchor='main')
     paginator = Paginator(paginate=paginate_selector.paginate,
@@ -211,27 +211,14 @@ def by_language():
 def user():
     return dict(form=auth())
 
-
 def download():
     return response.download(request,db)
 
-def about():
-    return dict()
-
-def terms():
-    return dict()
-
-def howitworks():
-    return dict()
-
-def buy():
-    return dict()
-
-def faq():
-    return dict()
-
-def business():
-    return dict()
+def staticpage():
+    if a0 in ('about', 'terms', 'howitworks', 'buy', 'faq', 'business'):
+        response.view = 'default/%s.html' % a0
+        return {}
+    return ''
 
 def contact():
     form=SQLFORM.factory(
