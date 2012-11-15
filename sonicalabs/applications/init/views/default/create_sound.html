@@ -1,8 +1,10 @@
 {{extend 'layout.html'}}
 
-<h3>{{=T('Upload an Experience')}}</h3>
 
+<div class="row">
 {{=form.custom.begin}}
+<div class="span6">
+    <h4>{{=T('Upload an Experience')}}</h4>
 <table>
     <tbody>
         <tr><td>{{=T('Title')}}</td><td>{{=form.custom.widget.title}}</td></tr>
@@ -15,10 +17,16 @@
         <tr id="sounds_uuid__row"><td></td><td>{{=form.custom.widget.uuid}}</td></tr>
         <tr><td>{{=T('Language')}}</td><td>{{=form.custom.widget.language}}</td></tr>
         <tr><td>{{=T('Picture')}}</td><td>{{=form.custom.widget.picture}}</td></tr>
-        <tr><td></td><td><span class="form_split">Time capsule</span><img src="{{=URL('static','/images/help.png')}}" alt="help" rel="popover" data-trigger="hover" title="{{=T('Time capsule')}}" data-content="{{=T('Use when you want the experience to be released at a later date. An email will be sent to the address provided.')}}"/></td></tr>
-        <tr class="indented"><td>{{=T('Release date')}}</td><td>{{=form.custom.widget.release_date}}</td></tr>
-        <tr class="indented"><td>{{=T('Email')}}</td><td>{{=form.custom.widget.email}}</td></tr>
-        <tr class="indented"><td>{{=T('Comments')}}</td><td>{{=form.custom.widget.comments}}</td></tr>
+    </tbody>
+</table>
+</div>
+<div class="span5">
+    <h4><span class="form_split">Time capsule</span><img src="{{=URL('static','/images/help.png')}}" alt="help" rel="popover" data-trigger="hover" title="{{=T('Time capsule')}}" data-content="{{=T('Use when you want the experience to be released at a later date. An email will be sent to the address provided.')}}"/></h4>
+<table>
+    <tbody>
+        <tr><td>{{=T('Release date')}}</td><td>{{=form.custom.widget.release_date}}</td></tr>
+        <tr><td>{{=T('Email')}}</td><td>{{=form.custom.widget.email}}</td></tr>
+        <tr><td>{{=T('Comments')}}</td><td>{{=form.custom.widget.comments}}</td></tr>
         <tr>
           <td>Upload an Experience</td>
           <td>
@@ -32,7 +40,13 @@
       </tr>
     </tbody>
 </table>
-{{=form.custom.submit}}
+</div>
+</div>
+<div class="row">
+    <div class="span6">
+        <button class="btn btn-large btn-primary">{{=T('Share')}}</button>
+    </div>
+</div>
 {{=form.custom.end}}
 
 <div id="uploading" style="display:none">
