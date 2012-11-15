@@ -21,7 +21,14 @@ def search():
             Sounds.description.contains(values, all=False) |
             Sounds.keywords.contains(values, all=False))).select(orderby=~Sounds.created_on, limitby=paginator.limitby())        
     else:
-        sounds = db(active_sounds).select(orderby=~Sounds.created_on,
+        if request.vars.user:
+            sounds = db(active_sounds & (Sounds.created_by==request.vars.user)).select(orderby=~Sounds.created_on,
+                                          limitby=paginator.limitby())
+        elif request.vars.language:
+            sounds = db(active_sounds & (Sounds.language==request.vars.language)).select(orderby=~Sounds.created_on,
+                                          limitby=paginator.limitby())
+        else:
+            sounds = db(active_sounds).select(orderby=~Sounds.created_on,
                                           limitby=paginator.limitby())
     return locals()
 
@@ -172,9 +179,33 @@ def most_popular():
     return locals()
 
 def by_user():
+    paginate_selector = PaginateSelector(anchor='main')
+    paginator = Paginator(paginate=paginate_selector.paginate,
+                          extra_vars={'v':1}, anchor='main', renderstyle=True)
+    sounds_grouped = db(Sounds).select(groupby=Sounds.created_by)
+    paginator.records = len(sounds_grouped)
+    
+    paginate_info = PaginateInfo(paginator.page,
+                                 paginator.paginate, paginator.records)
+    
+    count = Sounds.id.count()
+    sounds = db(Sounds).select(Sounds.download_server, Sounds.created_by, count, orderby=~count,
+                                      groupby=Sounds.created_by, limitby=paginator.limitby())
     return locals()
 
 def by_language():
+    paginate_selector = PaginateSelector(anchor='main')
+    paginator = Paginator(paginate=paginate_selector.paginate,
+                          extra_vars={'v':1}, anchor='main', renderstyle=True)
+    sounds_grouped = db(Sounds).select(groupby=Sounds.language)
+    paginator.records = len(sounds_grouped)
+    
+    paginate_info = PaginateInfo(paginator.page,
+                                 paginator.paginate, paginator.records)
+    
+    count = Sounds.id.count()
+    sounds = db(Sounds).select(Sounds.created_by, Sounds.download_server, Sounds.language, count, orderby=~count,
+                                      groupby=Sounds.language, limitby=paginator.limitby())
     return locals()
 
 def user():
