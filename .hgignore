@@ -13,3 +13,4 @@ errors/*
 *.sublime*
 .sass-cache/*
 httpserver.pid
+httpserver.log
