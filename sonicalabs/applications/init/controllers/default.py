@@ -15,10 +15,11 @@ def search():
 
     sounds = None
     if search_form.process(session=None, formname=None, message_onsuccess="").accepted and search_form.vars.query:
-        values = search_form.vars.query
-        sounds = db(active_sounds).select(orderby=~Sounds.created_on,
-            limitby=paginator.limitby()).find(lambda s: values.lower() in s.title.lower() or \
-             values.lower() in s.description.lower() or values.lower() in s.keywords.lower())
+        values = search_form.vars.query.split(" ")
+        sounds = db(active_sounds & (
+            Sounds.title.contains(values, all=False) |
+            Sounds.description.contains(values, all=False) |
+            Sounds.keywords.contains(values, all=False))).select(orderby=~Sounds.created_on, limitby=paginator.limitby())        
     else:
         sounds = db(active_sounds).select(orderby=~Sounds.created_on,
                                           limitby=paginator.limitby())
