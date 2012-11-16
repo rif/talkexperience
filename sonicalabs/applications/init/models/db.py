@@ -13,7 +13,8 @@ if not request.env.web2py_runtime_gae:
     db = DAL('sqlite://storage.sqlite', migrate_enabled=True)
 else:
     ## connect to Google BigTable (optional 'google:datastore://namespace')
-    db = DAL('google:datastore', migrate_enabled=False)
+    #db = DAL('google:datastore', migrate_enabled=False)
+    db = DAL('google:sql://talkexperience.com:talk-experience:talk-experience/talkexperience', migrate_enabled=True)
     ## store sessions and tickets there
     session.connect(request, response, db = db)
     ## or store session in Memcache, Redis, etc.
