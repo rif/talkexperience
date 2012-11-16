@@ -14,7 +14,7 @@ if not request.env.web2py_runtime_gae:
 else:
     ## connect to Google BigTable (optional 'google:datastore://namespace')
     #db = DAL('google:datastore', migrate_enabled=False)
-    db = DAL('google:sql://talkexperience.com:talk-experience:talk-experience/talkexperience', migrate_enabled=True)
+    db = DAL('google:sql://talkexperience.com:talk-experience:tae/talkexperience', migrate_enabled=True)
     ## store sessions and tickets there
     session.connect(request, response, db = db)
     ## or store session in Memcache, Redis, etc.
@@ -139,7 +139,8 @@ Sounds = db.define_table("sounds",
           requires = IS_EMPTY_OR(IS_EMAIL(error_message=T('Invalid email!'))),
           comment=T('Email to be sent to (the release notification)')),\
     Field('comments', 'text'),
-    Field('picture', 'upload', requires=IS_EMPTY_OR(IS_UPLOAD_FILENAME(extension='jpg|jpeg|png'))),
+    Field('picture', 'upload', uploadfield='picture_file'),#, requires=IS_EMPTY_OR(IS_UPLOAD_FILENAME(extension='jpg|jpeg|bmp|png'))),    
+    Field('picture_file', 'blob'),
     auth.signature,
     format='%(title)s'
 )
@@ -156,10 +157,12 @@ a0,a1 = request.args(0), request.args(1)
 active_sounds = Sounds.is_active == True
 user_sounds = Sounds.created_by == auth.user_id
 
-search_form= SQLFORM.factory(
+search_form= SQLFORM.factory(    
     Field('query', default=T('SEARCH')),
-    _action=URL('default', 'search')
+    _action=URL('default', 'search'),
+    _name='master-search'
 )
+
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)

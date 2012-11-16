@@ -1,0 +1,11 @@
+{{for comment in comments:}}
+<div class="row">
+   <div class="span2">
+    {{=comment.created_by.first_name}} <div class="muted" style="font-size: 80%;">{{=prettydate(comment.created_on)}}</div>
+  </div>
+  <div class="span4" style="margin-left: 0; border-bottom: 1px solid #8dc63f;">
+    <span class="comment_body">{{=comment.body}}</span>
+  </div>
+</div>
+{{pass}}
+{{=form}}

@@ -12,7 +12,13 @@ def search():
     paginator.records = db(active_sounds).count()
     paginate_info = PaginateInfo(paginator.page,
                                  paginator.paginate, paginator.records)
-
+    details_form=SQLFORM.factory(
+        Field('category', requires=IS_IN_SET(categories)),
+        Field('language', requires=IS_IN_SET(languages)),
+        Field('keywords'),
+        _name="detail-search",
+        _class="form-horizontal"
+    )
     sounds = None
     if search_form.process(session=None, formname=None, message_onsuccess="").accepted and search_form.vars.query:
         values = search_form.vars.query.split(" ")
@@ -28,7 +34,7 @@ def search():
             sounds = db(active_sounds & (Sounds.language==request.vars.language)).select(orderby=~Sounds.created_on,
                                           limitby=paginator.limitby())
         else:
-            sounds = db(active_sounds).select(orderby=~Sounds.created_on,
+            sounds = db(Sounds).select(orderby=~Sounds.created_on,
                                           limitby=paginator.limitby())
     return locals()
 
@@ -39,12 +45,15 @@ def record():
 def create_sound():
     from os.path import splitext
     form = SQLFORM(Sounds, submit_button=T('Share'))
-    if form.process(dbio=False).accepted:
-        sound = db(Sounds.uuid == form.vars.uuid).select().first()
+    pic_file = request.vars.picture
+    if form.process().accepted:
+        # bellow is the code that try to update the file if there was allready a file with that id
+        # this was executed with dbio=False
+        """sound = db(Sounds.uuid == form.vars.uuid).select().first()        
         if sound:
             if not form.vars.title: # keep the name of the file as title
                 form.vars.title = sound.title
-            sound.update_record(**dict(form.vars))
+            sound.update_record(picture_file=pic_file.read_binary() if pic_file else None, **dict(form.vars))
             if sound.release_date and sound.release_date > request.now:
                 sound.status = T('Scheduled for')+' '+str(sound.release_date)
                 sound.is_active = False
@@ -53,8 +62,8 @@ def create_sound():
                 sound.status = T('Ready')
             sound.created_by = sound.modified_by = auth.user_id
             sound.update_record()
-        else:
-            Sounds.insert(**dict(form.vars))
+        else:            
+            Sounds.insert(picture_file=pic_file.read_binary() if pic_file else None, **dict(form.vars))"""
         response.flash = T('Upload complete!')
         redirect(URL('my_uploads', user_signature=True))
     elif form.errors:
@@ -153,8 +162,7 @@ def my_uploads():
 
 def details():
     detail_sound = Sounds(a0) or redirect(URL('index'))
-    query = active_sounds & (Sounds.created_by==detail_sound.created_by)
-    print detail_sound
+    query = active_sounds & (Sounds.created_by==detail_sound.created_by)    
     detail_sound.update_record(play_count=(detail_sound.play_count or 0) + 1)
 
     paginate_selector = PaginateSelector(anchor='main')
@@ -189,7 +197,7 @@ def by_user():
                                  paginator.paginate, paginator.records)
     
     count = Sounds.id.count()
-    sounds = db(active_sounds).select(Sounds.download_server, Sounds.created_by, count, orderby=~count,
+    sounds = db(active_sounds).select(Sounds.download_server, Sounds.download_key, Sounds.created_by, count, orderby=~count,
                                       groupby=Sounds.created_by, limitby=paginator.limitby())
     return locals()
 
@@ -204,7 +212,7 @@ def by_language():
                                  paginator.paginate, paginator.records)
     
     count = Sounds.id.count()
-    sounds = db(active_sounds).select(Sounds.created_by, Sounds.download_server, Sounds.language, count, orderby=~count,
+    sounds = db(active_sounds).select(Sounds.created_by, Sounds.download_server, Sounds.download_key, Sounds.language, count, orderby=~count,
                                       groupby=Sounds.language, limitby=paginator.limitby())
     return locals()
 
