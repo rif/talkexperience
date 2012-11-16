@@ -12,3 +12,5 @@ sessions/*
 errors/*
 *.sublime*
 .sass-cache/*
+parameters_8000.py
+httpserver.pid
