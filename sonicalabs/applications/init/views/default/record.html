@@ -58,6 +58,7 @@
 
 <script type="text/javascript">
   $(function(){
+    var recorded = false
     $('[rel=popover]').popover();
   	$("#sounds_language").select2({width:"315px",});
   	$("#sounds_category").select2({width:"315px",});
@@ -72,6 +73,7 @@
   	});     
 	$("#rec-link").click(function(){
 		if($('#rec-link').hasClass('ready')){
+                        recorded = true
 			$("#status").text("{{=T('Recording...')}}");
 			Wami.startRecording("http://avocadosoft.ro:6060/record?uuid="+$("#sounds_uuid").val());			
 			//Wami.startRecording("http://localhost:6060/record?uuid="+$("#sounds_uuid").val());
@@ -85,5 +87,12 @@
 		}
 		return false;
 	});
+        $("form").submit(function(){
+            if(!recorded){      
+              alert("Please record your experience!");
+              return false;
+            } 
+            return true;
+        }); 
   });
 </script>
