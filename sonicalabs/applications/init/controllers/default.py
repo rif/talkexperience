@@ -15,12 +15,20 @@ def search():
 
     sounds = None
     if search_form.process(session=None, formname=None, message_onsuccess="").accepted and search_form.vars.query:
-        values = search_form.vars.query
-        sounds = db(active_sounds).select(orderby=~Sounds.created_on,
-            limitby=paginator.limitby()).find(lambda s: values.lower() in s.title.lower() or \
-             values.lower() in s.description.lower() or values.lower() in s.keywords.lower())
+        values = search_form.vars.query.split(" ")
+        sounds = db(active_sounds & (
+            Sounds.title.contains(values, all=False) |
+            Sounds.description.contains(values, all=False) |
+            Sounds.keywords.contains(values, all=False))).select(orderby=~Sounds.created_on, limitby=paginator.limitby())        
     else:
-        sounds = db(active_sounds).select(orderby=~Sounds.created_on,
+        if request.vars.user:
+            sounds = db(active_sounds & (Sounds.created_by==request.vars.user)).select(orderby=~Sounds.created_on,
+                                          limitby=paginator.limitby())
+        elif request.vars.language:
+            sounds = db(active_sounds & (Sounds.language==request.vars.language)).select(orderby=~Sounds.created_on,
+                                          limitby=paginator.limitby())
+        else:
+            sounds = db(active_sounds).select(orderby=~Sounds.created_on,
                                           limitby=paginator.limitby())
     return locals()
 
@@ -146,8 +154,8 @@ def my_uploads():
 def details():
     detail_sound = Sounds(a0) or redirect(URL('index'))
     query = active_sounds & (Sounds.created_by==detail_sound.created_by)
-    new_count = detail_sound.play_count or 0 + 1
-    detail_sound.update_record(play_count=new_count)
+    print detail_sound
+    detail_sound.update_record(play_count=(detail_sound.play_count or 0) + 1)
 
     paginate_selector = PaginateSelector(anchor='main')
     paginator = Paginator(paginate=paginate_selector.paginate,
@@ -171,35 +179,46 @@ def most_popular():
     return locals()
 
 def by_user():
+    paginate_selector = PaginateSelector(anchor='main')
+    paginator = Paginator(paginate=paginate_selector.paginate,
+                          extra_vars={'v':1}, anchor='main', renderstyle=True)
+    sounds_grouped = db(active_sounds).select(groupby=Sounds.created_by)
+    paginator.records = len(sounds_grouped)
+    
+    paginate_info = PaginateInfo(paginator.page,
+                                 paginator.paginate, paginator.records)
+    
+    count = Sounds.id.count()
+    sounds = db(active_sounds).select(Sounds.download_server, Sounds.created_by, count, orderby=~count,
+                                      groupby=Sounds.created_by, limitby=paginator.limitby())
     return locals()
 
 def by_language():
+    paginate_selector = PaginateSelector(anchor='main')
+    paginator = Paginator(paginate=paginate_selector.paginate,
+                          extra_vars={'v':1}, anchor='main', renderstyle=True)
+    sounds_grouped = db(active_sounds).select(groupby=Sounds.language)
+    paginator.records = len(sounds_grouped)
+    
+    paginate_info = PaginateInfo(paginator.page,
+                                 paginator.paginate, paginator.records)
+    
+    count = Sounds.id.count()
+    sounds = db(active_sounds).select(Sounds.created_by, Sounds.download_server, Sounds.language, count, orderby=~count,
+                                      groupby=Sounds.language, limitby=paginator.limitby())
     return locals()
 
 def user():
     return dict(form=auth())
 
-
 def download():
     return response.download(request,db)
 
-def about():
-    return dict()
-
-def terms():
-    return dict()
-
-def howitworks():
-    return dict()
-
-def buy():
-    return dict()
-
-def faq():
-    return dict()
-
-def business():
-    return dict()
+def staticpage():
+    if a0 in ('about', 'terms', 'howitworks', 'buy', 'faq', 'business'):
+        response.view = 'default/%s.html' % a0
+        return {}
+    return ''
 
 def contact():
     form=SQLFORM.factory(
