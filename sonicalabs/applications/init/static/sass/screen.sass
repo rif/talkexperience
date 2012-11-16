@@ -1,3 +1,6 @@
+@import "compass/utilities/color/contrast"
+@import "compass/css3/border-radius"
+
 $green: #8dc63f
 $fgcolor: white
 $bgcolor: #292424
@@ -49,7 +52,7 @@ footer
     font-family: amaranthregular
     color: $fgcolor
     font-size: 12px  
-    margin-right: 21px
+    margin-right: 45px
   a.share
     margin-right: 5px
 
@@ -170,8 +173,7 @@ a.sound-button
   padding: 7px 7px
   margin-bottom: 5
   margin-right: 7px
-  font-size: 14px
-  font-weight: bold  
+  font-size: 14px  
   color: $green
   text-align: center  
   vertical-align: middle
@@ -223,8 +225,11 @@ div.sound-comments
   div.qq-uploader
     div.qq-upload-button 
       width: 150px
-
-
+      @extend .btn-green
+      +border-radius(5px)
+    div.qq-upload-button-hover
+      background: +contrasted($green)
+      
 textarea
   height: 43px
   width: 300px
@@ -235,3 +240,33 @@ textarea
 .indented>td
   padding-left: 40px
 
+.btn-green 
+  color: #ffffff
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25)
+  background-color: #82b839
+  background-image: -moz-linear-gradient(top, #8dc63f, #72a230)
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#8dc63f), to(#72a230))
+  background-image: -webkit-linear-gradient(top, #8dc63f, #72a230)
+  background-image: -o-linear-gradient(top, #8dc63f, #72a230)
+  background-image: linear-gradient(to bottom, #8dc63f, #72a230)
+  background-repeat: repeat-x
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff8dc63f', endColorstr='#ff72a230', GradientType=0)
+  border-color: #72a230 #72a230 #48671f
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25)
+  *background-color: #72a230
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false)
+
+.btn-green:hover,
+.btn-green:active,
+.btn-green.active,
+.btn-green.disabled,
+.btn-green[disabled]
+  color: #ffffff
+  background-color: #72a230
+  *background-color: #648e2a
+
+.btn-green:active,
+.btn-green.active 
+  background-color: #567b24 \9
