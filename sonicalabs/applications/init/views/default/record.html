@@ -3,23 +3,30 @@
 <div class="row">
 {{=form.custom.begin}}
 <div class="span6">
-    <h4>{{=T('Record an Experience')}}</h4>
+    <h3>{{=T('Record an Experience')}}</h3>
 <table>
     <tbody>
         <tr><td>{{=T('Title')}}</td><td>{{=form.custom.widget.title}}</td></tr>
         <tr><td>{{=T('Description')}}</td><td>{{=form.custom.widget.description}}</td></tr>
         <tr>
-            <td>{{=T('Keywords')}}</td><td>{{=form.custom.widget.keywords}}
-            <img src="{{=URL('static','/images/help.png')}}" alt="help" rel="popover" data-trigger="hover" title="{{=T('Keywords')}}" data-content="{{=T('Representative words for the recording.')}}"/></td>
+            <td>
+                {{=T('Keywords')}}</td><td>{{=form.custom.widget.keywords}}
+                <img src="{{=URL('static','/images/help.png')}}" alt="help" rel="popover" data-trigger="hover" title="{{=T('Keywords')}}" data-content="{{=T('Representative words for the recording.')}}"/>
+            </td>
         </tr>
         <tr><td>{{=T('Category')}}</td><td>{{=form.custom.widget.category}}</td></tr>
         <tr id="sounds_uuid__row"><td></td><td>{{=form.custom.widget.uuid}}</td></tr>
         <tr><td>{{=T('Language')}}</td><td>{{=form.custom.widget.language}}</td></tr>
-        <tr><td>{{=T('Picture')}}</td><td>{{=form.custom.widget.picture}}</td></tr>
+        <tr>
+            <td>
+                {{=T('Picture')}}</td><td>{{=form.custom.widget.picture}}
+                <img src="{{=URL('static','/images/help.png')}}" alt="help" rel="popover" data-trigger="hover" title="{{=T('Picture')}}" data-content="{{=T('Representative picture for the recording.')}}"/>
+            </td>
+        </tr>
         </tbody>
 </table>
 </div>
-<div class="span5">
+<div class="span5" style="margin-top: 50px;">
     <h4><span class="form_split">Time capsule</span><img src="{{=URL('static','/images/help.png')}}" alt="help" rel="popover" data-trigger="hover" title="{{=T('Time capsule')}}" data-content="{{=T('Use when you want the experience to be released at a later date. An email will be sent to the address provided.')}}"/></h4>
 <table>
     <tbody>        
@@ -42,7 +49,7 @@
 </div>
 </div>
 <div class="row">
-    <div class="span6">
+    <div class="center">
         <button class="btn btn-large btn-green">{{=T('Share')}}</button>
     </div>
 </div>
