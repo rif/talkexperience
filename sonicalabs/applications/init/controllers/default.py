@@ -13,15 +13,27 @@ def search():
     paginate_info = PaginateInfo(paginator.page,
                                  paginator.paginate, paginator.records)
     details_form=SQLFORM.factory(
-        Field('category', requires=IS_IN_SET(categories)),
-        Field('language', requires=IS_IN_SET(languages)),
+        Field('category', requires=IS_EMPTY_OR(IS_IN_SET(categories))),
+        Field('language', requires=IS_EMPTY_OR(IS_IN_SET(languages))),
         Field('keywords'),
         _name="detail-search",
         _class="form-horizontal"
     )
     sounds = None
-    if search_form.process(session=None, formname=None, message_onsuccess="").accepted and search_form.vars.query:
-        values = search_form.vars.query.split(" ")
+    if details_form.process(formname='detail-search', message_onsuccess="").accepted:
+        query = Sounds.is_active==False
+        if details_form.vars.language:
+            query &= Sounds.language==details_form.vars.language
+        if details_form.vars.category:
+            query &= Sounds.category==details_form.vars.category
+        if details_form.vars.keywords:
+            values = details_form.vars.keywords.split(" ")
+            query &= Sounds.keywords.contains(values, all=False)
+        sounds = db(query).select(orderby=~Sounds.created_on, limitby=paginator.limitby())
+        return locals()
+    
+    if search_form.process(session=None, formname="master-search", message_onsuccess="").accepted and search_form.vars.query:
+        values = search_form.vars.query.split(",")
         sounds = db(active_sounds & (
             Sounds.title.contains(values, all=False) |
             Sounds.description.contains(values, all=False) |
