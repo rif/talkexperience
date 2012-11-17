@@ -34,7 +34,7 @@ def search():
             sounds = db(active_sounds & (Sounds.language==request.vars.language)).select(orderby=~Sounds.created_on,
                                           limitby=paginator.limitby())
         else:
-            sounds = db(Sounds).select(orderby=~Sounds.created_on,
+            sounds = db(active_sounds).select(orderby=~Sounds.created_on,
                                           limitby=paginator.limitby())
     return locals()
 
