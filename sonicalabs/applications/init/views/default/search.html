@@ -73,7 +73,7 @@ if i % 2 == 0: row='even'
                             <a href="https://plus.google.com/share?url={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}"><img src="{{=URL('static', 'images/gplus-32.png')}}" alt="gplus"</a>
         </div>
         <div class="sound-comments">
-            <a data-target="#commentsModal" role="button" data-toggle="modal" href="{{=URL('comments','post', args=sound.id)}}" class="sound-button">{{=T('Comment')}} {{=db(db.comments.sound == sound.id).count()}}</a>
+            <a data-target="#commentsModal" role="button" data-toggle="modal" href="{{=URL('comments','post', args=sound.id)}}" class="sound-button">{{=T('Comment')}} ({{=db(db.comments.sound == sound.id).count()}})</a>
         </div>
   </div>   
 </div>

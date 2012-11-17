@@ -54,7 +54,7 @@
             <a href="https://plus.google.com/share?url={{=quote('http://'+request.env.http_host + URL('details', args=detail_sound.id))}}"><img src="{{=URL('static', 'images/gplus-32.png')}}" alt="gplus" </a>
         </div>
         <div class="sound-comments">
-            <a data-target="#commentsModal" role="button" data-toggle="modal" href="{{=URL('default','comments', args=detail_sound.id)}}" class="sound-button">{{=T('Comment')}}</a>
+            <a data-target="#commentsModal" role="button" data-toggle="modal" href="{{=URL('comments','post', args=detail_sound.id)}}" class="sound-button">{{=T('Comment')}} ({{=db(db.comments.sound == detail_sound.id).count()}})</a>
         </div>
   </div>   
 </div>
@@ -132,7 +132,7 @@
                             <a href="https://plus.google.com/share?url={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}"><img src="{{=URL('static', 'images/gplus-32.png')}}" alt="gplus"</a>
                         </div>
                         <div class="sound-comments">
-                            <a data-target="#commentsModal" role="button" class="sound-button" data-toggle="modal" href="{{=URL('default','comments', args=sound.id)}}" class="sound-button">{{=T('Comment')}}</a>
+                            <a data-target="#commentsModal" role="button" data-toggle="modal" href="{{=URL('comments','post', args=sound.id)}}" class="sound-button">{{=T('Comment')}} ({{=db(db.comments.sound == sound.id).count()}})</a>
                         </div>
                   </div>   
                 </div>
@@ -159,6 +159,14 @@
         $(".description").jTruncate({length: 100});
         $('body').on('hidden', '.modal', function () {
                $(this).removeData('modal');
+        }).on('shown', '.modal', function () {
+            $(".modal-body").on("submit", "#comment-form", function(){
+                var f = $(this);
+                $.post(f.attr("action"), f.serialize(), function(data){
+                    $(".modal-body").html(data);
+                });
+                return false
+            });                     
         });
     });
 </script>
