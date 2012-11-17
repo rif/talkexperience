@@ -34,7 +34,12 @@ func handleUrl(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleServe(w http.ResponseWriter, r *http.Request) {
-	blobstore.Send(w, appengine.BlobKey(r.FormValue("blobKey")))
+    c := appengine.NewContext(r)
+    key := appengine.BlobKey(r.FormValue("blobKey"))
+    if blobInfo, err := blobstore.Stat(c, key); err == nil {
+        w.Header().Set("Content-Disposition", fmt.Sprintf(`inline; filename="%s"`, blobInfo.Filename))
+    }    
+    blobstore.Send(w, key)
 }
 
 func handleDelete(w http.ResponseWriter, r *http.Request) {
