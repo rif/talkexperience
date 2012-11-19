@@ -1,6 +1,7 @@
 {{extend 'layout.html'}}
 
 {{from html import truncate_string}}
+{{from urllib import quote}}
 
 <h3>{{=T('My Favorites')}}</h3>
 
@@ -21,7 +22,7 @@ if i % 2 == 0: row='even'
                 </div>
                 <div class="span3 title">
                     {{=sound.username}}<br/>
-                    {{=sound.category}}: <a href="{{=URL('details', args=sound.id)}}">{{=truncate_string(sound.title,32)}}</a>
+                    {{=sound.category}}: <a href="{{=URL('details', args=sound.id)}}">{{=truncate_string(sound.title or '',32)}}</a>
                 </div>                
             </div>
             <div class="row">
@@ -58,8 +59,8 @@ if i % 2 == 0: row='even'
    </div>
   <div class="social">
     <div class="sound-share">
-        <a href="https://www.facebook.com/sharer.php?u={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}&t={{=quote(sound.title)}}"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
-        <a href="http://twitter.com/intent/tweet?source=sharethiscom&text={{=quote(sound.title)}}&url={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
+        <a href="https://www.facebook.com/sharer.php?u={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}&t={{=quote(sound.title or '')}}"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
+        <a href="http://twitter.com/intent/tweet?source=sharethiscom&text={{=quote(sound.title or '')}}&url={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
         <a href="https://plus.google.com/share?url={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}"><img src="{{=URL('static', 'images/gplus-32.png')}}" alt="gplus"</a>
     </div>
     <div class="sound-comments">

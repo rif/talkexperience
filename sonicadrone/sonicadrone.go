@@ -147,7 +147,7 @@ func handleRecord(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Print("Start processing ", fileName, " - ", uuid)
 	go process(path, fileName, uuid)
-	fmt.Fprint(w, "{success:true}")
+	fmt.Fprint(w, `{"success":true}`)
 }
 
 func handleCrossdomainWamiXML(w http.ResponseWriter, r *http.Request) {

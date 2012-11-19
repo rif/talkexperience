@@ -50,7 +50,7 @@
 </div>
 <div class="row">
     <div class="center">
-        <button class="btn btn-large btn-green">{{=T('Share')}}</button>
+        <button id="share-button" disabled="disabled" class="btn btn-large btn-green">{{=T('Share')}}</button>
     </div>
 </div>
 {{=form.custom.end}}
@@ -90,6 +90,9 @@
 			$("#status").text("");
 			Wami.stopRecording();			
 			$(this).addClass('ready');
+                        $.get("{{=URL('default','init_sound')}}/" + $("#sounds_uuid").val(), function(){
+                            $("#share-button").removeAttr("disabled");  
+                        });
       		$(this).text("{{=T('Start recording')}}");
 		}
 		return false;
