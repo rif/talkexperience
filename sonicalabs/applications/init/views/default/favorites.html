@@ -4,6 +4,8 @@
 
 <h3>{{=T('My Favorites')}}</h3>
 
+<a class="btn btn-green btn-small" href="{{=URL('default', 'playlist')}}">My playlist</a>
+
 {{=paginate_info}}
 <br/>
 {{ for i,sound in enumerate(sounds):
@@ -54,7 +56,16 @@ if i % 2 == 0: row='even'
             </div>           
        </div>   
    </div>
-  <div class="social"></div>   
+  <div class="social">
+    <div class="sound-share">
+        <a href="https://www.facebook.com/sharer.php?u={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}&t={{=quote(sound.title)}}"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
+        <a href="http://twitter.com/intent/tweet?source=sharethiscom&text={{=quote(sound.title)}}&url={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
+        <a href="https://plus.google.com/share?url={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}"><img src="{{=URL('static', 'images/gplus-32.png')}}" alt="gplus"</a>
+    </div>
+    <div class="sound-comments">
+        <a data-target="#commentsModal" role="button" data-toggle="modal" href="{{=URL('comments','post', args=sound.id)}}" class="sound-button">{{=T('Comment')}} ({{=db(db.comments.sound == sound.id).count()}})</a>
+    </div>
+  </div>   
 </div>
 {{pass}}
 {{=paginator}}

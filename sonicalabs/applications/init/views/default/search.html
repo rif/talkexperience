@@ -55,7 +55,7 @@ if i % 2 == 0: row='even'
                 <div class="span4 sound-buttons">
                     <a href="{{=sound.download_url}}" class="sound-button">{{=T('Download')}}</a>
                     <a href="{{=URL('add_favorite', args=sound.id, user_signature=True)}}" class="sound-button">{{=T('Add to')}}<br/>{{=T('favorite')}}</a>
-                    <a href="#" class="sound-button">{{=T('Add to')}}<br/>{{=T('playlist')}}</a>
+                    <a href="{{=URL('add_playlist', args=sound.id, user_signature=True)}}" class="sound-button">{{=T('Add to')}}<br/>{{=T('playlist')}}</a>
                 </div>
             </div>
             <div class="row">
@@ -68,13 +68,13 @@ if i % 2 == 0: row='even'
    </div>
   <div class="social">
     <div class="sound-share">
-            <a href="https://www.facebook.com/sharer.php?u={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}&t={{=quote(sound.title)}}"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
-                            <a href="http://twitter.com/intent/tweet?source=sharethiscom&text={{=quote(sound.title)}}&url={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
-                            <a href="https://plus.google.com/share?url={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}"><img src="{{=URL('static', 'images/gplus-32.png')}}" alt="gplus"</a>
-        </div>
-        <div class="sound-comments">
-            <a data-target="#commentsModal" role="button" data-toggle="modal" href="{{=URL('comments','post', args=sound.id)}}" class="sound-button">{{=T('Comment')}} ({{=db(db.comments.sound == sound.id).count()}})</a>
-        </div>
+        <a href="https://www.facebook.com/sharer.php?u={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}&t={{=quote(sound.title)}}"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
+        <a href="http://twitter.com/intent/tweet?source=sharethiscom&text={{=quote(sound.title)}}&url={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
+        <a href="https://plus.google.com/share?url={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}"><img src="{{=URL('static', 'images/gplus-32.png')}}" alt="gplus"</a>
+    </div>
+    <div class="sound-comments">
+        <a data-target="#commentsModal" role="button" data-toggle="modal" href="{{=URL('comments','post', args=sound.id)}}" class="sound-button">{{=T('Comment')}} ({{=db(db.comments.sound == sound.id).count()}})</a>
+    </div>
   </div>   
 </div>
 {{pass}}
@@ -86,7 +86,9 @@ if i % 2 == 0: row='even'
   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
   <h3 id="commentsModalLabel">Comments</h3>
 </div>
-<div class="modal-body"></div>
+<div class="modal-body">
+    <img src="{{=URL('static', 'css/spinner.gif')}}" alt="spinner">
+</div>
 <div class="modal-footer">
   <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>  
 </div>

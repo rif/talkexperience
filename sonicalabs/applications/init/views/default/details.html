@@ -36,7 +36,7 @@
                 <div class="span4 sound-buttons">
                     <a href="{{=detail_sound.download_url}}" class="sound-button">{{=T('Download')}}</a>
                     <a href="{{=URL('add_favorite', args=detail_sound.id, user_signature=True)}}" class="sound-button">{{=T('Add to')}}<br/>{{=T('favorite')}}</a>
-                    <a href="#" class="sound-button">{{=T('Add to')}}<br/>{{=T('playlist')}}</a>
+                    <a href="{{=URL('add_playlist', args=detail_sound.id, user_signature=True)}}" class="sound-button">{{=T('Add to')}}<br/>{{=T('playlist')}}</a>
                 </div>
             </div>
             <div class="row">
@@ -64,7 +64,9 @@
   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
   <h3 id="commentsModalLabel">Comments</h3>
 </div>
-<div class="modal-body"></div>
+<div class="modal-body">
+    <img src="{{=URL('static', 'css/spinner.gif')}}" alt="spinner">
+</div>
 <div class="modal-footer">
   <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>  
 </div>
@@ -114,7 +116,7 @@
                                 <div class="span4 sound-buttons">
                                     <a href="{{=sound.download_url}}" class="sound-button">{{=T('Download')}}</a>
                                     <a href="{{=URL('add_favorite', args=sound.id, user_signature=True)}}" class="sound-button">{{=T('Add to')}}<br/>{{=T('favorite')}}</a>
-                                    <a href="#" class="sound-button">{{=T('Add to')}}<br/>{{=T('playlist')}}</a>
+                                    <a href="{{=URL('add_playlist', args=sound.id, user_signature=True)}}" class="sound-button">{{=T('Add to')}}<br/>{{=T('playlist')}}</a>
                                 </div>
                             </div>
                             <div class="row">

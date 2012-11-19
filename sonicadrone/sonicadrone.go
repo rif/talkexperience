@@ -19,14 +19,14 @@ import (
 )
 
 var (
-	ACCEPTED_ORIGINS = []string{"http://talk-experience.appspot.com", "http://www.talkexperience.com", "http://localhost:8080", "::1"}
+	ACCEPTED_ORIGINS = []string{"http://talk-experience.appspot.com", "http://www.talkexperience.com", "http://localhost:8000", "::1"}
 )
 
 const (
-	MAIN_APPLICATION = "http://www.talkexperience.com"
-	//MAIN_APPLICATION = "http://localhost:8080"
-	BLOBS_APPLICATION = "http://talkexperienceblobs.appspot.com"
-	//BLOBS_APPLICATION    = "http://localhost:8081"	
+	//MAIN_APPLICATION = "http://www.talkexperience.com"
+	MAIN_APPLICATION = "http://localhost:8000"
+	//BLOBS_APPLICATION = "http://talkexperienceblobs.appspot.com"
+	BLOBS_APPLICATION    = "http://localhost:8081"	
 	TRANSFORMER          = "avconv"
 	BITRATE              = "96k"
 	FOLDER_UPLOAD        = "./upload"
@@ -66,7 +66,7 @@ func handleProcess(w http.ResponseWriter, r *http.Request) {
 	log.Printf("record request: %+v", r)
 	w.Header().Set("Access-Control-Allow-Origin", MAIN_APPLICATION)
 	//w.Header().Set("Access-Control-Allow-Headers", "X-Requested-With,X-File-Name,Content-Type")
-	w.Header().Set("Access-Control-Allow-Headers", "origin, x-mime-type, x-requested-with, x-file-name, content-type")
+	w.Header().Set("Access-Control-Allow-Headers", "origin, x-mime-type, x-requested-with, x-file-name, content-type, cache-control")
 	if r.Method == "OPTIONS" {
 		return
 	}
@@ -107,11 +107,13 @@ func handleProcess(w http.ResponseWriter, r *http.Request) {
 		io.Copy(f, r.Body)
 		defer r.Body.Close()
 	}
-	f.Close()
+	if f != nil {
+	    f.Close()
+	}
 
 	log.Print("Start processing ", fileName, " - ", uuid)
 	go process(path, fileName, uuid)
-	fmt.Fprint(w, "{success:true}")
+	fmt.Fprint(w, `{"success":true}`)
 }
 
 func handleRecord(w http.ResponseWriter, r *http.Request) {
@@ -264,6 +266,8 @@ func genUUID() string {
 }
 
 func main() {
+    os.Mkdir(FOLDER_UPLOAD, os.ModeDir | os.ModePerm)
+    os.Mkdir(FOLDER_READY, os.ModeDir | os.ModePerm)
 	http.HandleFunc("/process", handleProcess)
 	http.HandleFunc("/record", handleRecord)
 	http.HandleFunc("/crossdomain.xml", handleCrossdomainWamiXML)

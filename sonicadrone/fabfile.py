@@ -7,6 +7,11 @@ def build():
     local("strip -s sonicadrone")
 
 @task
+def run():    
+    local("go run sonicadrone.go")    
+
+
+@task
 def clean():
     local("rm sonicadrone")
 
