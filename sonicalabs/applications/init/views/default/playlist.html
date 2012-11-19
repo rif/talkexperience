@@ -8,7 +8,7 @@
     <div id="audioplayer">{{=T('Please enable javascript and flash to use the player')}}</div>        
     <script type="text/javascript">AudioPlayer.embed("audioplayer", {
         soundFile: "{{for s in sounds:}}{{=s.download_url + ','}}{{pass}}",
-        titles: "{{for s in sounds:}}{{=s.title + ','}}{{pass}}",
+        titles: "{{for s in sounds:}}{{=s.title or '' + ','}}{{pass}}",
         artists: "{{for s in sounds:}}{{=s.username + ','}}{{pass}}",
         autostart: "yes" 
         });</script>
@@ -19,7 +19,7 @@
     <tbody>
         {{for s in sounds:}}
         <tr>
-            <td>{{=s.title}}</td>
+            <td>{{=s.title or ''}}</td>
             <td>{{=s.username}}</td>
             <td><a href="{{=URL('remove_playlist', args=s.id, user_signature=True)}}" class="">{{=T('Remove')}}</a></td>
         </tr>
