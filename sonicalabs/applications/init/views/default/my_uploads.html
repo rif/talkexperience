@@ -19,7 +19,7 @@ if i % 2 == 0: row='even'
                 </div>
                 <div class="span3 title">
                     {{=sound.username}}<br/>
-                    {{=sound.category}}: <a href="{{=URL('details', args=sound.id)}}">{{=truncate_string(sound.title,32)}}</a>
+                    {{=sound.category}}: <a href="{{=URL('details', args=sound.id)}}">{{=truncate_string(sound.title if sound.title else '',32)}}</a>
                 </div>                
             </div>
             <div class="row">

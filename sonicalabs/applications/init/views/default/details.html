@@ -11,7 +11,7 @@
                 </div>
                 <div class="span3 title">
                     {{=detail_sound.username}}<br/>
-                    {{=detail_sound.category}}: <a href="{{=URL('details', args=detail_sound.id)}}">{{=truncate_string(detail_sound.title,32)}}</a>
+                    {{=detail_sound.category}}: <a href="{{=URL('details', args=detail_sound.id)}}">{{=truncate_string(detail_sound.title or '',32)}}</a>
                 </div>                
             </div>
             <div class="row">
@@ -35,8 +35,8 @@
             <div class="row">
                 <div class="span4 sound-buttons">
                     <a href="{{=detail_sound.download_url}}" class="sound-button">{{=T('Download')}}</a>
-                    <a href="{{=URL('add_favorite', args=detail_sound.id, user_signature=True)}}" class="sound-button">{{=T('Add to')}}<br/>{{=T('favorite')}}</a>
-                    <a href="{{=URL('add_playlist', args=detail_sound.id, user_signature=True)}}" class="sound-button">{{=T('Add to')}}<br/>{{=T('playlist')}}</a>
+                    <a href="{{=URL('add_favorite', args=detail_sound.id, user_signature=True)}}" class="sound-button addto-link">{{=T('Add to')}}<br/>{{=T('favorite')}}</a>
+                    <a href="{{=URL('add_playlist', args=detail_sound.id, user_signature=True)}}" class="sound-button addto-link">{{=T('Add to')}}<br/>{{=T('playlist')}}</a>
                 </div>
             </div>
             <div class="row">
@@ -49,7 +49,7 @@
    </div>
   <div class="social">
     <div class="sound-share">                                    
-            <a href="https://www.facebook.com/sharer.php?u={{=quote('http://'+request.env.http_host + URL('details', args=detail_sound.id))}}&t={{=quote(detail_sound.title)}}"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
+            <a href="https://www.facebook.com/sharer.php?u={{=quote('http://'+request.env.http_host + URL('details', args=detail_sound.id))}}&t={{=quote(detail_sound.title or '')}}"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
             <a href="http://twitter.com/intent/tweet?source=sharethiscom&text={{=quote(detail_sound.title)}}&url={{=quote('http://'+request.env.http_host + URL('details', args=detail_sound.id))}}"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
             <a href="https://plus.google.com/share?url={{=quote('http://'+request.env.http_host + URL('details', args=detail_sound.id))}}"><img src="{{=URL('static', 'images/gplus-32.png')}}" alt="gplus" </a>
         </div>
@@ -91,7 +91,7 @@
                                 </div>
                                 <div class="span3 title">
                                     {{=sound.username}}<br/>
-                                    {{=sound.category}}: <a href="{{=URL('details', args=sound.id)}}">{{=truncate_string(sound.title,32)}}</a>
+                                    {{=sound.category}}: <a href="{{=URL('details', args=sound.id)}}">{{=truncate_string(sound.title or '',32)}}</a>
                                 </div>                
                             </div>
                             <div class="row">
@@ -115,8 +115,8 @@
                             <div class="row">
                                 <div class="span4 sound-buttons">
                                     <a href="{{=sound.download_url}}" class="sound-button">{{=T('Download')}}</a>
-                                    <a href="{{=URL('add_favorite', args=sound.id, user_signature=True)}}" class="sound-button">{{=T('Add to')}}<br/>{{=T('favorite')}}</a>
-                                    <a href="{{=URL('add_playlist', args=sound.id, user_signature=True)}}" class="sound-button">{{=T('Add to')}}<br/>{{=T('playlist')}}</a>
+                                    <a href="{{=URL('add_favorite', args=sound.id, user_signature=True)}}" class="sound-button addto-link">{{=T('Add to')}}<br/>{{=T('favorite')}}</a>
+                                    <a href="{{=URL('add_playlist', args=sound.id, user_signature=True)}}" class="sound-button addto-link">{{=T('Add to')}}<br/>{{=T('playlist')}}</a>
                                 </div>
                             </div>
                             <div class="row">
@@ -129,8 +129,8 @@
                    </div>
                   <div class="social">
                     <div class="sound-share">
-                            <a href="https://www.facebook.com/sharer.php?u={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}&t={{=quote(sound.title)}}"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
-                            <a href="http://twitter.com/intent/tweet?source=sharethiscom&text={{=quote(sound.title)}}&url={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
+                            <a href="https://www.facebook.com/sharer.php?u={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}&t={{=quote(sound.title or '')}}"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
+                            <a href="http://twitter.com/intent/tweet?source=sharethiscom&text={{=quote(sound.title or '')}}&url={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
                             <a href="https://plus.google.com/share?url={{=quote('http://'+request.env.http_host + URL('details', args=sound.id))}}"><img src="{{=URL('static', 'images/gplus-32.png')}}" alt="gplus"</a>
                         </div>
                         <div class="sound-comments">
@@ -169,6 +169,13 @@
                 });
                 return false
             });                     
+        });
+        $(".addto-link").click(function(){
+            var link = $(this);
+            $.get(link.attr("href"), function(){
+                $("div.flash").text("Succesfuly added to " + link.html().substring((link.html().indexOf("<br>"))+4) + "!").fadeIn().delay(5000).fadeOut();                
+            });
+           return false; 
         });
     });
 </script>

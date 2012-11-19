@@ -59,26 +59,35 @@ def record():
     return create_sound()  
 
 @auth.requires_login()
+def init_sound():
+    # inits saound at the beginig of upload/record process so that a sound
+    # with the specified uuid will always exist when updated later.
+    Sounds.insert(uuid=a0)
+    return ''
+    
+@auth.requires_login()
 def create_sound():
-    sound = db(Sounds.uuid == request.vars.uuid).select().first()
-    form = SQLFORM(Sounds, sound, submit_button=T('Share'))        
-    if form.process().accepted:
+    sound = db(Sounds.uuid == request.vars.uuid).select().first()    
+    form = SQLFORM(Sounds)
+    pic_file = request.vars.picture
+    if form.process(dbio=False).accepted:
         # bellow is the code that try to update the file if there was allready a file with that id
-        # this was executed with dbio=False        
+        # this was executed with dbio=False
+        print "accepted!"
         if sound:
             if not form.vars.title: # keep the name of the file as title
                 form.vars.title = sound.title
-            #sound.update_record(picture_file=pic_file.read_binary() if pic_file else None, **dict(form.vars))
+            print form.vars
+            sound.update_record(picture_file=pic_file.read_binary() if pic_file else None, **dict(form.vars))
             if sound.release_date and sound.release_date > request.now:
                 sound.status = T('Scheduled for')+' '+str(sound.release_date)
                 sound.is_active = False
             else:
                 sound.is_active = True
                 sound.status = T('Ready')
-            sound.created_by = sound.modified_by = auth.user_id
+            sound.created_by = sound.modified_by = auth.user_id            
             sound.update_record()
-        else:            
-            Sounds.update_or_insert(**dict(form.vars))
+            
         response.flash = T('Upload complete!')
         redirect(URL('my_uploads', user_signature=True))
     elif form.errors:
@@ -86,16 +95,18 @@ def create_sound():
     return locals()
 
 def set_download_info():
-    sound = db(Sounds.uuid == request.vars.uuid).select().first()
+    sound = db(Sounds.uuid == request.vars.uuid).select().first()    
     if sound:
+        is_active = True
+        status = T('Ready')
+        if sound.release_date and sound.release_date > request.now:
+            status = T('Scheduled for') + ' ' + str(sound.release_date)
+            is_active = False
         sound.update_record(uuid = request.vars.uuid,
                             download_server=request.vars.host,
-                            download_key=request.vars.key)
-        if sound.release_date and sound.release_date > request.now:
-            sound.status = T('Scheduled for') + ' ' + str(sound.release_date)
-        else:
-            sound.is_active = True
-            sound.status = T('Ready')
+                            download_key=request.vars.key,
+                            is_active = is_active,
+                            status = status)
     else:
         title = ""
         if request.vars.filename:
@@ -261,9 +272,7 @@ def add_favorite():
     if not sound.id in fav: fav.append(sound.id)    
     Profiles.update_or_insert(Profiles.user==auth.user_id,
                        user=auth.user_id, favorites = fav)
-    session.flash = T('Experience added to favorites')    
-    redirect(request.env.http_referer)
-    return dict()
+    return ''
 
 @auth.requires_signature()
 def remove_favorite():
@@ -272,12 +281,10 @@ def remove_favorite():
         sound = Sounds(a0) or redirect(URL('index'))        
         p.favorites.remove(sound.id)
         p.update_record()
-    session.flash = T('Experience removed from favorites')
-    redirect(request.env.http_referer)
-    return dict()
+    return ''
 
 @auth.requires_login()
-def favorites():
+def favorites():    
     p = db(Profiles.user == auth.user_id).select().first()    
     sounds = db(Sounds.id.belongs(p.favorites)).select() if p and p.favorites else []
     
@@ -297,10 +304,8 @@ def add_playlist():
     sound = Sounds(a0) or redirect(URL('index'))    
     if not sound.id in pl: pl.append(sound.id)    
     Profiles.update_or_insert(Profiles.user==auth.user_id,
-                       user=auth.user_id, playlist = pl)
-    session.flash = T('Experience added to playlist')    
-    redirect(request.env.http_referer)
-    return dict()
+                       user=auth.user_id, playlist = pl)        
+    return ''
 
 @auth.requires_signature()
 def remove_playlist():
@@ -309,9 +314,7 @@ def remove_playlist():
         sound = Sounds(a0) or redirect(URL('index'))        
         p.playlist.remove(sound.id)
         p.update_record()
-    session.flash = T('Experience removed from favorites')
-    redirect(request.env.http_referer)
-    return dict()
+    return ''
 
 @auth.requires_login()
 def playlist():
