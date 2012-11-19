@@ -71,6 +71,19 @@ if i % 2 == 0: row='even'
 {{pass}}
 {{=paginator}}
 
+<div id="commentsModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="commentsModalLabel" aria-hidden="true">
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+  <h3 id="commentsModalLabel">Comments</h3>
+</div>
+<div class="modal-body">
+    <img src="{{=URL('static', 'css/spinner.gif')}}" alt="spinner">
+</div>
+<div class="modal-footer">
+  <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>  
+</div>
+</div>
+
 {{block head}}
 <script type="text/javascript" src="{{=URL('static', 'js/audio-player.js')}}"></script>  
 <script type="text/javascript">    
