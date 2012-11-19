@@ -54,7 +54,7 @@ if i % 2 == 0: row='even'
             <div class="row">
                 <div class="span4 sound-buttons">
                     <a href="{{=sound.download_url}}" class="sound-button">{{=T('Download')}}</a>
-                    <a href="#" class="sound-button">{{=T('Add to')}}<br/>{{=T('favorite')}}</a>
+                    <a href="{{=URL('add_favorite', args=sound.id, user_signature=True)}}" class="sound-button">{{=T('Add to')}}<br/>{{=T('favorite')}}</a>
                     <a href="#" class="sound-button">{{=T('Add to')}}<br/>{{=T('playlist')}}</a>
                 </div>
             </div>
