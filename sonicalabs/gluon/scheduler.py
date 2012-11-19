@@ -739,6 +739,8 @@ class Scheduler(MetaScheduler):
                     db(sw.worker_name == self.worker_name).update(
                         last_heartbeat=now, status=ACTIVE)
                     self.worker_status[1] = 1  # re-activating the process
+                    if self.worker_status[0] <> RUNNING:
+                        self.worker_status[0] = ACTIVE
 
             self.do_assign_tasks = False
 
@@ -949,10 +951,10 @@ class Scheduler(MetaScheduler):
             orderby = ~st.id | ~sr.id
         row = self.db(q).select(
             *fields,
-            orderby=orderby,
-            left=left,
-            limitby=(0, 1)
-        ).first()
+            **dict(orderby=orderby,
+                   left=left,
+                   limitby=(0, 1))
+             ).first()
         if output:
             row.result = row.scheduler_run.result and \
                 loads(row.scheduler_run.result,

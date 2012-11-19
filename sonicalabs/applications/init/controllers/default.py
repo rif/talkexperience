@@ -60,17 +60,15 @@ def record():
 
 @auth.requires_login()
 def create_sound():
-    from os.path import splitext
-    form = SQLFORM(Sounds, submit_button=T('Share'))
-    pic_file = request.vars.picture
+    sound = db(Sounds.uuid == request.vars.uuid).select().first()
+    form = SQLFORM(Sounds, sound, submit_button=T('Share'))        
     if form.process().accepted:
         # bellow is the code that try to update the file if there was allready a file with that id
-        # this was executed with dbio=False
-        """sound = db(Sounds.uuid == form.vars.uuid).select().first()        
+        # this was executed with dbio=False        
         if sound:
             if not form.vars.title: # keep the name of the file as title
                 form.vars.title = sound.title
-            sound.update_record(picture_file=pic_file.read_binary() if pic_file else None, **dict(form.vars))
+            #sound.update_record(picture_file=pic_file.read_binary() if pic_file else None, **dict(form.vars))
             if sound.release_date and sound.release_date > request.now:
                 sound.status = T('Scheduled for')+' '+str(sound.release_date)
                 sound.is_active = False
@@ -80,7 +78,7 @@ def create_sound():
             sound.created_by = sound.modified_by = auth.user_id
             sound.update_record()
         else:            
-            Sounds.insert(picture_file=pic_file.read_binary() if pic_file else None, **dict(form.vars))"""
+            Sounds.update_or_insert(**dict(form.vars))
         response.flash = T('Upload complete!')
         redirect(URL('my_uploads', user_signature=True))
     elif form.errors:
@@ -88,9 +86,6 @@ def create_sound():
     return locals()
 
 def set_download_info():
-    # import logging
-    # logger = logging.getLogger("test")
-    # logger.info("sssssssssssssssssssssssssssssss")
     sound = db(Sounds.uuid == request.vars.uuid).select().first()
     if sound:
         sound.update_record(uuid = request.vars.uuid,
@@ -102,15 +97,14 @@ def set_download_info():
             sound.is_active = True
             sound.status = T('Ready')
     else:
-        id = Sounds.insert(uuid = request.vars.uuid,
-                           download_server=request.vars.host,
-                           download_key=request.vars.key)
-        sound = Sounds(id)
+        title = ""
         if request.vars.filename:
             from os.path import splitext
-            title = splitext(request.vars.filename)[0]
-            sound.title = title
-    sound.update_record()
+            title = splitext(request.vars.filename)[0]            
+        id = Sounds.insert(uuid = request.vars.uuid,
+                           download_server=request.vars.host,
+                           download_key=request.vars.key,
+                           title=title)
     return "done!"
 
 def activate_scheduled_sounds():
@@ -253,11 +247,45 @@ def contact():
         if mail.send(to='radu.fericean@wisebiz-group.com;gmurgan@sympatico.ca',
                   subject='from %s (%s)' % (form.vars.your_name, form.vars.your_email),
                   message = form.vars.message):
-            response.flash = 'Thank you'
+            response.flash = T('Thank you')
             response.js = "jQuery('#%s').hide()" % request.cid
         else:
             form.errors.your_email = "Unable to send the email"
     return dict(form=form)
 
-def comments():
-    return dict(sound_id=a0)
+@auth.requires_signature()
+def add_favorite():
+    p = db(Profiles.user == auth.user_id).select().first()    
+    fav = p.favorites if p else []
+    sound = Sounds(a0) or redirect(URL('index'))
+    if not sound.id in fav:fav.append(sound.id)    
+    Profiles.update_or_insert(Profiles.user==auth.user_id,
+                       user=auth.user_id, favorites = fav)
+    session.flash = T('Experience added to favorites')    
+    redirect(request.env.http_referer)
+    return dict()
+
+@auth.requires_signature()
+def remove_favorite():
+    p = db(Profiles.user == auth.user_id).select().first()    
+    if p:
+        sound = Sounds(a0) or redirect(URL('index'))        
+        p.favorites.remove(sound.id)
+        p.update_record()
+    session.flash = T('Experience removed from favorites')
+    redirect(request.env.http_referer)
+    return dict()
+
+@auth.requires_login()
+def favorites():
+    p = db(Profiles.user == auth.user_id).select().first()
+    paginate_selector = PaginateSelector(anchor='main')
+    paginator = Paginator(paginate=paginate_selector.paginate,
+                          extra_vars={'v':1}, anchor='main', renderstyle=True)   
+    sounds = []    
+    if auth.user.favorites:
+        sounds = db(Sounds.id.belongs(p.favorites)).select()    
+    paginator.records = len(sounds)
+    paginate_info = PaginateInfo(paginator.page,
+                                 paginator.paginate, paginator.records)    
+    return locals()

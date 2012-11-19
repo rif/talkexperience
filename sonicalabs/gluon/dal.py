@@ -1199,7 +1199,7 @@ class BaseAdapter(ConnectionPool):
     def BELONGS(self, first, second):
         if isinstance(second, str):
             return '(%s IN (%s))' % (self.expand(first), second[:-1])
-        elif second==[] or second==():
+        elif not second:
             return '(1=0)'
         items = ','.join(self.expand(item, first.type) for item in second)
         return '(%s IN (%s))' % (self.expand(first), items)
@@ -3964,13 +3964,17 @@ class DatabaseStoredFile:
         return self.db._adapter.escape(obj)
 
     def __init__(self,db,filename,mode):
-        if db._adapter.dbengine != 'mysql':
-            raise RuntimeError("only MySQL can store metadata .table files in database for now")
+        if not db._adapter.dbengine in ('mysql', 'postgres'):
+            raise RuntimeError("only MySQL/Postgres can store metadata .table files in database for now")
         self.db = db
         self.filename = filename
         self.mode = mode
         if not self.web2py_filesystem:
-            self.db.executesql("CREATE TABLE IF NOT EXISTS web2py_filesystem (path VARCHAR(255), content LONGTEXT, PRIMARY KEY(path) ) ENGINE=InnoDB;")
+            if db._adapter.dbengine == 'mysql':
+                sql = "CREATE TABLE IF NOT EXISTS web2py_filesystem (path VARCHAR(255), content LONGTEXT, PRIMARY KEY(path) ) ENGINE=InnoDB;"
+            elif db._adapter.dbengine == 'postgres':
+                sql = "CREATE TABLE IF NOT EXISTS web2py_filesystem (path VARCHAR(255), content TEXT, PRIMARY KEY(path));"
+            self.db.executesql(sql)
             DatabaseStoredFile.web2py_filesystem = True
         self.p=0
         self.data = ''
@@ -4588,7 +4592,7 @@ class GoogleDatastoreAdapter(NoSQLAdapter):
         processor = attributes.get('processor',self.parse)
         return processor(rows,fields,colnames,False)
 
-    def count(self,query,distinct=None):
+    def count(self,query,distinct=None,limit=None):
         if distinct:
             raise RuntimeError("COUNT DISTINCT not supported")
         (items, tablename, fields) = self.select_raw(query)
@@ -4596,7 +4600,7 @@ class GoogleDatastoreAdapter(NoSQLAdapter):
         try:
             return len(items)
         except TypeError:
-            return items.count(limit=None)
+            return items.count(limit=limit)
 
     def delete(self,tablename, query):
         """
@@ -8910,7 +8914,7 @@ class Set(object):
                 ret and [f(self,new_fields) for f in table._after_update]
             else:
                 ret = 0
-            response.update = ret
+            response.updated = ret
         return response
 
     def delete_uploaded_files(self, upload_fields=None):
@@ -8987,7 +8991,7 @@ class LazySet(object):
     def _count(self,distinct=None):
         return self._getset()._count(distinct)
     def _select(self, *fields, **attributes):
-        return self._getset()._select(*field,**attributes)
+        return self._getset()._select(*fields,**attributes)
     def _delete(self):
         return self._getset()._delete()
     def _update(self, **update_fields):

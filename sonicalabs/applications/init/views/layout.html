@@ -72,11 +72,12 @@
             {{=search_form.custom.widget.query}}
             {{=search_form.custom.end}}                        
             {{if auth.is_logged_in():}}
-            <a class="mixed" href="{{=URL('user', 'profile')}}">WELCOME <span class="green">{{=auth.user.first_name.upper()}}</span></a>
+            <span class="mixed">WELCOME <span class="green">{{=auth.user.first_name.upper()}}</span></span>
             {{else:}}
             <a class="mixed" href="{{=URL('user', 'profile')}}"><span class="green">SIGN</span> IN</a>
             {{pass}}
             | <a class="mixed" href="{{=URL('user', 'profile')}}"><span class="green">PROFILE</span></a><br>
+            <div class="spacer">&nbsp;</div>
             <a class="mixed" href="{{=URL('user', 'logout')}}"><span class="green">SIGN</span> OUT</a>
           </div>
           <a id="top-first" href="{{=URL('default', 'most_popular')}}">MOST POPULAR<br>SUBJECTS</a>
@@ -87,7 +88,7 @@
           <a id="bottom-first" href="{{=URL('default', 'create_sound')}}">UPLOAD AN<br>EXPERIENCE</a>
           <a id="bottom-second" href="{{=URL('default', 'record')}}">RECORD AN<br>EXPERIENCE</a>
           <a id="bottom-third" href="{{=URL('default', 'my_uploads', user_signature=True)}}">MY<br>EXPERIENCES</a>
-          <a id="bottom-fourth" href="{{=URL('user', 'profile')}}">MY<br/>PROFILE</a>
+          <a id="bottom-fourth" href="{{=URL('default', 'favorites')}}">MY<br/>FAVORITES</a>
           {{end}}
         </div>
     </div>

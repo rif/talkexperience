@@ -10,11 +10,11 @@
 # request.requires_https()
 
 if not request.env.web2py_runtime_gae:
-    db = DAL('sqlite://storage.sqlite', migrate_enabled=False)
+    db = DAL('sqlite://storage.sqlite', migrate_enabled=True)
 else:
     ## connect to Google BigTable (optional 'google:datastore://namespace')
     #db = DAL('google:datastore', migrate_enabled=False)
-    db = DAL('google:sql://talkexperience.com:talk-experience:tae/talkexperience', migrate_enabled=False)
+    db = DAL('google:sql://talkexperience.com:talk-experience:tae/talkexperience', migrate_enabled=True)
     ## store sessions and tickets there
     session.connect(request, response, db = db)
     ## or store session in Memcache, Redis, etc.
@@ -36,6 +36,7 @@ crud, service, plugins = Crud(db), Service(), PluginManager()
 #auth.settings.extra_fields['auth_user']= [Field('avatar', 'upload')]
 
 ## create all tables needed by auth if not custom tables
+#auth.settings.extra_fields['auth_user']= [Field('favorites', 'list:reference sounds', readable=False, writable=False)]
 auth.define_tables()#(username=False, signature=False)
 
 ## configure email
@@ -60,21 +61,23 @@ use_janrain(auth,filename='private/janrain.key')
 from gravatar import Gravatar
 
 def get_username(row):
-    u = db.auth_user(row.sounds.created_by)
+    u = db.auth_user(row.sounds.created_by) if 'created_by' in row.sounds.keys() else None
     return u.first_name + ' ' + u.last_name if u else T("Anonymous")
 
 def get_email(row):
-    u = db.auth_user(row.sounds.created_by)
+    u = db.auth_user(row.sounds.created_by) if 'created_by' in row.sounds.keys() else None
     return u.email if u else T("anonymous@mailinator.com")
 
 def get_download_url(row):
-    if row.sounds.download_server and row.sounds.download_server:
+    if 'download_server' not in row.sounds.keys() or 'download_key' not in row.sounds.keys(): return '.'
+    if row.sounds.download_server and row.sounds.download_key: 
         return 'http://' + row.sounds.download_server + '/serve/?blobKey=' + row.sounds.download_key
     else:
         return '.'
 
 def get_delete_url(row):
-    if row.sounds.download_server and row.sounds.download_server:
+    if 'download_server' not in row.sounds.keys() or 'download_key' not in row.sounds.keys(): return '.'
+    if row.sounds.download_server and row.sounds.download_key:
         return 'http://' + row.sounds.download_server + '/delete/?blobKey=' + row.sounds.download_key
     else:
         return '.'
@@ -163,6 +166,11 @@ search_form= SQLFORM.factory(
     _name='master-search'
 )
 
+
+Profiles = db.define_table("profiles",
+    Field('user', 'reference auth_user'),
+    Field('favorites', 'list:reference sounds', readable=False, writable=False),
+)
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)

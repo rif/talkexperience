@@ -1,0 +1,77 @@
+{{extend 'layout.html'}}
+
+{{from html import truncate_string}}
+
+<h3>{{=T('My Favorites')}}</h3>
+
+{{=paginate_info}}
+<br/>
+{{ for i,sound in enumerate(sounds):
+row='odd'
+if i % 2 == 0: row='even'
+}}
+<div class="sound {{=row}}">
+    <div class="sound-container">
+        <div class="sound-left">            
+            <div class="row">
+                <div class="span1">
+                    <img src="{{=Gravatar(sound.owner_email, size=60).thumb}}" alt="" style="float:right"/>
+                </div>
+                <div class="span3 title">
+                    {{=sound.username}}<br/>
+                    {{=sound.category}}: <a href="{{=URL('details', args=sound.id)}}">{{=truncate_string(sound.title,32)}}</a>
+                </div>                
+            </div>
+            <div class="row">
+                <div class="span1">
+                    {{if sound.picture:}}
+                    <img src="{{=URL('download', args=sound.picture)}}" alt="" style="float:right"/>
+                    {{pass}}
+                </div>
+                <div class="span3 description"><b>{{=T('Description:')}}</b> {{=sound.description}}</div>
+            </div>
+            
+        </div>
+        <div class="sound-divider">
+            <img src="{{=URL('static', 'images/sound-divider-'+row+'.png')}}" alt="sound-divider"/>
+        </div>   
+       <div class="sound-right">
+            <div class="status">{{=T('Status')}}: {{=sound.status}}</div>
+            <div class="row sound-player">
+                <div id="audioplayer_{{=i}}">{{=T('Please enable javascript and flash to use the player')}}</div>        
+                <script type="text/javascript">AudioPlayer.embed("audioplayer_{{=i}}", {soundFile: "{{=sound.download_url}}"});</script>
+            </div>
+            <div class="row">
+                <div class="span4 sound-buttons">
+                    <a href="{{=URL('remove_favorite', args=sound.id, user_signature=True)}}" class="sound-button">{{=T('Remove from favorites')}}</a>                    
+                </div>
+              </div>
+            <div class="row">
+                <div class="span4 sound-added">
+                    <b>{{=T('Plays')}}</b>: {{=sound.play_count}}<br/>
+                    <b>{{=T('Added')}}</b>: {{=prettydate(sound.created_on)}}
+                </div>  
+            </div>           
+       </div>   
+   </div>
+  <div class="social"></div>   
+</div>
+{{pass}}
+{{=paginator}}
+
+{{block head}}
+<script type="text/javascript" src="{{=URL('static', 'js/audio-player.js')}}"></script>  
+<script type="text/javascript">    
+        AudioPlayer.setup("{{=URL('static', 'js/player.swf')}}", {  
+            width: 290,
+            transparentpagebg: "yes",            
+            rightbg: "8dc63f",
+            righticon: "#98FF00",
+            righticonhover: "#8dc63f",
+            remaining: "yes",        
+        });    
+    $(function(){
+       $(".description").jTruncate({length: 100});  
+    });
+</script>
+{{end}}
