@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	MAIN_APPLICATION = "http://www.talkexperience.com"
-	//MAIN_APPLICATION = "http://localhost:8080"
+	//MAIN_APPLICATION = "http://www.talkexperience.com"
+	MAIN_APPLICATION = "http://localhost:8000"
 )
 
 func serveError(c appengine.Context, w http.ResponseWriter, err error) {

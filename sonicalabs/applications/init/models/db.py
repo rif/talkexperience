@@ -13,10 +13,10 @@ if not request.env.web2py_runtime_gae:
     db = DAL('sqlite://storage.sqlite', migrate_enabled=True)
 else:
     ## connect to Google BigTable (optional 'google:datastore://namespace')
-    #db = DAL('google:datastore', migrate_enabled=False)
+    sess_db = DAL('google:datastore', migrate_enabled=False)
     db = DAL('google:sql://talkexperience.com:talk-experience:tae/talkexperience', migrate_enabled=True)
     ## store sessions and tickets there
-    session.connect(request, response, db = db)
+    session.connect(request, response, db = sess_db)
     ## or store session in Memcache, Redis, etc.
     ## from gluon.contrib.memdb import MEMDB
     ## from google.appengine.api.memcache import Client
@@ -170,6 +170,7 @@ search_form= SQLFORM.factory(
 Profiles = db.define_table("profiles",
     Field('user', 'reference auth_user'),
     Field('favorites', 'list:reference sounds', readable=False, writable=False),
+    Field('playlist', 'list:reference sounds', readable=False, writable=False),
 )
 
 ## after defining tables, uncomment below to enable auditing

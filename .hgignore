@@ -15,4 +15,6 @@ errors/*
 parameters_8000.py
 httpserver.pid
 httpserver.log
-applications/admin/*
+sonicadrone/upload/*
+sonicadrone/ready/*
+sonicadrone/sonicadrone

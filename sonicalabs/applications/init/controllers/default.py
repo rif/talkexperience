@@ -256,9 +256,9 @@ def contact():
 @auth.requires_signature()
 def add_favorite():
     p = db(Profiles.user == auth.user_id).select().first()    
-    fav = p.favorites if p else []
+    fav = p.favorites if p and p.favorites else []
     sound = Sounds(a0) or redirect(URL('index'))
-    if not sound.id in fav:fav.append(sound.id)    
+    if not sound.id in fav: fav.append(sound.id)    
     Profiles.update_or_insert(Profiles.user==auth.user_id,
                        user=auth.user_id, favorites = fav)
     session.flash = T('Experience added to favorites')    
@@ -278,13 +278,50 @@ def remove_favorite():
 
 @auth.requires_login()
 def favorites():
-    p = db(Profiles.user == auth.user_id).select().first()
+    p = db(Profiles.user == auth.user_id).select().first()    
+    sounds = db(Sounds.id.belongs(p.favorites)).select() if p and p.favorites else []
+    
     paginate_selector = PaginateSelector(anchor='main')
     paginator = Paginator(paginate=paginate_selector.paginate,
-                          extra_vars={'v':1}, anchor='main', renderstyle=True)   
-    sounds = []    
-    if auth.user.favorites:
-        sounds = db(Sounds.id.belongs(p.favorites)).select()    
+                          extra_vars={'v':1}, anchor='main', renderstyle=True)
+        
+    paginator.records = len(sounds)
+    paginate_info = PaginateInfo(paginator.page,
+                                 paginator.paginate, paginator.records)    
+    return locals()
+
+@auth.requires_signature()
+def add_playlist():
+    p = db(Profiles.user == auth.user_id).select().first()    
+    pl = p.playlist if p and p.playlist else []
+    sound = Sounds(a0) or redirect(URL('index'))    
+    if not sound.id in pl: pl.append(sound.id)    
+    Profiles.update_or_insert(Profiles.user==auth.user_id,
+                       user=auth.user_id, playlist = pl)
+    session.flash = T('Experience added to playlist')    
+    redirect(request.env.http_referer)
+    return dict()
+
+@auth.requires_signature()
+def remove_playlist():
+    p = db(Profiles.user == auth.user_id).select().first()    
+    if p:
+        sound = Sounds(a0) or redirect(URL('index'))        
+        p.playlist.remove(sound.id)
+        p.update_record()
+    session.flash = T('Experience removed from favorites')
+    redirect(request.env.http_referer)
+    return dict()
+
+@auth.requires_login()
+def playlist():
+    p = db(Profiles.user == auth.user_id).select().first()    
+    sounds = db(Sounds.id.belongs(p.playlist)).select() if p and p.playlist else []
+    
+    paginate_selector = PaginateSelector(anchor='main')
+    paginator = Paginator(paginate=paginate_selector.paginate,
+                          extra_vars={'v':1}, anchor='main', renderstyle=True)
+        
     paginator.records = len(sounds)
     paginate_info = PaginateInfo(paginator.page,
                                  paginator.paginate, paginator.records)    
