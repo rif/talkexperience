@@ -19,6 +19,9 @@
     </div>
 </div>
 
+<div class="center-div" style="width: 240px; display: none;">
+<img id="spinner" src="{{=URL('static', 'images/spinner-black.gif')}}" alt="spinner">
+</div>
 <div id="create-experience" style="display: none;"></div>
 
 <link href="{{=URL('static','css/fineuploader.css')}}" rel="stylesheet" type="text/css" />
@@ -37,8 +40,8 @@ $(function(){
       uploadButton: "<i class='icon-folder-open icon-white'></i> {{=T('Upload a file')}}",  
     },
     request: {
-        //endpoint: 'http://avocadosoft.ro:6060/process',
-        endpoint: 'http://localhost:6060/',
+        endpoint: 'http://avocadosoft.ro:6060/process',
+        //endpoint: 'http://localhost:6060/',
         params: {uuid:"{{=experience_uuid}}"},
     },
     validation: {
@@ -51,9 +54,11 @@ $(function(){
           $("#wami").hide();
         },
         onComplete: function(id, fileName){            
-          $("#file-uploader").replaceWith('<h4 id="filename">Experience name: ' + fileName + '</h4>');                
+          $("#file-uploader").replaceWith('<h4 id="filename">Experience name: ' + fileName + '</h4>');
+          $("#spinner").show();
           $("#create-experience").load("{{=URL('default', 'create_experience', args=experience_uuid)}}", function(){
-            $(this).slideDown();
+            $("#spinner").hide();
+            $(this).slideDown();        
           });
         }
     }
@@ -78,7 +83,9 @@ $(function(){
                 $("#status").text("");
                 Wami.stopRecording();			
                 $(this).addClass('ready');
+                $("#spinner").show();
                 $("#create-experience").load("{{=URL('default', 'create_experience')}}", function(){
+                    $("#spinner").hide();
                     $(this).slideDown();
                 });
                 $("#rec-link").hide();                
@@ -86,17 +93,5 @@ $(function(){
         }
         return false;
     });
-    /*$("#create-experience").on("submit", "#create-experience-form", function(){
-        var form = $(this);
-        $.post(form.attr("action"), form.serialize(), function(data, status){
-            if(data.indexOf("error") != -1) {
-                $("#create-experience").html(data);                    
-            } else {
-                window.location = "{{=URL('my_uploads', user_signature=True)}}";
-            }
-        });
-        return false;
-    });
-    */
 });
 </script>

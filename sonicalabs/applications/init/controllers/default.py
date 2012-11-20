@@ -68,8 +68,7 @@ def create_experience():
     else:
         sound = db(Sounds.uuid == a0).select().first()
     Sounds.is_active.default = False
-    form = SQLFORM(Sounds, sound, _action=URL('default', 'create_experience', args=a0), _id="create-experience-form")
-    print request.vars
+    form = SQLFORM(Sounds, sound, _action=URL('default', 'create_experience', args=a0), _id="create-experience-form")    
     if form.process().accepted:        
         response.flash = T('Upload complete!')
         redirect(URL('my_uploads', user_signature=True))
