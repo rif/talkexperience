@@ -84,7 +84,7 @@ $(function(){
                 Wami.stopRecording();			
                 $(this).addClass('ready');
                 $("#spinner").show();
-                $("#create-experience").load("{{=URL('default', 'create_experience')}}", function(){
+                $("#create-experience").load("{{=URL('default', 'create_experience', args=experience_uuid)}}", function(){
                     $("#spinner").hide();
                     $(this).slideDown();
                 });
