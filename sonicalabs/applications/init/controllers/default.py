@@ -73,7 +73,8 @@ def create_experience():
         response.flash = T('Upload complete!')
         redirect(URL('my_uploads', user_signature=True))
     elif form.errors:
-       response.flash = T('Form has errors')    
+        response.view = 'default/create_experience_full.html'
+        response.flash = T('Form has errors')    
     return locals()
 
 def set_download_info():
@@ -88,8 +89,7 @@ def set_download_info():
                         download_server=request.vars.host,
                         download_key=request.vars.key,
                         is_active = is_active,
-                        status = status,
-                        title = title)
+                        status = status)
     return "done!"
 
 def activate_scheduled_sounds():
@@ -142,6 +142,7 @@ def delete_sound():
     crud.delete(Sounds, a0,
                 next=URL('my_uploads', user_signature=True),
                 message=T('Sound deleted!'))
+    #TODO: remove from all favorites and playlists
     return locals()
 
 @auth.requires_signature()
