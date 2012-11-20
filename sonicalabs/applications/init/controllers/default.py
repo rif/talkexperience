@@ -55,41 +55,31 @@ def search():
                             paginator.paginate, paginator.records)
     return locals()
 
-def record():
-    return create_sound()  
-
 @auth.requires_login()
-def submit_experience():    
-    return dict()
+def submit_experience():
+    import uuid        
+    return dict(experience_uuid = str(uuid.uuid4()))
     
 @auth.requires_login()
 def create_experience():    
     if request.env.request_method == 'GET':        
-        sound_id = Sounds.insert()        
+        sound_id = Sounds.insert(uuid=a0)
+        sound = Sounds(sound_id)
     else:
-        sound_id = a0
-    form = SQLFORM(Sounds, sound_id, _action=URL('default', 'create_experience', args=sound_id), _id="create-experience-form")
-    if form.process().accepted:
-        sound = Sounds(form.vars.id)
-        sound.is_active = True
-        sound.status = T('Ready')
-        sound.created_by = sound.modified_by = auth.user_id
-        if sound.release_date and sound.release_date > request.now:
-            sound.status = T('Scheduled for')+' '+str(sound.release_date)
-            sound.is_active = False                
-        sound.update_record()
-        response.flash = T('Upload complete!')        
+        sound = db(Sounds.uuid == a0).select().first()
+    Sounds.is_active.default = False
+    form = SQLFORM(Sounds, sound, _action=URL('default', 'create_experience', args=a0), _id="create-experience-form")
+    print request.vars
+    if form.process().accepted:        
+        response.flash = T('Upload complete!')
+        redirect(URL('my_uploads', user_signature=True))
     elif form.errors:
-       response.flash = T('form has errors')    
+       response.flash = T('Form has errors')    
     return locals()
 
 def set_download_info():
     sound = db(Sounds.uuid == request.vars.uuid).select().first()    
-    if not sound: return 'notfound!'
-    title = sound.title
-    if title == '' and request.vars.filename:
-        from os.path import splitext
-        title = splitext(request.vars.filename)[0]    
+    if not sound: return 'notfound!'    
     is_active = True
     status = T('Ready')
     if sound.release_date and sound.release_date > request.now:

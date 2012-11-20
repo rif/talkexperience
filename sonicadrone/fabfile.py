@@ -10,6 +10,9 @@ def build():
 def run():    
     local("go run sonicadrone.go")    
 
+@task
+def fake():    
+    local("go run fakedrone.go")  
 
 @task
 def clean():
