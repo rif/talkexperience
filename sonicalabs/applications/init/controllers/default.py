@@ -69,7 +69,10 @@ def create_experience():
         sound = db(Sounds.uuid == a0).select().first()
     Sounds.is_active.default = False
     form = SQLFORM(Sounds, sound, _action=URL('default', 'create_experience', args=a0), _id="create-experience-form")    
-    if form.process().accepted:        
+    if form.process().accepted:
+        new_sound = Sounds(form.vars.id)
+        if new_sound.release_date and new_sound.release_date > request.now:                
+            new_sound.update_record(is_active=False, status = T('Scheduled for') + ' ' + str(new_sound.release_date))
         response.flash = T('Upload complete!')
         redirect(URL('my_uploads', user_signature=True))
     elif form.errors:
@@ -124,8 +127,8 @@ def update_sound():
                    showid=False)
     if form.process().accepted:
         new_sound = Sounds(form.vars.id)
-        if new_sound.release_date and new_sound.release_date > request.now:
-            new_sound.update_record(is_active=False)
+        if new_sound.release_date and new_sound.release_date > request.now:                
+            new_sound.update_record(is_active=False, status = T('Scheduled for') + ' ' + str(new_sound.release_date))
         response.flash = T('Sound info updated!')
         redirect(URL('my_uploads', user_signature=True))
     elif form.errors:
