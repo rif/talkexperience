@@ -5,8 +5,6 @@
 
 <h3>{{=T('My Favorites')}}</h3>
 
-<a class="btn btn-green btn-small" href="{{=URL('default', 'playlist')}}">My playlist</a>
-
 {{=paginate_info}}
 <br/>
 {{ for i,sound in enumerate(sounds):

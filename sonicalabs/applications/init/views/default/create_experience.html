@@ -1,7 +1,5 @@
-{{extend 'layout.html'}}
-
-<div class="row">
 {{=form.custom.begin}}
+<div class="row">
 <div class="span6">
     <h3>{{=T('Record an Experience')}}</h3>
 <table>
@@ -38,10 +36,10 @@
           <td>
             <a style="display:none" href="#" class="btn btn-large btn-green ready" id="rec-link">{{=T('Start recording')}}</a>
             <span id="wami"></span>
-			<noscript>          
+	    <noscript>          
               <p>{{=T('Please enable JavaScript and Flash to use the recorder feature.')}}</p>              
             </noscript> 
-      <div id="status"></div>
+            <div id="status"></div>
           </td>
       </tr>
     </tbody>
@@ -50,59 +48,22 @@
 </div>
 <div class="row">
     <div class="center">
-        <button id="share-button" disabled="disabled" class="btn btn-large btn-green">{{=T('Share')}}</button>
+        <button id="share-button" class="btn btn-large btn-green">{{=T('Share')}}</button>
     </div>
 </div>
 {{=form.custom.end}}
 
-<!-- swfobject is a commonly used library to embed Flash content -->
-<script type="text/javascript"
-	src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+
 <link href="{{=URL('static','css/select2.css')}}" rel="stylesheet" type="text/css" />
 <script src="{{=URL('static','js/select2.min.js')}}" type="text/javascript"></script>
 <!-- Setup the recorder interface -->
 <script type="text/javascript" src="{{=URL('static', 'js/recorder.js')}}"></script>
 
 <script type="text/javascript">
-  $(function(){
-    var recorded = false
-    $('[rel=popover]').popover();
+  $(function(){  
+        $('[rel=popover]').popover();
   	$("#sounds_language").select2({width:"315px",});
   	$("#sounds_category").select2({width:"315px",});
-    $("#sounds_uuid__row").hide();
-  	Wami.setup({  		
-			id : "wami",
-			swfUrl : "{{=URL('static', 'js/Wami.swf')}}",
-      onReady : function() {
-        Wami.hide();
-        $("#rec-link").fadeIn();        
-      },
-  	});     
-	$("#rec-link").click(function(){
-		if($('#rec-link').hasClass('ready')){
-                        recorded = true
-			$("#status").text("{{=T('Recording...')}}");
-			Wami.startRecording("http://avocadosoft.ro:6060/record?uuid="+$("#sounds_uuid").val());			
-			//Wami.startRecording("http://localhost:6060/record?uuid="+$("#sounds_uuid").val());
-			$(this).removeClass('ready');
-      		$(this).text("{{=T('Stop recording')}}");
-		} else{
-			$("#status").text("");
-			Wami.stopRecording();			
-			$(this).addClass('ready');
-                        $.get("{{=URL('default','init_sound')}}/" + $("#sounds_uuid").val(), function(){
-                            $("#share-button").removeAttr("disabled");  
-                        });
-      		$(this).text("{{=T('Start recording')}}");
-		}
-		return false;
-	});
-        $("form").submit(function(){
-            if(!recorded){      
-              alert("Please record your experience!");
-              return false;
-            } 
-            return true;
-        }); 
-  });
+        $("#sounds_uuid__row").hide();        
+    });
 </script>
