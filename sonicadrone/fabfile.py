@@ -13,6 +13,7 @@ def run():
 
 @task
 def clean():
+    local("rm -rf upload ready")
     local("rm sonicadrone")
 
 @task

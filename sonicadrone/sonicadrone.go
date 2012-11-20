@@ -23,10 +23,10 @@ var (
 )
 
 const (
-	//MAIN_APPLICATION = "http://www.talkexperience.com"
-	MAIN_APPLICATION = "http://localhost:8000"
-	//BLOBS_APPLICATION = "http://talkexperienceblobs.appspot.com"
-	BLOBS_APPLICATION    = "http://localhost:8081"	
+	MAIN_APPLICATION = "http://www.talkexperience.com"
+	//MAIN_APPLICATION = "http://localhost:8000"
+	BLOBS_APPLICATION = "http://talkexperienceblobs.appspot.com"
+	//BLOBS_APPLICATION    = "http://localhost:8081"	
 	TRANSFORMER          = "avconv"
 	BITRATE              = "96k"
 	FOLDER_UPLOAD        = "./upload"

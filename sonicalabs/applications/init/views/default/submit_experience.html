@@ -1,0 +1,100 @@
+{{extend 'layout.html'}}
+
+<div class="row">
+    <div class="offset3 span2">
+    <div id="fine-uploader">       
+    <noscript>          
+      <p>{{=T("Please enable JavaScript to use the file uploader.")}}</p>
+      <!-- or put a simple form for upload here -->
+    </noscript>         
+    </div>    
+    </div>
+    <div class="span3">
+    <a style="display:none" href="#" class="btn btn-large btn-green ready" id="rec-link"><i class="icon-plus-sign icon-white"></i> {{=T('Start recording')}}</a>
+    <span id="wami"></span>
+    <noscript>          
+      <p>{{=T('Please enable JavaScript and Flash to use the recorder feature.')}}</p>              
+    </noscript> 
+    <div id="status"></div>    
+    </div>
+</div>
+
+<div id="create-experience" style="display: none;"></div>
+
+<link href="{{=URL('static','css/fineuploader.css')}}" rel="stylesheet" type="text/css" />
+<script src="{{=URL('static','js/fineuploader-3.0.min.js')}}" type="text/javascript"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+<script type="text/javascript" src="{{=URL('static', 'js/recorder.js')}}"></script>
+<script type="text/javascript">
+$(function(){
+  var uploader = new qq.FineUploader({
+    // pass the dom node (ex. $(selector)[0] for jQuery users)    
+    multiple: false,
+    //debug: true,
+    element: $("#fine-uploader")[0],
+    // path to server-side upload script
+    text: {
+      uploadButton: "<i class='icon-folder-open icon-white'></i> {{=T('Upload a file')}}",  
+    },
+    request: {
+        endpoint: 'http://avocadosoft.ro:6060/process',
+        //endpoint: 'http://localhost:6060/process',
+        params: {uuid: $("#sounds_uuid").val()},
+    },
+    validation: {
+        allowedExtensions: ['mp3', 'wav', 'ogg', 'oga', 'aac', 'mp4', 'mp2', 'flac', 'au', 'ac3'],
+    },
+    callbacks: {
+        onSubmit: function(id, fileName){            
+          $(".qq-upload-button").hide();
+          $("#rec-link").hide();
+        },
+        onComplete: function(id, fileName){            
+          $("#file-uploader").replaceWith('<h4 id="filename">Experience name: ' + fileName + '</h4>');                
+          $("#create-experience").load("{{=URL('default', 'create_experience')}}", function(){
+            $(this).slideDown();
+          });
+        }
+    }
+  });    
+    Wami.setup({  		
+	id : "wami",
+	swfUrl : "{{=URL('static', 'js/Wami.swf')}}",
+        onReady : function() {
+          Wami.hide();
+          $("#rec-link").show();        
+        },
+    });     
+    $("#rec-link").click(function(){
+        if($('#rec-link').hasClass('ready')){                    
+                $("#status").text("{{=T('Recording...')}}");                
+                Wami.startRecording("http://avocadosoft.ro:6060/record?uuid="+$("#sounds_uuid").val());			
+                //Wami.startRecording("http://localhost:6060/record?uuid="+$("#sounds_uuid").val());
+                $(".qq-upload-button").hide();          
+                $(this).removeClass('ready');
+        $(this).text("{{=T('Stop recording')}}");
+        } else{
+                $("#status").text("");
+                Wami.stopRecording();			
+                $(this).addClass('ready');
+                $("#create-experience").load("{{=URL('default', 'create_experience')}}", function(){
+                    $(this).slideDown();
+                });
+                $("#rec-link").hide();                
+        $(this).text("{{=T('Start recording')}}");
+        }
+        return false;
+    });
+    $("#create-experience").on("submit", "#create-experience-form", function(){
+        var form = $(this);
+        $.post(form.attr("action"), form.serialize(), function(data, status){
+            if(data.indexOf("error") != -1) {
+                $("#create-experience").html(data);                    
+            } else {
+                window.location = "{{=URL('my_uploads', user_signature=True)}}";
+            }
+        });
+        return false;
+    });
+});
+</script>

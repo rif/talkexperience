@@ -10,11 +10,11 @@
 # request.requires_https()
 
 if not request.env.web2py_runtime_gae:
-    db = DAL('sqlite://storage.sqlite', migrate_enabled=True)
+    db = DAL('sqlite://storage.sqlite', migrate_enabled=False)
 else:
     ## connect to Google BigTable (optional 'google:datastore://namespace')
     sess_db = DAL('google:datastore', migrate_enabled=False)
-    db = DAL('google:sql://talkexperience.com:talk-experience:tae/talkexperience', migrate_enabled=True)
+    db = DAL('google:sql://talkexperience.com:talk-experience:tae/talkexperience', migrate_enabled=False)
     ## store sessions and tickets there
     session.connect(request, response, db = sess_db)
     ## or store session in Memcache, Redis, etc.
@@ -123,10 +123,10 @@ categories = ['Birth',
 import uuid
 
 Sounds = db.define_table("sounds",
-    Field('title'),
+    Field('title', requires=IS_NOT_EMPTY()),
     Field('description', 'text'),
     Field('keywords', comment=T('Comma separated key words')),    
-    Field('uuid', length=64, default=lambda:str(uuid.uuid4())),
+    Field('uuid', length=64, default=lambda:str(uuid.uuid4())),#, readable=False, writable=False),
     Field('download_server', writable=False, readable=False),
     Field('download_key', writable=False, readable=False),
     Field('status', writable=False, readable=False, default=T("Processing...")),
@@ -142,7 +142,7 @@ Sounds = db.define_table("sounds",
           requires = IS_EMPTY_OR(IS_EMAIL(error_message=T('Invalid email!'))),
           comment=T('Email to be sent to (the release notification)')),\
     Field('comments', 'text'),
-    Field('picture', 'upload', uploadfield='picture_file'),#, requires=IS_EMPTY_OR(IS_UPLOAD_FILENAME(extension='jpg|jpeg|bmp|png'))),    
+    Field('picture', 'upload', uploadfield='picture_file', requires=IS_EMPTY_OR(IS_UPLOAD_FILENAME(extension='jpg|jpeg|bmp|png'))),    
     Field('picture_file', 'blob'),
     auth.signature,
     format='%(title)s'

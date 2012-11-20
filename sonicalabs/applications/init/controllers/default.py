@@ -59,63 +59,48 @@ def record():
     return create_sound()  
 
 @auth.requires_login()
-def init_sound():
-    # inits saound at the beginig of upload/record process so that a sound
-    # with the specified uuid will always exist when updated later.
-    Sounds.insert(uuid=a0)
-    return ''
+def submit_experience():    
+    return dict()
     
 @auth.requires_login()
-def create_sound():
-    sound = db(Sounds.uuid == request.vars.uuid).select().first()    
-    form = SQLFORM(Sounds)
-    pic_file = request.vars.picture
-    if form.process(dbio=False).accepted:
-        # bellow is the code that try to update the file if there was allready a file with that id
-        # this was executed with dbio=False
-        print "accepted!"
-        if sound:
-            if not form.vars.title: # keep the name of the file as title
-                form.vars.title = sound.title
-            print form.vars
-            sound.update_record(picture_file=pic_file.read_binary() if pic_file else None, **dict(form.vars))
-            if sound.release_date and sound.release_date > request.now:
-                sound.status = T('Scheduled for')+' '+str(sound.release_date)
-                sound.is_active = False
-            else:
-                sound.is_active = True
-                sound.status = T('Ready')
-            sound.created_by = sound.modified_by = auth.user_id            
-            sound.update_record()
-            
-        response.flash = T('Upload complete!')
-        redirect(URL('my_uploads', user_signature=True))
+def create_experience():    
+    if request.env.request_method == 'GET':        
+        sound_id = Sounds.insert()        
+    else:
+        sound_id = a0
+    form = SQLFORM(Sounds, sound_id, _action=URL('default', 'create_experience', args=sound_id), _id="create-experience-form")
+    if form.process().accepted:
+        sound = Sounds(form.vars.id)
+        sound.is_active = True
+        sound.status = T('Ready')
+        sound.created_by = sound.modified_by = auth.user_id
+        if sound.release_date and sound.release_date > request.now:
+            sound.status = T('Scheduled for')+' '+str(sound.release_date)
+            sound.is_active = False                
+        sound.update_record()
+        response.flash = T('Upload complete!')        
     elif form.errors:
        response.flash = T('form has errors')    
     return locals()
 
 def set_download_info():
     sound = db(Sounds.uuid == request.vars.uuid).select().first()    
-    if sound:
-        is_active = True
-        status = T('Ready')
-        if sound.release_date and sound.release_date > request.now:
-            status = T('Scheduled for') + ' ' + str(sound.release_date)
-            is_active = False
-        sound.update_record(uuid = request.vars.uuid,
-                            download_server=request.vars.host,
-                            download_key=request.vars.key,
-                            is_active = is_active,
-                            status = status)
-    else:
-        title = ""
-        if request.vars.filename:
-            from os.path import splitext
-            title = splitext(request.vars.filename)[0]            
-        id = Sounds.insert(uuid = request.vars.uuid,
-                           download_server=request.vars.host,
-                           download_key=request.vars.key,
-                           title=title)
+    if not sound: return 'notfound!'
+    title = sound.title
+    if title == '' and request.vars.filename:
+        from os.path import splitext
+        title = splitext(request.vars.filename)[0]    
+    is_active = True
+    status = T('Ready')
+    if sound.release_date and sound.release_date > request.now:
+        status = T('Scheduled for') + ' ' + str(sound.release_date)
+        is_active = False
+    sound.update_record(uuid = request.vars.uuid,
+                        download_server=request.vars.host,
+                        download_key=request.vars.key,
+                        is_active = is_active,
+                        status = status,
+                        title = title)
     return "done!"
 
 def activate_scheduled_sounds():
