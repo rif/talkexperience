@@ -37,9 +37,9 @@ $(function(){
       uploadButton: "<i class='icon-folder-open icon-white'></i> {{=T('Upload a file')}}",  
     },
     request: {
-        endpoint: 'http://avocadosoft.ro:6060/process',
-        //endpoint: 'http://localhost:6060/process',
-        params: {uuid: $("#sounds_uuid").val()},
+        //endpoint: 'http://avocadosoft.ro:6060/process',
+        endpoint: 'http://localhost:6060/',
+        params: {uuid:"{{=experience_uuid}}"},
     },
     validation: {
         allowedExtensions: ['mp3', 'wav', 'ogg', 'oga', 'aac', 'mp4', 'mp2', 'flac', 'au', 'ac3'],
@@ -48,10 +48,11 @@ $(function(){
         onSubmit: function(id, fileName){            
           $(".qq-upload-button").hide();
           $("#rec-link").hide();
+          $("#wami").hide();
         },
         onComplete: function(id, fileName){            
           $("#file-uploader").replaceWith('<h4 id="filename">Experience name: ' + fileName + '</h4>');                
-          $("#create-experience").load("{{=URL('default', 'create_experience')}}", function(){
+          $("#create-experience").load("{{=URL('default', 'create_experience', args=experience_uuid)}}", function(){
             $(this).slideDown();
           });
         }
@@ -68,8 +69,8 @@ $(function(){
     $("#rec-link").click(function(){
         if($('#rec-link').hasClass('ready')){                    
                 $("#status").text("{{=T('Recording...')}}");                
-                Wami.startRecording("http://avocadosoft.ro:6060/record?uuid="+$("#sounds_uuid").val());			
-                //Wami.startRecording("http://localhost:6060/record?uuid="+$("#sounds_uuid").val());
+                Wami.startRecording("http://avocadosoft.ro:6060/record?uuid={{=experience_uuid}}");			
+                //Wami.startRecording("http://localhost:6060/record?uuid={{=experience_uuid}}");
                 $(".qq-upload-button").hide();          
                 $(this).removeClass('ready');
         $(this).text("{{=T('Stop recording')}}");
@@ -85,7 +86,7 @@ $(function(){
         }
         return false;
     });
-    $("#create-experience").on("submit", "#create-experience-form", function(){
+    /*$("#create-experience").on("submit", "#create-experience-form", function(){
         var form = $(this);
         $.post(form.attr("action"), form.serialize(), function(data, status){
             if(data.indexOf("error") != -1) {
@@ -96,5 +97,6 @@ $(function(){
         });
         return false;
     });
+    */
 });
 </script>

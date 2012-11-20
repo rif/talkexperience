@@ -120,13 +120,11 @@ categories = ['Birth',
 'Travel',
 ]
 
-import uuid
-
 Sounds = db.define_table("sounds",
     Field('title', requires=IS_NOT_EMPTY()),
     Field('description', 'text'),
     Field('keywords', comment=T('Comma separated key words')),    
-    Field('uuid', length=64, default=lambda:str(uuid.uuid4())),#, readable=False, writable=False),
+    Field('uuid', length=64, readable=False, writable=False),
     Field('download_server', writable=False, readable=False),
     Field('download_key', writable=False, readable=False),
     Field('status', writable=False, readable=False, default=T("Processing...")),
