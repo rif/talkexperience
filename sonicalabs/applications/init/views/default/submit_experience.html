@@ -1,5 +1,5 @@
 {{extend 'layout.html'}}
-
+<h3>{{=T('Upload an existing experience or Record a new one using the buttons below')}}</h3>
 <div class="row">
     <div class="offset3 span2">
     <div id="fine-uploader">       
@@ -19,8 +19,9 @@
     </div>
 </div>
 
-<div id="spinner" class="center-div" style="width: 240px; display: none;">
+<div id="spinner" class="center-div">
 <img src="{{=URL('static', 'images/spinner-black.gif')}}" alt="spinner">
+<p>{{=T('Loading form, please wait...')}}</p> 
 </div>
 <div id="create-experience" style="display: none;"></div>
 
