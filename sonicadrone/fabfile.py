@@ -1,5 +1,6 @@
 from fabric.api import local, sudo
 from fabric.decorators import task, hosts
+from fabric.context_managers import lcd
 
 @task
 def build():
@@ -20,12 +21,15 @@ def clean():
     local("rm sonicadrone")
 
 @task
-@hosts('rif@avocadosoft.ro:22011')
 def deploy():
     build()
-    sudo('supervisorctl stop sonicadrone')
-    local('scp sonicadrone avocado:')
-    sudo('supervisorctl start sonicadrone')
+    DEST = '~/Documents/webframeworks/openshift/drone'
+    local('rsync sonicadrone %s/diy/sonicadrone' % DEST)
+    with lcd(DEST):
+        local('pwd')
+        local('git add .')
+        local('git ci -m "new version"')
+        local('git push')    
     clean()
 
 @task

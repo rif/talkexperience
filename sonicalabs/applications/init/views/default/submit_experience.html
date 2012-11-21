@@ -42,8 +42,8 @@ $(function(){
     text: {
       uploadButton: "<i class='icon-folder-open icon-white'></i> {{=T('Upload a file')}}",  
     },
-    request: {
-        endpoint: 'http://avocadosoft.ro:6060/process',
+    request: {        
+        endpoint: 'https://drone-talkexperience.rhcloud.com/process',        
         //endpoint: 'http://localhost:6060/',
         params: {uuid:"{{=experience_uuid}}"},
     },
@@ -76,8 +76,8 @@ $(function(){
     });     
     $("#rec-link").click(function(){
         if($('#rec-link').hasClass('ready')){                    
-                $("#status").text("{{=T('Recording...')}}");                
-                Wami.startRecording("http://avocadosoft.ro:6060/record?uuid={{=experience_uuid}}");			
+                $("#status").text("{{=T('Recording...')}}");
+                Wami.startRecording("https://drone-talkexperience.rhcloud.com/record?uuid={{=experience_uuid}}");                	    
                 //Wami.startRecording("http://localhost:6060/record?uuid={{=experience_uuid}}");
                 $(".qq-upload-button, .tohide").hide();          
                 $(this).removeClass('ready');

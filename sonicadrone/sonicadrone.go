@@ -16,10 +16,13 @@ import (
 	"strconv"
 	"strings"
 	"time"
+        "runtime"
 )
 
 var (
 	ACCEPTED_ORIGINS = []string{"http://talk-experience.appspot.com", "http://www.talkexperience.com", "http://localhost:8000", "::1"}
+        REPO_PATH = os.Getenv("OPENSHIFT_REPO_DIR")
+        DATA_DIR = os.Getenv("OPENSHIFT_DATA_DIR")
 )
 
 const (
@@ -27,10 +30,10 @@ const (
 	//MAIN_APPLICATION = "http://localhost:8000"
 	BLOBS_APPLICATION = "http://talkexperienceblobs.appspot.com"
 	//BLOBS_APPLICATION    = "http://localhost:8081"	
-	TRANSFORMER          = "avconv"
+	TRANSFORMER          = "ffmpeg"
 	BITRATE              = "96k"
-	FOLDER_UPLOAD        = "./upload"
-	FOLDER_READY         = "./ready"
+	FOLDER_UPLOAD        = "upload"
+	FOLDER_READY         = "ready"
 	CROSSDOMAIN_WAMI_XML = `<cross-domain-policy>
 <site-control permitted-cross-domain-policies="master-only"/>
 <allow-access-from domain="*.talkexperience.com" secure="false"/>
@@ -87,7 +90,7 @@ func handleProcess(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "{error: 'Invalid form values!'}")
 		return
 	}
-	path := path.Join(FOLDER_UPLOAD, uuid+"_"+fileName)
+	path := path.Join(DATA_DIR, FOLDER_UPLOAD, uuid+"_"+fileName)
 	f, err := os.Create(path)
 	if err != nil {
 		log.Print("Could not create ", path)
@@ -140,7 +143,7 @@ func handleRecord(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 	fileName := fmt.Sprintf("record_%s.wav", genUUID())
-	path := path.Join(FOLDER_UPLOAD, uuid+"_"+fileName)
+	path := path.Join(DATA_DIR, FOLDER_UPLOAD, uuid+"_"+fileName)
 	err = ioutil.WriteFile(path, data, 0660)
 	if err != nil {
 		fmt.Println(err)
@@ -232,14 +235,16 @@ func prepareNewFileName(oldfn, uuid string) (basefn string) {
 }
 
 func transcode(oldfn, basefn string) (newfn string) {
-	_, err := exec.LookPath(TRANSFORMER)
-	if err != nil {
-		log.Fatal(TRANSFORMER + " not installed!")
-	}
-	newfn = path.Join(FOLDER_READY, basefn+".mp3")
+        if REPO_PATH == ""{
+            _, err := exec.LookPath(TRANSFORMER)
+            if err != nil {
+                log.Fatal(TRANSFORMER + " not installed!")
+            }
+        }
+	newfn = path.Join(DATA_DIR, FOLDER_READY, basefn+".mp3")
 	log.Printf("Transcoding %s to %s", oldfn, newfn)
 	//err = exec.Command(TRANSFORMER, "-i", oldfn, "-vn", "-c:a", "libmp3lame", "-b:a", "96k", "-q:a", "9", "-y", newfn).Run()
-	err = exec.Command(TRANSFORMER, "-i", oldfn, "-vn", "-acodec", "libmp3lame", "-ab", BITRATE, "-aq", "9", "-y", newfn).Run()
+	err := exec.Command(path.Join(REPO_PATH, "misc", TRANSFORMER), "-i", oldfn, "-vn", "-acodec", "libmp3lame", "-ab", BITRATE, "-aq", "9", "-y", newfn).Run()
 	if err != nil {
 		log.Print(err)
 	}
@@ -266,15 +271,17 @@ func genUUID() string {
 }
 
 func main() {
-    os.Mkdir(FOLDER_UPLOAD, os.ModeDir | os.ModePerm)
-    os.Mkdir(FOLDER_READY, os.ModeDir | os.ModePerm)
+    runtime.GOMAXPROCS(runtime.NumCPU())
+    ip := os.Getenv("OPENSHIFT_INTERNAL_IP") // empty is localhost
+    os.Mkdir(path.Join(DATA_DIR, FOLDER_UPLOAD), os.ModeDir | os.ModePerm)
+    os.Mkdir(path.Join(DATA_DIR, FOLDER_READY), os.ModeDir | os.ModePerm)
 	http.HandleFunc("/process", handleProcess)
 	http.HandleFunc("/record", handleRecord)
 	http.HandleFunc("/crossdomain.xml", handleCrossdomainWamiXML)
 	log.Print("Serving...")
-	err := http.ListenAndServe(":6060", nil)
+	err := http.ListenAndServe(fmt.Sprintf("%s:8080", ip), nil)
 	if err != nil {
-		log.Print("Could not start server!")
-		return
+            log.Print("Could not start server: ", err)
+            return
 	}
 }
