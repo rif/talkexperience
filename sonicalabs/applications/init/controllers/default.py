@@ -46,9 +46,9 @@ def search():
             sounds = db(active_sounds & (Sounds.language==request.vars.language)).select(orderby=~Sounds.created_on,
                                           limitby=paginator.limitby())
         # display nothing if no search criteria (client's request)
-        else:
-            sounds = db(Sounds).select(orderby=~Sounds.created_on,
-                                          limitby=paginator.limitby())
+        #else:
+        #    sounds = db(active_sounds).select(orderby=~Sounds.created_on,
+        #                                  limitby=paginator.limitby())
     if not sounds: sounds = []
     paginator.records = len(sounds)
     paginate_info = PaginateInfo(paginator.page,
