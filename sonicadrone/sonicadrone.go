@@ -244,7 +244,7 @@ func transcode(oldfn, basefn string) (newfn string) {
 	newfn = path.Join(DATA_DIR, FOLDER_READY, basefn+".mp3")
 	log.Printf("Transcoding %s to %s", oldfn, newfn)
 	//err = exec.Command(TRANSFORMER, "-i", oldfn, "-vn", "-c:a", "libmp3lame", "-b:a", "96k", "-q:a", "9", "-y", newfn).Run()
-	err = exec.Command(path.Join(REPO_PATH, 'misc', TRANSFORMER), "-i", oldfn, "-vn", "-acodec", "libmp3lame", "-ab", BITRATE, "-aq", "9", "-y", newfn).Run()
+	err := exec.Command(path.Join(REPO_PATH, "misc", TRANSFORMER), "-i", oldfn, "-vn", "-acodec", "libmp3lame", "-ab", BITRATE, "-aq", "9", "-y", newfn).Run()
 	if err != nil {
 		log.Print(err)
 	}
