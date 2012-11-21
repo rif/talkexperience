@@ -21,11 +21,9 @@
         <tr>
             <td><a style="font-size: 14px;" href="{{=URL('default', 'details', args=s.id)}}">{{=s.title or ''}}</a></td>
             <td>{{=s.username}}</td>
-            <td>
-                <div class="btn-group">
-                    <a href="{{=s.download_url}}" class="btn btn-green btn-small">{{=T('Download')}}</a>
-                    <a href="{{=URL('default','remove_playlist', args=s.id, user_signature=True)}}" class="btn btn-green btn-small">{{=T('Remove')}}</a>
-                </div>
+            <td>                
+                <a href="{{=s.download_url}}" class="btn btn-green btn-small">{{=T('Download')}}</a>
+                <a href="{{=URL('default','remove_playlist', args=s.id, user_signature=True)}}" class="btn btn-green btn-small">{{=T('Remove')}}</a>                
             </td>
         </tr>
         {{pass}}
