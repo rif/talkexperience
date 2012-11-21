@@ -16,6 +16,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+        "runtime"
 )
 
 var (
@@ -266,15 +267,17 @@ func genUUID() string {
 }
 
 func main() {
+    runtime.GOMAXPROCS(runtime.NumCPU())
+    ip := os.Getenv("OPENSHIFT_INTERNAL_IP") // empty is localhost
     os.Mkdir(FOLDER_UPLOAD, os.ModeDir | os.ModePerm)
     os.Mkdir(FOLDER_READY, os.ModeDir | os.ModePerm)
 	http.HandleFunc("/process", handleProcess)
 	http.HandleFunc("/record", handleRecord)
 	http.HandleFunc("/crossdomain.xml", handleCrossdomainWamiXML)
 	log.Print("Serving...")
-	err := http.ListenAndServe(":6060", nil)
+	err := http.ListenAndServe(fmt.Sprintf("%s:8080", ip), nil)
 	if err != nil {
-		log.Print("Could not start server!")
-		return
+            log.Print("Could not start server: ", err)
+            return
 	}
 }
