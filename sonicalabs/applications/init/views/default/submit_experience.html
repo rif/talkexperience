@@ -1,7 +1,9 @@
 {{extend 'layout.html'}}
-<h3>{{=T('Upload an existing experience or Record a new one using the buttons below')}}</h3>
+<div class="center-div submit-buttons-description tohide">
+<p>{{=T('Upload an existing experience or')}}<br/>{{=T('Record a new one using the buttons below')}}</p>
+</div>
 <div class="row">
-    <div class="offset3 span2">
+    <div class="offset3 span3">
     <div id="fine-uploader">       
     <noscript>          
       <p>{{=T("Please enable JavaScript to use the file uploader.")}}</p>
@@ -50,7 +52,7 @@ $(function(){
     },
     callbacks: {
         onSubmit: function(id, fileName){            
-          $(".qq-upload-button").hide();
+          $(".qq-upload-button, .tohide").hide();
           $("#rec-link").hide();
           $("#wami").hide();
         },
@@ -77,7 +79,7 @@ $(function(){
                 $("#status").text("{{=T('Recording...')}}");                
                 Wami.startRecording("http://avocadosoft.ro:6060/record?uuid={{=experience_uuid}}");			
                 //Wami.startRecording("http://localhost:6060/record?uuid={{=experience_uuid}}");
-                $(".qq-upload-button").hide();          
+                $(".qq-upload-button, .tohide").hide();          
                 $(this).removeClass('ready');
         $(this).text("{{=T('Stop recording')}}");
         } else{

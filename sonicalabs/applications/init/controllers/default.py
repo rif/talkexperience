@@ -46,9 +46,9 @@ def search():
             sounds = db(active_sounds & (Sounds.language==request.vars.language)).select(orderby=~Sounds.created_on,
                                           limitby=paginator.limitby())
         # display nothing if no search criteria (client's request)
-        #else:
-        #    sounds = db(active_sounds).select(orderby=~Sounds.created_on,
-        #                                  limitby=paginator.limitby())
+        else:
+            sounds = db(Sounds).select(orderby=~Sounds.created_on,
+                                          limitby=paginator.limitby())
     if not sounds: sounds = []
     paginator.records = len(sounds)
     paginate_info = PaginateInfo(paginator.page,
@@ -162,6 +162,7 @@ def my_uploads():
 
 def details():
     detail_sound = Sounds(a0) or redirect(URL('index'))
+    if not detail_sound.is_active: raise HTTP(404)
     query = active_sounds & (Sounds.created_by==detail_sound.created_by)    
     detail_sound.update_record(play_count=(detail_sound.play_count or 0) + 1)
 
@@ -247,6 +248,7 @@ def add_favorite():
     p = db(Profiles.user == auth.user_id).select().first()    
     fav = p.favorites if p and p.favorites else []
     sound = Sounds(a0) or redirect(URL('index'))
+    if not sound.is_active: raise HTTP(404)
     if not sound.id in fav: fav.append(sound.id)    
     Profiles.update_or_insert(Profiles.user==auth.user_id,
                        user=auth.user_id, favorites = fav)
@@ -256,15 +258,17 @@ def add_favorite():
 def remove_favorite():
     p = db(Profiles.user == auth.user_id).select().first()    
     if p:
-        sound = Sounds(a0) or redirect(URL('index'))        
+        sound = Sounds(a0) or redirect(URL('index'))
+        if not sound.is_active: raise HTTP(404)
         p.favorites.remove(sound.id)
         p.update_record()
-    return ''
+    redirect(URL('default','favorites'))
+    return dict()
 
 @auth.requires_login()
 def favorites():    
     p = db(Profiles.user == auth.user_id).select().first()    
-    sounds = db(Sounds.id.belongs(p.favorites)).select() if p and p.favorites else []
+    sounds = db(active_sounds & Sounds.id.belongs(p.favorites)).select() if p and p.favorites else []
     
     paginate_selector = PaginateSelector(anchor='main')
     paginator = Paginator(paginate=paginate_selector.paginate,
@@ -279,7 +283,8 @@ def favorites():
 def add_playlist():
     p = db(Profiles.user == auth.user_id).select().first()    
     pl = p.playlist if p and p.playlist else []
-    sound = Sounds(a0) or redirect(URL('index'))    
+    sound = Sounds(a0) or redirect(URL('index'))
+    if not sound.is_active: raise HTTP(404)
     if not sound.id in pl: pl.append(sound.id)    
     Profiles.update_or_insert(Profiles.user==auth.user_id,
                        user=auth.user_id, playlist = pl)        
@@ -289,15 +294,17 @@ def add_playlist():
 def remove_playlist():
     p = db(Profiles.user == auth.user_id).select().first()    
     if p:
-        sound = Sounds(a0) or redirect(URL('index'))        
+        sound = Sounds(a0) or redirect(URL('index'))
+        if not sound.is_active: raise HTTP(404)
         p.playlist.remove(sound.id)
         p.update_record()
-    return ''
+    redirect(URL('default','playlist'))
+    return dict()
 
 @auth.requires_login()
 def playlist():
     p = db(Profiles.user == auth.user_id).select().first()    
-    sounds = db(Sounds.id.belongs(p.playlist)).select() if p and p.playlist else []
+    sounds = db(active_sounds & Sounds.id.belongs(p.playlist)).select() if p and p.playlist else []
     
     paginate_selector = PaginateSelector(anchor='main')
     paginator = Paginator(paginate=paginate_selector.paginate,
