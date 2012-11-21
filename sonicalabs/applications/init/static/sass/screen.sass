@@ -136,7 +136,9 @@ div.sound
   div.sound-right
     padding-top: 5px
     float: left
-    width: 47%  
+    width: 47%
+    div.sound-player
+      margin-left: 25px
   div.social    
     height: 38px
     img
@@ -187,7 +189,7 @@ a.sound-button
 
 div.sound-share
   display: inline-block
-  margin-left: -65%
+  margin-left: -67%
   margin-top: 3px
 
 div.sound-comments
@@ -240,7 +242,11 @@ div.sound-comments
         padding-top: 5px
     div.qq-upload-button-hover
       background: +contrasted($green)
-      
+  .qq-upload-list li
+    background-color: $bgcolor
+  .qq-upload-cancel
+    color: $green
+
 textarea
   height: 43px
   width: 300px
@@ -299,9 +305,6 @@ div.mostsound
     height: 18px
     margin-top: -2px
 
-.sound-player
-  margin-left: 25px
-
 .footer-content
   bottom: -3.7em
 
@@ -313,4 +316,7 @@ div.mostsound
   margin-top: 100px
   width: 180px
   display: none  
-    
+
+.submit-buttons-description
+  width: 280px
+  margin-bottom: 30px

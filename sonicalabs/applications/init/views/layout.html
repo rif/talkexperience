@@ -106,12 +106,12 @@
       </div><!--/row-->
     </section><!--/main-->
     </div> <!-- /container -->
-{{block footer}} <!-- this is default footer -->
-  <div class="container-fluid">
-  <hr/>
+    <div class="container-fluid">
+        <hr/>
     </div>
     <div class="container">    
-    <footer>      
+    <footer>
+        {{block footer}} <!-- this is default footer -->
       <div class="footer-content">
 	      <a href="{{=URL('staticpage', args='about')}}">ABOUT US</a>
         <a href="{{=URL('staticpage', args='howitworks')}}">HOW IT WORKS</a>
@@ -123,10 +123,10 @@
         <a href="{{=URL('index')}}">HOME</a>
         <a class="share" href="http://twitter.com/talkexperience"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
         <a class="share" href="http://www.facebook.com/pages/Talkexperience/136783493132773"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
-      </div>      
+      </div>
+      {{end}}
     </footer>    
-  </div> <!-- /container -->
-  {{end}}
+  </div> <!-- /container -->  
     
   <script src="{{=URL('static','js/bootstrap.min.js')}}"></script>
   {{block script}}{{end}}

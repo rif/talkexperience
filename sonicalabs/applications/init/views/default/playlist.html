@@ -19,9 +19,14 @@
     <tbody>
         {{for s in sounds:}}
         <tr>
-            <td>{{=s.title or ''}}</td>
+            <td><a style="font-size: 14px;" href="{{=URL('default', 'details', args=s.id)}}">{{=s.title or ''}}</a></td>
             <td>{{=s.username}}</td>
-            <td><a href="{{=URL('remove_playlist', args=s.id, user_signature=True)}}" class="">{{=T('Remove')}}</a></td>
+            <td>
+                <div class="btn-group">
+                    <a href="{{=s.download_url}}" class="btn btn-green btn-small">{{=T('Download')}}</a>
+                    <a href="{{=URL('default','remove_playlist', args=s.id, user_signature=True)}}" class="btn btn-green btn-small">{{=T('Remove')}}</a>
+                </div>
+            </td>
         </tr>
         {{pass}}
     </tbody>
