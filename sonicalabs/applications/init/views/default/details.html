@@ -30,7 +30,7 @@
         <div class="sound-right">
             <div class="row sound-player">
                 <div id="audioplayer">{{=T('Please enable javascript and flash to use the player')}}</div>        
-                <script type="text/javascript">AudioPlayer.embed("audioplayer", {soundFile: "{{=detail_sound.download_url}}"});</script>
+                <script type="text/javascript">AudioPlayer.embed("audioplayer", {soundFile: "{{=detail_sound.download_url}}", autostart: "yes"});</script>
             </div>
             <div class="row">
                 <div class="span4 sound-buttons">
