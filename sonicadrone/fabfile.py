@@ -1,4 +1,4 @@
-from fabric.api import local, sudo
+from fabric.api import local, sudo, run
 from fabric.decorators import task, hosts
 from fabric.context_managers import lcd
 
@@ -8,7 +8,7 @@ def build():
     local("strip -s sonicadrone")
 
 @task
-def run():    
+def start():    
     local("go run sonicadrone.go")    
 
 @task
@@ -33,6 +33,7 @@ def deploy():
     clean()
 
 @task
-@hosts('rif@avocadosoft.ro:22011')
-def logs():
-    sudo("tail -f /var/log/supervisor/sonicadrone-stdout---supervisor-lUXEcG.log")
+@hosts('dc9d2c9d2ffc45c38b7a4e8d320a6ce9@drone-talkexperience.rhcloud.com')
+def log():
+    run('tail -f diy-0.1/logs/sonicadrone.log')
+
