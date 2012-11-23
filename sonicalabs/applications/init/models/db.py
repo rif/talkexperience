@@ -9,7 +9,7 @@
 ## be redirected to HTTPS, uncomment the line below:
 # request.requires_https()
 
-MIGRATION_ENABLED = True
+MIGRATION_ENABLED = False
 
 if not request.env.web2py_runtime_gae:
     db = DAL('sqlite://storage.sqlite', migrate_enabled=MIGRATION_ENABLED)
