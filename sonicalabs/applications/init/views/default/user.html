@@ -2,16 +2,17 @@
 <h2>{{=T( request.args(0).replace('_',' ').capitalize() )}}</h2>
 <div id="web2py_user_form">
 {{
+f = form.elements()[1] # it is an extended form
 if request.args(0)=='login':
     if not 'register' in auth.settings.actions_disabled:
-        form.add_button(T('Register'),URL(args='register'))
+        f.add_button(T('Register'),URL(args='register'))
     pass
     if not 'request_reset_password' in auth.settings.actions_disabled:
-        form.add_button(T('Lost Password'),URL(args='request_reset_password'))
+        f.add_button(T('Lost Password'),URL(args='request_reset_password'))
     pass
 pass
 }}
-{{if auth.user:}}
+{{if request.args(0)=='profile':}}
 <a href="http://www.gravatar.com" target="_blank">
     <img src="{{=Gravatar(auth.user.email, size=80).thumb}}" alt=""/><br/>
     Change on Gravatar
@@ -26,6 +27,11 @@ pass
 {{pass}}
 
 <script language="javascript"><!--
-      jQuery("#web2py_user_form input:visible:enabled:first").focus();
-      //--></script>
+jQuery("#web2py_user_form input:visible:enabled:first").focus();
+{{if request.args(0)=='register':}}
+    web2py_validate_entropy(jQuery('#auth_user_password'),100);
+{{elif request.args(0)=='change_password':}}
+    web2py_validate_entropy(jQuery('#no_table_new_password'),100);
+{{pass}}
+//--></script>
 

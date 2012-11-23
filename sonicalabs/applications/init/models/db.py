@@ -9,12 +9,14 @@
 ## be redirected to HTTPS, uncomment the line below:
 # request.requires_https()
 
+MIGRATION_ENABLED = True
+
 if not request.env.web2py_runtime_gae:
-    db = DAL('sqlite://storage.sqlite', migrate_enabled=False)
+    db = DAL('sqlite://storage.sqlite', migrate_enabled=MIGRATION_ENABLED)
 else:
     ## connect to Google BigTable (optional 'google:datastore://namespace')
     sess_db = DAL('google:datastore', migrate_enabled=False)
-    db = DAL('google:sql://talkexperience.com:talk-experience:tae/talkexperience', migrate_enabled=False)
+    db = DAL('google:sql://talkexperience.com:talk-experience:tae/talkexperience', migrate_enabled=MIGRATION_ENABLED)
     ## store sessions and tickets there
     session.connect(request, response, db = sess_db)
     ## or store session in Memcache, Redis, etc.
@@ -33,10 +35,12 @@ from gluon.tools import Auth, Crud, Service, PluginManager, prettydate
 auth = Auth(db)
 crud, service, plugins = Crud(db), Service(), PluginManager()
 
-#auth.settings.extra_fields['auth_user']= [Field('avatar', 'upload')]
+#auth.settings.extra_fields['auth_user']= [
+#    Field('avatar', 'upload'),
+#    Field('favorites', 'list:reference sounds', readable=False, writable=False),
+#]
 
-## create all tables needed by auth if not custom tables
-#auth.settings.extra_fields['auth_user']= [Field('favorites', 'list:reference sounds', readable=False, writable=False)]
+
 auth.define_tables()#(username=False, signature=False)
 
 ## configure email
@@ -50,8 +54,14 @@ auth.settings.registration_requires_verification = False
 auth.settings.registration_requires_approval = False
 auth.settings.reset_password_requires_verification = True
 
-from gluon.contrib.login_methods.rpx_account import use_janrain
-use_janrain(auth,filename='private/janrain.key')
+from gluon.contrib.login_methods.rpx_account import RPXAccount
+from gluon.contrib.login_methods.extended_login_form import ExtendedLoginForm
+
+rpx_form = RPXAccount(request,
+                        api_key="7a5ffb2bec55c2cb5067ef87770dc93c8446657e",
+                        domain="sonicalabs",
+                        url=URL('default', 'user', args='login', scheme=True))
+auth.settings.login_form = ExtendedLoginForm(auth, rpx_form, signals=['token'])
 
 # if request.env.web2py_runtime_gae:            # if running on Google App Engine
 #     from gluon.contrib.login_methods.gae_google_account import GaeGoogleAccount

@@ -74,11 +74,11 @@
             {{if auth.is_logged_in():}}
             <span class="mixed">WELCOME <span class="green">{{=auth.user.first_name.upper()}}</span></span>
             {{else:}}
-            <a class="mixed" href="{{=URL('default', 'user', 'profile')}}"><span class="green">SIGN</span> IN</a>
+            <a class="mixed" href="{{=URL('default', 'user', args='login')}}"><span class="green">SIGN</span> IN</a>
             {{pass}}
-            | <a class="mixed" href="{{=URL('default', 'user', 'profile')}}"><span class="green">PROFILE</span></a><br>
+            | <a class="mixed" href="{{=URL('default', 'user', args='profile')}}"><span class="green">PROFILE</span></a><br>
             <div class="spacer">&nbsp;</div>
-            <a class="mixed" href="{{=URL('default', 'user', 'logout')}}"><span class="green">SIGN</span> OUT</a>
+            <a class="mixed" href="{{=URL('default', 'user', args='logout')}}"><span class="green">SIGN</span> OUT</a>
           </div>
           <a id="top-first" href="{{=URL('default', 'most_popular')}}">MOST POPULAR<br>SUBJECTS</a>
           <a id="top-second" href="{{=URL('default', 'by_language')}}">MOST EXPERIENCES<br>BY LANGUAGE</a>
