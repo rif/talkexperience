@@ -11,10 +11,11 @@
   {{=search_form.custom.end}}
   {{if auth.is_logged_in():}}
   <span class="mixed">WELCOME {{=auth.user.first_name.upper()}}</span>
+  | <a href="{{=URL('default', 'user', args='profile')}}">PROFILE</a><br>
   {{else:}}
   <a href="{{=URL('default', 'user', args='login')}}">SIGN IN</a>
-  {{pass}}  
-  | <a href="{{=URL('default', 'user', args='profile')}}">PROFILE</a><br>
+  | <a href="{{=URL('default', 'user', args='register')}}">SIGN UP</a><br>
+  {{pass}}    
   <div class="spacer">&nbsp;</div>
   <a href="{{=URL('default', 'submit_experience')}}">SUBMIT AN EXPERIENCE</a><br>  
   <a href="{{=URL('default', 'user', args='logout')}}">SIGN OUT</a>

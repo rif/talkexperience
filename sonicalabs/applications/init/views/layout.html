@@ -73,10 +73,11 @@
             {{=search_form.custom.end}}                        
             {{if auth.is_logged_in():}}
             <span class="mixed">WELCOME <span class="green">{{=auth.user.first_name.upper()}}</span></span>
+            | <a class="mixed" href="{{=URL('default', 'user', args='profile')}}"><span class="green">PROFILE</span></a><br>
             {{else:}}
             <a class="mixed" href="{{=URL('default', 'user', args='login')}}"><span class="green">SIGN</span> IN</a>
-            {{pass}}
-            | <a class="mixed" href="{{=URL('default', 'user', args='profile')}}"><span class="green">PROFILE</span></a><br>
+            | <a class="mixed" href="{{=URL('default', 'user', args='register')}}"><span class="green">SIGN</span> UP</a><br>
+            {{pass}}            
             <div class="spacer">&nbsp;</div>
             <a class="mixed" href="{{=URL('default', 'user', args='logout')}}"><span class="green">SIGN</span> OUT</a>
           </div>
