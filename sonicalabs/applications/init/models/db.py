@@ -46,7 +46,7 @@ auth.define_tables()#(username=False, signature=False)
 ## configure email
 mail=auth.settings.mailer
 mail.settings.server =  'gae'
-mail.settings.sender = 'fericean@gmail.com'
+mail.settings.sender = 'rif@talkexperience.com'
 #mail.settings.login = 'user:pass'
 
 ## configure auth policy
