@@ -1,6 +1,6 @@
 {{extend 'layout.html'}}
 
-<h2>Most experiences by user</h2>
+<h2>{{=T('Most experiences by user')}}</h2>
 
 {{=paginate_selector}}{{=paginate_info}}
 {{ for i,s in enumerate(sounds): }}
