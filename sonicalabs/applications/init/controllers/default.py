@@ -223,7 +223,7 @@ def download():
     return response.download(request,db)
 
 def staticpage():
-    if a0 in ('about', 'terms', 'howitworks', 'buy', 'faq', 'business'):
+    if a0 in ('about', 'terms', 'howitworks', 'buy', 'faq', 'business', 'mission'):
         response.view = 'default/%s.html' % a0
         return {}
     return ''
