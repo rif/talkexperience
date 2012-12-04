@@ -148,7 +148,7 @@ def delete_sound():
     #TODO: remove from all favorites and playlists
     return locals()
 
-@auth.requires_signature()
+@auth.requires_login()
 def my_uploads():
     paginator = Paginator(paginate=10,
                           extra_vars={'v':1}, anchor='main', renderstyle=True)    
