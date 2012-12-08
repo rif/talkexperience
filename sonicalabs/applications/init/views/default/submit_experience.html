@@ -70,8 +70,9 @@ $(function(){
 	id : "wami",
 	swfUrl : "{{=URL('static', 'js/Wami.swf')}}",
         onReady : function() {
-          Wami.hide();
-          $("#rec-link").show();        
+          Wami.hide();          
+          $("#rec-link").show();
+          $("#wami>div").css("z-index", "-1");
         },
     });     
     $("#rec-link").click(function(){
