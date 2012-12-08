@@ -13,10 +13,12 @@ if request.args(0)=='login':
 pass
 }}
 {{if request.args(0)=='profile':}}
-<a href="http://www.gravatar.com" target="_blank">
-    <img src="{{=Gravatar(auth.user.email, size=80).thumb}}" alt=""/><br/>
-    Change on Gravatar
-</a>
+<div>
+    <div>
+        <img src="{{=Gravatar(auth.user.email, size=80).thumb}}" alt=""/>
+    </div>
+    <a href="http://www.gravatar.com" target="_blank">{{=T('Change on Gravatar')}}</a>
+</div>
 {{pass}}
 {{=form}}
 </div>

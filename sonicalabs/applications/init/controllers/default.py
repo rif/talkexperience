@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from plugin_paginator import Paginator, PaginateSelector, PaginateInfo
 
-def index(): return dict()
-
-def index_new(): return dict()
+def index():
+    session.forget()
+    return dict()
 
 def search():
     paginate_selector = PaginateSelector(anchor='main')
