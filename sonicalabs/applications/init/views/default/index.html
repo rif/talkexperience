@@ -19,10 +19,10 @@
 <![endif]-->
 
 </head>
-<body> 
+<body>
   <div class="container first">
   <div class="row">
-  <div class="span12" id="main">    
+  <div class="span12" id="main">
   <div id="top-left">
     <a class="mixed" href="{{=URL('default', 'most_popular')}}">MOST POPULAR <br/> <span class="green">SUBJECTS</span></a>
   </div>
@@ -34,11 +34,14 @@
   </div>
   <div id="logo">
     <a href="{{=URL('index')}}"><img src="{{=URL('static', 'images/logo_no_icon.png')}}" alt="logo"/></a>
+    <div style="height:25px">
+      <img src="{{=URL('static', 'images/beta.png')}}" alt="beta" style="float:right;height:25px"/>
+    </div>
     <ul class="pretty">
       <li>Writing a blog, a book or an article requires time and
   some talent. Making an audio recording of a life or
   professional experience is so much easier</li>
-      <li>Selling an antique object? Attach your audio experience of owning it</li>
+      <li>Sign-in or Sign-up and record an Experience</li>
       <li>It's free, portable and intuitive</li>
     </ul>
   </div>
@@ -67,10 +70,11 @@
       <footer>
       <div class="footer-content">
         <a href="{{=URL('default', 'staticpage', args='about')}}">ABOUT US</a>
-        <a href="{{=URL('default', 'staticpage', args='howitworks')}}">HOW IT WORKS</a>        
+        <a href="{{=URL('default', 'staticpage', args='howitworks')}}">HOW IT WORKS</a>
         <a href="{{=URL('default', 'staticpage', args='terms')}}">TERMS &amp; CONDITIONS</a>
         <a href="{{=URL('default', 'staticpage', args='faq')}}">FAQ</a>
         <a href="{{=URL('default', 'contact')}}">CONTACT US</a>
+        <span class="follow">follow on</span>
         <a class="share" href="http://twitter.com/talkexperience"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
         <a class="share" href="http://www.facebook.com/pages/Talkexperience/136783493132773"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
       </div>
