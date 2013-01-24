@@ -14,35 +14,35 @@
   <!--[if IE]>
       <meta http-equiv="X-UA-Compatible" content="IE=edge{{=not request.is_local and ',chrome=1' or ''}}">
       <![endif]-->
-  
+
   <title>{{=response.title or request.application}}</title>
-  
+
   <!-- http://dev.w3.org/html5/markup/meta.name.html -->
   <meta name="application-name" content="{{=request.application}}" />
-  
+
   <!-- Speaking of Google, don't forget to set your site up:
        http://google.com/webmasters -->
   <meta name="google-site-verification" content="" />
-  
+
   <!--  Mobile Viewport Fix
 	j.mp/mobileviewport & davidbcalhoun.com/2010/viewport-metatag
 	device-width: Occupy full width of the screen in its current orientation
 	initial-scale = 1.0 retains dimensions instead of zooming out if page height > device height
 	user-scalable = yes allows the user to zoom in -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+
   <link rel="shortcut icon" href="{{=URL('static','images/favicon.ico')}}" type="image/x-icon">
   <link rel="apple-touch-icon" href="{{=URL('static','images/favicon.png')}}">
-  
-  <!-- All JavaScript at the bottom, except for Modernizr which enables 
+
+  <!-- All JavaScript at the bottom, except for Modernizr which enables
        HTML5 elements & feature detects -->
-  <script src="{{=URL('static','js/modernizr.custom.js')}}"></script>   
-  
+  <script src="{{=URL('static','js/modernizr.custom.js')}}"></script>
+
   <!-- include stylesheets -->
   {{
   response.files.append(URL('static','css/web2py.css'))
   response.files.append(URL('static','css/bootstrap.min.css'))
-  #response.files.append(URL('static','css/bootstrap-responsive.min.css'))  
+  #response.files.append(URL('static','css/bootstrap-responsive.min.css'))
   response.files.append(URL('static','css/web2py_bootstrap.css'))
   response.files.append(URL('static','css/fonts.css'))
   response.files.append(URL('static','css/screen.css'))
@@ -65,38 +65,39 @@
         <div class="span12" id="te-head">
           <a id="logo" href="{{=URL('index')}}">
             <img src="{{=URL('static','images/logo.png')}}" alt="dark-logo" height="20">
+            <img src="{{=URL('static', 'images/beta.png')}}" alt="beta" style="height:16px"/>
           </a>
           {{block ta-menu}}
           <div id="ta-menu">
             {{=search_form.custom.begin}}
             {{=search_form.custom.widget.query}}
-            {{=search_form.custom.end}}                        
+            {{=search_form.custom.end}}
             {{if auth.is_logged_in():}}
             <span class="mixed">WELCOME <span class="green">{{=auth.user.first_name.upper()}}</span></span>
             | <a class="mixed" href="{{=URL('default', 'user', args='profile')}}"><span class="green">PROFILE</span></a><br>
             {{else:}}
             <a class="mixed" href="{{=URL('default', 'user', args='login')}}"><span class="green">SIGN</span> IN</a>
             | <a class="mixed" href="{{=URL('default', 'user', args='register')}}"><span class="green">SIGN</span> UP</a><br>
-            {{pass}}            
+            {{pass}}
             <div class="spacer">&nbsp;</div>
             <a class="mixed" href="{{=URL('default', 'user', args='logout')}}"><span class="green">SIGN</span> OUT</a>
           </div>
           <a id="top-first" href="{{=URL('default', 'most_popular')}}">MOST POPULAR<br>SUBJECTS</a>
           <a id="top-second" href="{{=URL('default', 'by_language')}}">MOST EXPERIENCES<br>BY LANGUAGE</a>
           <a id="top-third" href="{{=URL('default', 'by_user')}}">MOST EXPERIENCES<br>BY USER</a>
-          <a id="top-fourth" href="{{=URL('default', 'search')}}">SEARCH FOR AN<br>EXPERIENCE</a>          
+          <a id="top-fourth" href="{{=URL('default', 'search')}}">SEARCH FOR AN<br>EXPERIENCE</a>
           <a id="top-fifth" href="{{=URL('default', 'staticpage', args='mission')}}">CAPTURING GLOBAL<br>TACIT KNOWLEDGE</a>
-          <a id="bottom-first" href="{{=URL('default', 'submit_experience')}}">SUBMIT AN<br>EXPERIENCE</a>          
+          <a id="bottom-first" href="{{=URL('default', 'submit_experience')}}">SUBMIT AN<br>EXPERIENCE</a>
           <a id="bottom-third" href="{{=URL('default', 'my_uploads')}}">MY<br>EXPERIENCES</a>
           <a id="bottom-fourth" href="{{=URL('default', 'playlist')}}">MY<br/>PLAYLIST</a>
           <a id="bottom-fourth" href="{{=URL('default', 'favorites')}}">MY<br/>FAVORITES</a>
           {{end}}
         </div>
     </div>
-  </div>  
+  </div>
   <div class="container">
     <div class="flash">{{=response.flash or ''}}</div>
-    
+
     <section id="main" class="main span12">
       <div class="row">
       	<div class="span12">
@@ -110,24 +111,25 @@
     <div class="container-fluid">
         <hr/>
     </div>
-    <div class="container">    
+    <div class="container">
     <footer>
         {{block footer}} <!-- this is default footer -->
       <div class="footer-content">
 	      <a href="{{=URL('default', 'staticpage', args='about')}}">ABOUT US</a>
-        <a href="{{=URL('default', 'staticpage', args='howitworks')}}">HOW IT WORKS</a>        
+        <a href="{{=URL('default', 'staticpage', args='howitworks')}}">HOW IT WORKS</a>
         <a href="{{=URL('default', 'staticpage', args='faq')}}">FAQ</a>
         <a href="{{=URL('default', 'staticpage', args='terms')}}">TERMS &amp; CONDITIONS</a>
         <a href="{{=URL('default', 'contact')}}">CONTACT US</a>
         <a href="{{=URL('default', 'details', args=60)}}">MESSAGE FROM THE FOUNDER</a>
         <a href="{{=URL('default', 'index')}}">HOME</a>
+        <span class="follow">follow on</span>
         <a class="share" href="http://twitter.com/talkexperience"><img src="{{=URL('static', 'images/twitter.png')}}" alt="twitter"></a>
         <a class="share" href="http://www.facebook.com/pages/Talkexperience/136783493132773"><img src="{{=URL('static', 'images/facebook.png')}}" alt="facebook"></a>
       </div>
       {{end}}
-    </footer>    
-  </div> <!-- /container -->  
-    
+    </footer>
+  </div> <!-- /container -->
+
   <script src="{{=URL('static','js/bootstrap.min.js')}}"></script>
   {{block script}}{{end}}
   <!--[if lt IE 7 ]>
@@ -143,8 +145,8 @@
       document.location.protocol ? 'https://ssl' : 'http://www') +
       '.google-analytics.com/ga.js'; var s =
       document.getElementsByTagName('script')[0];
-      s.parentNode.insertBefore(ga, s); })(); </script> {{pass}} 
-  <script type="text/javascript">     
+      s.parentNode.insertBefore(ga, s); })(); </script> {{pass}}
+  <script type="text/javascript">
     $(function(){
       $("#no_table_query").one("focus", function() {
         $(this).val("");
